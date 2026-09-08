@@ -63,15 +63,16 @@ guiding test for whether a change is breaking:
 
 ### Tag note
 
-`v1.2.0` has not been tagged yet — `git tag -l` shows `v1.1.4` as the
-latest. Status in `CHANGELOG.md` is `[Unreleased]`; status in the
-current milestone below is 🚧 In Progress.
+`v1.2.0-beta.1` has been tagged and published under the `beta` npm
+dist-tag. `v1.2.0` stable is not released yet — pending broad validation
+(FULL matrix + real-world use). Status in `CHANGELOG.md` is
+`[1.2.0-beta.1]`; status in the current milestone below is 🚧 Beta.
 
 ---
 
 ## 🎯 Current Milestone: v1.2.0
 
-> **Status:** 🚧 In Progress · **Target:** v1.2.0
+> **Status:** 🚧 Beta (`v1.2.0-beta.1`) · **Target:** v1.2.0
 
 The next release consolidates the API layer, providers, router layout,
 and CSS framework naming. Landed in this branch:

@@ -5,9 +5,9 @@ All notable changes to `create-lumen` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.0-beta.1] — 2026-09-07
 
-> Status: 🚧 In Progress · Target: v1.2.0
+> Beta · feature-complete, pending broad validation
 
 ### Added
 
