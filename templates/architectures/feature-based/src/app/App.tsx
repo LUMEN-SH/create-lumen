@@ -1,9 +1,20 @@
-import { HomePage } from "@/features/home/pages/HomePage";
+import { ThemeProvider } from "@/app/providers/ThemeProvider";
+import { HomePage } from "@/features/home";
 
 export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <HomePage />
-    </div>
+    <ThemeProvider>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "var(--color-bg)",
+        }}
+      >
+        <HomePage />
+      </div>
+    </ThemeProvider>
   );
 }

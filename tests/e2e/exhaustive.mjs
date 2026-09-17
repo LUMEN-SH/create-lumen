@@ -44,7 +44,7 @@ async function generate(responses, baseApp, projectPath) {
   await fsp.mkdir(projectPath, { recursive: true });
   execSync(`rsync -a --delete "${baseApp}/" "${projectPath}/"`);
 
-  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language);
+  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language, responses.cssFramework);
   await injectConditionals(projectPath, TEMPLATES_DIR, responses, responses.architecture, responses.language);
   await injectFormatter(projectPath, TEMPLATES_DIR, responses);
   await setupCssFramework({
@@ -52,6 +52,7 @@ async function generate(responses, baseApp, projectPath) {
     templatesDir: TEMPLATES_DIR,
     language: responses.language,
     cssFramework: responses.cssFramework,
+    architecture: responses.architecture,
     ext: responses.language === "ts" ? "tsx" : "jsx",
     pkg,
   });
@@ -64,7 +65,7 @@ async function generate(responses, baseApp, projectPath) {
 }
 
 async function check(responses, projectPath) {
-  const { language, architecture, cssFramework, testing, router, stateManagement, linter, formatter } = responses;
+  const { language, architecture, cssFramework, testing, router, stateManagement, linter, formatter, apiClient } = responses;
   const ext = language === "ts" ? "tsx" : "jsx";
   const extConfig = language === "ts" ? "ts" : "js";
   const pkgJson = JSON.parse(await fsp.readFile(path.join(projectPath, "package.json"), "utf8"));
@@ -116,18 +117,64 @@ async function check(responses, projectPath) {
     const providerPath =
       architecture === "feature-based"
         ? path.join(projectPath, `src/app/providers/StoreProvider.${ext}`)
-        : path.join(projectPath, `src/context/StoreProvider.${ext}`);
+        : path.join(projectPath, `src/providers/StoreProvider.${ext}`);
     assert.ok(await exists(providerPath), "redux: StoreProvider file missing");
+    assert.ok(
+      !(await exists(path.join(projectPath, "src/context"))),
+      "redux comp: legacy src/context/ should not exist"
+    );
   } else {
     assert.ok(!main.includes("StoreProvider"), `non-redux: StoreProvider should be absent (${stateManagement})`);
   }
 
+  // Providers / contexts (split: feat contexts/ + providers/, comp co-localized in providers/)
+  if (architecture === "feature-based") {
+    assert.ok(
+      await exists(path.join(projectPath, `src/app/contexts/themecontext.${ext === "tsx" ? "ts" : "js"}`)),
+      "feat: app/contexts/themecontext missing"
+    );
+    assert.ok(
+      await exists(path.join(projectPath, `src/app/providers/ThemeProvider.${ext}`)),
+      "feat: app/providers/ThemeProvider missing"
+    );
+    assert.ok(
+      await exists(path.join(projectPath, `src/app/hooks/useTheme.${ext === "tsx" ? "ts" : "js"}`)),
+      "feat: app/hooks/useTheme missing"
+    );
+  } else {
+    assert.ok(
+      await exists(path.join(projectPath, `src/providers/AppProvider.${ext}`)),
+      "comp: providers/AppProvider missing"
+    );
+    assert.ok(
+      await exists(path.join(projectPath, `src/providers/appcontext.${ext === "tsx" ? "ts" : "js"}`)),
+      "comp: providers/appcontext missing"
+    );
+    assert.ok(
+      await exists(path.join(projectPath, `src/hooks/useApp.${ext === "tsx" ? "ts" : "js"}`)),
+      "comp: hooks/useApp missing"
+    );
+    assert.ok(
+      !(await exists(path.join(projectPath, "src/context"))),
+      "comp: legacy src/context/ should not exist"
+    );
+  }
+
   // Router
   if (router) {
+    const base = architecture === "feature-based" ? "src/app/router" : "src/router";
+    assert.ok(await exists(path.join(projectPath, `${base}/index.${ext}`)), `router: ${base}/index missing`);
+    assert.ok(await exists(path.join(projectPath, `${base}/guards/AuthGuard.${ext}`)), "router: guards/AuthGuard missing");
     if (architecture === "feature-based") {
-      assert.ok(await exists(path.join(projectPath, `src/app/router.${ext}`)), "router: src/app/router missing");
+      assert.ok(await exists(path.join(projectPath, `${base}/guards/RoleGuard.${ext}`)), "router: guards/RoleGuard missing");
+      assert.ok(await exists(path.join(projectPath, `${base}/routes/home.routes.${ext}`)), "router: routes/home.routes missing");
+      assert.ok(await exists(path.join(projectPath, `${base}/routes/auth.routes.${ext}`)), "router: routes/auth.routes missing");
     } else {
-      assert.ok(await exists(path.join(projectPath, `src/routes/index.${ext}`)), "router: src/routes/index missing");
+      assert.ok(await exists(path.join(projectPath, `${base}/guards/GuestGuard.${ext}`)), "router: guards/GuestGuard missing");
+      assert.ok(
+        !(await exists(path.join(projectPath, `${base}/routes`))),
+        `router: ${base}/routes should not exist (centralized router)`
+      );
     }
   }
 
@@ -176,10 +223,164 @@ async function check(responses, projectPath) {
     assert.ok(js.includes('"@/*"'), "js: @/* path missing");
   }
 
+  // Typecheck script (TS only)
+  if (language === "ts") {
+    assert.strictEqual(scripts.typecheck, "tsc -b", "ts: typecheck script");
+  } else {
+    assert.ok(!scripts.typecheck, "js: typecheck script should be absent");
+  }
+
+  // types/ parity: both architectures ship a types index in the active language
+  // (component-based at src/types, feature-based at src/shared/types)
+  const typesRel =
+    architecture === "component-based"
+      ? `src/types/index.${language === "ts" ? "ts" : "js"}`
+      : `src/shared/types/index.${language === "ts" ? "ts" : "js"}`;
+  assert.ok(
+    await exists(path.join(projectPath, typesRel)),
+    `types: ${typesRel} missing`
+  );
+
+  // axios API client layer
+  if (apiClient === "axios") {
+    if (architecture === "component-based") {
+      assert.ok(await exists(path.join(projectPath, `src/config/axios.config.${extConfig}`)), "axios: config/axios.config missing");
+      assert.ok(await exists(path.join(projectPath, `src/services/axios.client.${extConfig}`)), "axios: services/axios.client missing");
+      assert.ok(await exists(path.join(projectPath, `src/services/user.service.${extConfig}`)), "axios: services/user.service missing");
+    } else {
+      assert.ok(await exists(path.join(projectPath, `src/shared/lib/axios/api.config.${extConfig}`)), "axios: shared/lib/axios/api.config missing");
+      assert.ok(await exists(path.join(projectPath, `src/shared/lib/axios/api.client.${extConfig}`)), "axios: shared/lib/axios/api.client missing");
+      assert.ok(await exists(path.join(projectPath, `src/shared/lib/axios/index.${extConfig}`)), "axios: shared/lib/axios/index missing");
+      assert.ok(await exists(path.join(projectPath, `src/features/home/services/user.service.${extConfig}`)), "axios: features/home/services/user.service missing");
+    }
+    assert.ok(
+      !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/axios.ts" : "src/shared/lib/axios.ts"))) &&
+        !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/axios.jsx" : "src/shared/lib/axios.jsx"))),
+      "axios: old flat axios file present"
+    );
+    if (architecture === "feature-based") {
+      assert.ok(!(await exists(path.join(projectPath, "src/shared/api"))), "axios: stray shared/api folder");
+    } else {
+      assert.ok(!(await exists(path.join(projectPath, "src/services/.gitkeep"))), "axios: stray services/.gitkeep");
+    }
+  } else if (apiClient === "fetch") {
+    const fetchRoutes =
+      architecture === "component-based"
+        ? [
+            `src/config/api.config.${extConfig}`,
+            `src/services/api.client.${extConfig}`,
+            `src/services/user.service.${extConfig}`,
+          ]
+        : [
+            `src/shared/api/api.config.${extConfig}`,
+            `src/shared/api/api.client.${extConfig}`,
+            `src/shared/api/index.${extConfig}`,
+            `src/features/home/services/user.service.${extConfig}`,
+          ];
+    for (const rel of fetchRoutes) {
+      assert.ok(await exists(path.join(projectPath, rel)), `fetch: ${rel} missing`);
+    }
+    assert.ok(
+      !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/api.ts" : "src/shared/api.ts"))) &&
+        !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/api.jsx" : "src/shared/api.jsx"))),
+      "fetch: old monolithic api file present"
+    );
+    if (architecture === "feature-based") {
+      assert.ok(!(await exists(path.join(projectPath, "src/shared/lib/index.ts"))), "fetch: shared/lib/index.ts present");
+      assert.ok(!(await exists(path.join(projectPath, "src/shared/lib/index.js"))), "fetch: shared/lib/index.js present");
+      assert.ok(!(await exists(path.join(projectPath, "src/shared/lib"))), "fetch: stray shared/lib folder");
+    } else {
+      assert.ok(!(await exists(path.join(projectPath, "src/services/.gitkeep"))), "fetch: stray services/.gitkeep");
+    }
+  } else {
+    assert.ok(
+      !(await exists(path.join(projectPath, "src/config/axios.config.ts"))) &&
+        !(await exists(path.join(projectPath, "src/config/axios.config.js"))),
+      `non-axios: stray config/axios.config (${apiClient})`
+    );
+    assert.ok(!(await exists(path.join(projectPath, "src/lib/axios"))) && !(await exists(path.join(projectPath, "src/shared/lib/axios"))), `non-axios: stray lib/axios (${apiClient})`);
+    if (architecture === "feature-based") {
+      assert.ok(!(await exists(path.join(projectPath, "src/shared/lib"))), `non-axios: stray shared/lib (${apiClient})`);
+    }
+    assert.ok(
+      !(await exists(path.join(projectPath, "src/config/api.config.ts"))) &&
+        !(await exists(path.join(projectPath, "src/config/api.config.js"))),
+      `non-fetch: stray config/api.config (${apiClient})`
+    );
+    assert.ok(!(await exists(path.join(projectPath, "src/lib/api"))) && !(await exists(path.join(projectPath, "src/shared/api"))), `non-fetch: stray lib/api (${apiClient})`);
+  }
+
+  // Pase 4: dead service barrels (no consumers) removed in both architectures.
+  const deadSvc = architecture === "component-based" ? "src/services/index" : "src/features/home/services/index";
+  assert.ok(
+    !(await exists(path.join(projectPath, `${deadSvc}.${extConfig}`))) &&
+      !(await exists(path.join(projectPath, `${deadSvc}.${extConfig === "ts" ? "js" : "ts"}`))),
+    `pase4: dead service barrel still present: ${deadSvc}`
+  );
+  // feature-based keeps the public home barrel + per-feature types/.gitkeep.
+  if (architecture === "feature-based") {
+    assert.ok(await exists(path.join(projectPath, `src/features/home/index.${extConfig}`)), "pase4: features/home/index missing");
+    assert.ok(await exists(path.join(projectPath, "src/features/home/types/.gitkeep")), "pase4: features/home/types/.gitkeep missing");
+  }
+
+  // config/constants dropped in every scaffold
+  assert.ok(!(await exists(path.join(projectPath, "src/config/constants.ts"))), "constants: src/config/constants.ts present");
+  assert.ok(!(await exists(path.join(projectPath, "src/config/constants.js"))), "constants: src/config/constants.js present");
+
   // vite config gets the @ alias for non-tailwind setups
   if (cssFramework !== "tailwind") {
     const vite = await fsp.readFile(path.join(projectPath, `vite.config.${extConfig}`), "utf8");
     assert.ok(/(?:["'])@(?:["'])/.test(vite) || vite.includes("find: @"), "vite: @ alias missing");
+  }
+
+  // CSS framework markup parity: every architecture expresses the shared look
+  // in the chosen framework's idiom (tailwind classes / bootstrap utilities /
+  // CSS variables / inline styles), and the imported stylesheet carries that
+  // framework's content. Vanilla CSS uses main.css; tailwind/bootstrap keep
+  // globals.css. themes.css lives next to it in every case.
+  const mainFileName = cssFramework === "none" ? "main.css" : "globals.css";
+  const mainRel =
+    architecture === "feature-based"
+      ? `src/shared/styles/${mainFileName}`
+      : `src/styles/${mainFileName}`;
+  const mainCss = await fsp.readFile(path.join(projectPath, mainRel), "utf8");
+  const themesRel =
+    architecture === "feature-based"
+      ? "src/shared/styles/themes.css"
+      : "src/styles/themes.css";
+  assert.ok(
+    await exists(path.join(projectPath, themesRel)),
+    "css: themes.css missing (every framework ships one)"
+  );
+  if (cssFramework === "tailwind") {
+    assert.ok(/@import[^;]*tailwindcss/.test(mainCss), "css: tailwind import missing");
+  } else if (cssFramework === "none") {
+    assert.ok(mainCss.includes("box-sizing"), "css: reset missing (cssFramework none)");
+    assert.ok(
+      mainCss.includes("var(--color-"),
+      "css: vanilla stylesheet should consume CSS variables (none framework)"
+    );
+  }
+  assert.ok(
+    !(await exists(path.join(projectPath, "src/index.css"))),
+    "css: src/index.css should not exist (Vite leftover; CSS lives in styles/)"
+  );
+  const homeRel =
+    architecture === "feature-based"
+      ? `src/features/home/pages/HomePage.${ext}`
+      : `src/pages/Home/Home.${ext}`;
+  const home = await fsp.readFile(path.join(projectPath, homeRel), "utf8");
+  const hasTailwind = /text-(?:gray|blue|yellow|4xl|xl)|bg-gray-|w-8 h-8/.test(home);
+  const hasBootstrap = /text-muted|d-flex|fw-bold|btn-primary/.test(home);
+  if (cssFramework === "tailwind") {
+    assert.ok(hasTailwind && !hasBootstrap, "home: tailwind markup expected under tailwind");
+  } else if (cssFramework === "bootstrap") {
+    assert.ok(hasBootstrap && !hasTailwind, "home: bootstrap markup expected under bootstrap");
+  } else {
+    assert.ok(!hasTailwind && !hasBootstrap, "home: inline markup expected under none");
+  }
+  if (architecture === "component-based") {
+    assert.ok(!(await exists(path.join(projectPath, "src/components/layout"))), "components/layout still present");
   }
 
   // README
@@ -200,11 +401,16 @@ async function main() {
   for (const lang of axes.language) bases[lang] = await ensureBase(lang);
 
   const limit = process.env.LIMIT ? Number(process.env.LIMIT) : Infinity;
+  const skip = process.env.SKIP ? Number(process.env.SKIP) : 0;
   const failures = [];
   let total = 0;
 
   for (const responses of matrix()) {
-    if (total >= limit) break;
+    if (skip && total < skip) {
+      total++;
+      continue;
+    }
+    if (total - skip >= limit) break;
     total++;
     const projectPath = path.join(os.tmpdir(), `lumen-exh-${total}`);
     try {
@@ -218,7 +424,7 @@ async function main() {
     if (total % 500 === 0) console.log(`  ...${total} generated`);
   }
 
-  console.log(`\nGenerated and checked ${total} configs.`);
+  console.log(`\nGenerated and checked ${total - skip} configs.`);
   if (failures.length) {
     console.log(`FAILURES: ${failures.length}`);
     for (const f of failures.slice(0, 50)) {

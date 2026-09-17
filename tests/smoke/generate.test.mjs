@@ -46,7 +46,7 @@ async function generate(responses, baseApp, projectPath) {
   await fsp.mkdir(projectPath, { recursive: true });
   execSync(`rsync -a --delete "${baseApp}/" "${projectPath}/"`);
 
-  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language);
+  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language, responses.cssFramework);
   await injectConditionals(projectPath, TEMPLATES_DIR, responses, responses.architecture, responses.language);
   await injectFormatter(projectPath, TEMPLATES_DIR, responses);
   await setupCssFramework({
@@ -54,6 +54,7 @@ async function generate(responses, baseApp, projectPath) {
     templatesDir: TEMPLATES_DIR,
     language: responses.language,
     cssFramework: responses.cssFramework,
+    architecture: responses.architecture,
     ext: responses.language === "ts" ? "tsx" : "jsx",
     pkg,
   });
@@ -91,8 +92,13 @@ async function check(responses, projectPath) {
   const scripts = pkgJson.scripts || {};
 
   const expect = ["dev", "build", "preview", "lint", "lint:fix", "format", "format:check", "test", "test:run"];
+  if (language === "ts") expect.push("typecheck");
   for (const s of expect) {
     assert.ok(scripts[s], `missing script: ${s}`);
+  }
+
+  if (language === "ts") {
+    assert.strictEqual(scripts.typecheck, "tsc -b", "typecheck script");
   }
 
   assert.ok(await exists(path.join(projectPath, `src/main.${ext}`)), `main.${ext} missing`);

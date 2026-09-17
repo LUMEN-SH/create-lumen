@@ -54,7 +54,7 @@ async function generate(responses, projectPath) {
 
   await runViteCreate(projectPath, responses.projectName, pkg, responses.language);
   await runBaseInstall(projectPath, pkg);
-  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language);
+  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language, responses.cssFramework);
   await injectConditionals(projectPath, TEMPLATES_DIR, responses, responses.architecture, responses.language);
   await injectFormatter(projectPath, TEMPLATES_DIR, responses);
   await installAllDeps(responses, pkg, projectPath);
@@ -63,6 +63,7 @@ async function generate(responses, projectPath) {
     templatesDir: TEMPLATES_DIR,
     language: responses.language,
     cssFramework: responses.cssFramework,
+    architecture: responses.architecture,
     ext: responses.language === "ts" ? "tsx" : "jsx",
     pkg,
   });
@@ -99,7 +100,7 @@ async function check(name, responses, projectPath) {
     assert.ok(await exists(eslintCfg), `${name}: eslint.config.ts missing`);
     const content = await fsp.readFile(eslintCfg, "utf8");
     assert.ok(content.includes('import prettier from "eslint-config-prettier";'), `${name}: prettier import missing`);
-    assert.ok(/\.\.\.prettier,\s*\n\s*[)\]];/.test(content), `${name}: ...prettier not last in eslint config`);
+    assert.ok(/prettier,\s*\n\s*[)\]];/.test(content), `${name}: prettier not last in eslint config`);
     assert.ok(devDeps["eslint-config-prettier"], `${name}: eslint-config-prettier not in devDeps`);
   } else if (responses.linter === "oxlint" && responses.formatter === "prettier") {
     assert.ok(!(await exists(path.join(projectPath, "eslint.config.ts"))), `${name}: eslint.config.ts should not exist for oxlint`);

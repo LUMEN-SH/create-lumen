@@ -46,7 +46,7 @@ async function generate(responses, baseApp, projectPath) {
   await fsp.mkdir(projectPath, { recursive: true });
   execSync(`rsync -a --delete "${baseApp}/" "${projectPath}/"`);
 
-  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language);
+  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language, responses.cssFramework);
   await injectConditionals(projectPath, TEMPLATES_DIR, responses, responses.architecture, responses.language);
   await injectFormatter(projectPath, TEMPLATES_DIR, responses);
   await setupCssFramework({
@@ -54,6 +54,7 @@ async function generate(responses, baseApp, projectPath) {
     templatesDir: TEMPLATES_DIR,
     language: responses.language,
     cssFramework: responses.cssFramework,
+    architecture: responses.architecture,
     ext: responses.language === "ts" ? "tsx" : "jsx",
     pkg,
   });
@@ -73,11 +74,40 @@ async function generate(responses, baseApp, projectPath) {
 const PARITY_FILE_CANDIDATES = [
   "src/app/App.tsx", "src/app/App.jsx",
   "src/components/ui/Button.tsx", "src/components/ui/Button.jsx",
+  "src/shared/components/ui/Button.tsx", "src/shared/components/ui/Button.jsx",
   "src/main.tsx", "src/main.jsx",
   "scripts/create-feature.mjs",
   "vite.config.ts", "vitest.config.ts", "jest.config.ts",
   "eslint.config.ts", "eslint.config.js",
-  "src/context/app-context.ts", "src/context/AppContext.tsx",
+  "src/types/index.ts", "src/types/index.js",
+  "src/shared/types/index.ts", "src/shared/types/index.js",
+  "src/config/axios.config.ts", "src/config/axios.config.js",
+  "src/services/axios.client.ts", "src/services/axios.client.js",
+  "src/services/user.service.ts", "src/services/user.service.js",
+  "src/shared/lib/axios/api.config.ts", "src/shared/lib/axios/api.config.js",
+  "src/shared/lib/axios/api.client.ts", "src/shared/lib/axios/api.client.js",
+  "src/features/home/services/user.service.ts", "src/features/home/services/user.service.js",
+  "src/config/api.config.ts", "src/config/api.config.js",
+  "src/services/api.client.ts", "src/services/api.client.js",
+  "src/shared/api/api.config.ts", "src/shared/api/api.config.js",
+  "src/shared/api/api.client.ts", "src/shared/api/api.client.js",
+  "src/features/home/services/user.service.ts", "src/features/home/services/user.service.js",
+  "src/app/router/index.tsx", "src/app/router/index.jsx",
+  "src/app/router/guards/AuthGuard.tsx", "src/app/router/guards/AuthGuard.jsx",
+  "src/app/router/guards/RoleGuard.tsx", "src/app/router/guards/RoleGuard.jsx",
+  "src/app/router/routes/home.routes.tsx", "src/app/router/routes/home.routes.jsx",
+  "src/app/router/routes/auth.routes.tsx", "src/app/router/routes/auth.routes.jsx",
+  "src/router/index.tsx", "src/router/index.jsx",
+  "src/router/guards/AuthGuard.tsx", "src/router/guards/AuthGuard.jsx",
+  "src/router/guards/GuestGuard.tsx", "src/router/guards/GuestGuard.jsx",
+  "src/providers/AppProvider.tsx", "src/providers/AppProvider.jsx",
+  "src/providers/appcontext.ts", "src/providers/appcontext.js",
+  "src/hooks/useApp.ts", "src/hooks/useApp.js",
+  "src/app/contexts/themecontext.ts", "src/app/contexts/themecontext.js",
+  "src/app/providers/ThemeProvider.tsx", "src/app/providers/ThemeProvider.jsx",
+  "src/app/hooks/useTheme.ts", "src/app/hooks/useTheme.js",
+  "src/app/providers/StoreProvider.tsx", "src/app/providers/StoreProvider.jsx",
+  "src/providers/StoreProvider.tsx", "src/providers/StoreProvider.jsx",
 ];
 
 // Run a tool binary from the vendored toolchain against the project.
@@ -195,12 +225,137 @@ async function diffTrees(a, b) {
 }
 
 async function audit(responses, projectPath) {
-  const { language, linter, formatter, cssFramework } = responses;
+  const { language, linter, formatter, cssFramework, apiClient, architecture } = responses;
   const extConfig = language === "ts" ? "ts" : "js";
   const errors = [];
   const ok = (cond, msg) => { if (!cond) errors.push(msg); };
 
   ok(await exists(path.join(projectPath, `src/main.${language === "ts" ? "tsx" : "jsx"}`)), "main entry missing");
+  const typesRel =
+    architecture === "component-based"
+      ? `src/types/index.${language === "ts" ? "ts" : "js"}`
+      : `src/shared/types/index.${language === "ts" ? "ts" : "js"}`;
+  ok(await exists(path.join(projectPath, typesRel)), `${typesRel} missing`);
+
+  const axiosRoutes =
+    architecture === "component-based"
+      ? [
+          `src/config/axios.config.${extConfig}`,
+          `src/services/axios.client.${extConfig}`,
+          `src/services/user.service.${extConfig}`,
+        ]
+      : [
+          `src/shared/lib/axios/api.config.${extConfig}`,
+          `src/shared/lib/axios/api.client.${extConfig}`,
+          `src/shared/lib/axios/index.${extConfig}`,
+          `src/features/home/services/user.service.${extConfig}`,
+        ];
+  if (apiClient === "axios") {
+    for (const rel of axiosRoutes) {
+      ok(await exists(path.join(projectPath, rel)), `${rel} missing`);
+    }
+    const oldFlat = architecture === "component-based" ? "src/services" : "src/shared/lib";
+    ok(
+      !(await exists(path.join(projectPath, oldFlat, "axios.ts"))) &&
+        !(await exists(path.join(projectPath, oldFlat, "axios.jsx"))),
+      "old flat axios file present"
+    );
+  } else if (apiClient === "fetch") {
+    const fetchRoutes =
+      architecture === "component-based"
+        ? [
+            `src/config/api.config.${extConfig}`,
+            `src/services/api.client.${extConfig}`,
+            `src/services/user.service.${extConfig}`,
+          ]
+        : [
+            `src/shared/api/api.config.${extConfig}`,
+            `src/shared/api/api.client.${extConfig}`,
+            `src/shared/api/index.${extConfig}`,
+            `src/features/home/services/user.service.${extConfig}`,
+          ];
+    for (const rel of fetchRoutes) {
+      ok(await exists(path.join(projectPath, rel)), `${rel} missing`);
+    }
+    const oldMono = architecture === "component-based" ? "src/services" : "src/shared";
+    ok(
+      !(await exists(path.join(projectPath, oldMono, "api.ts"))) &&
+        !(await exists(path.join(projectPath, oldMono, "api.jsx"))),
+      "old monolithic api file present"
+    );
+    if (architecture === "feature-based") {
+      ok(
+        !(await exists(path.join(projectPath, "src/shared/lib/index.ts"))) &&
+          !(await exists(path.join(projectPath, "src/shared/lib/index.js"))),
+        "shared/lib/index still present"
+      );
+    }
+  } else {
+    ok(
+      !(await exists(path.join(projectPath, "src/config/axios.config.ts"))) &&
+        !(await exists(path.join(projectPath, "src/config/axios.config.js"))),
+      `stray config/axios.config (${apiClient})`
+    );
+    ok(!(await exists(path.join(projectPath, "src/lib/axios"))), `stray lib/axios (${apiClient})`);
+    // feature-based ships `shared/lib` only when axios is chosen, so an empty
+    // placeholder never leaks alone — check real client files for leaks.
+    if (architecture === "component-based") {
+      ok(!(await exists(path.join(projectPath, "src/shared/lib/axios"))), `stray shared/lib/axios (${apiClient})`);
+    } else {
+      ok(
+        !(await exists(path.join(projectPath, "src/shared/lib/axios/api.client.ts"))) &&
+          !(await exists(path.join(projectPath, "src/shared/lib/axios/api.client.js"))),
+        `stray shared/lib/axios api.client (${apiClient})`
+      );
+    }
+    ok(
+      !(await exists(path.join(projectPath, "src/services/axios.client.ts"))) &&
+        !(await exists(path.join(projectPath, "src/services/axios.client.js"))),
+      `stray services/axios.client (${apiClient})`
+    );
+    ok(
+      !(await exists(path.join(projectPath, "src/config/api.config.ts"))) &&
+        !(await exists(path.join(projectPath, "src/config/api.config.js"))),
+      `stray config/api.config (${apiClient})`
+    );
+    ok(!(await exists(path.join(projectPath, "src/lib/api"))), `stray lib/api (${apiClient})`);
+    if (architecture === "component-based") {
+      ok(!(await exists(path.join(projectPath, "src/shared/api"))), `stray shared/api (${apiClient})`);
+    } else {
+      ok(
+        !(await exists(path.join(projectPath, "src/shared/api/api.client.ts"))) &&
+          !(await exists(path.join(projectPath, "src/shared/api/api.client.js"))),
+        `stray shared/api api.client (${apiClient})`
+      );
+    }
+  }
+  ok(
+    !(await exists(path.join(projectPath, "src/config/constants.ts"))) &&
+      !(await exists(path.join(projectPath, "src/config/constants.js"))),
+    "config/constants still present"
+  );
+
+  // Pase 4: dead service barrels (no consumers) are removed in both architectures,
+  // while the public feature barrel and per-feature types/.gitkeep are kept.
+  const deadSvcBarrels = architecture === "component-based" ? ["src/services/index"] : ["src/features/home/services/index"];
+  for (const rel of deadSvcBarrels) {
+    ok(
+      !(await exists(path.join(projectPath, `${rel}.${extConfig}`))) &&
+        !(await exists(path.join(projectPath, `${rel}.${extConfig === "ts" ? "js" : "ts"}`))),
+      `dead service barrel still present: ${rel}`
+    );
+  }
+  if (architecture === "feature-based") {
+    const activeLang = language === "ts" ? "ts" : "js";
+    ok(
+      await exists(path.join(projectPath, `src/features/home/index.${activeLang}`)),
+      `features/home public barrel (${activeLang}) missing`
+    );
+    ok(
+      await exists(path.join(projectPath, "src/features/home/types/.gitkeep")),
+      "features/home/types/.gitkeep missing"
+    );
+  }
 
   if (linter === "eslint") {
     ok(await exists(path.join(projectPath, `eslint.config.${extConfig}`)), "eslint config missing");
@@ -220,6 +375,57 @@ async function audit(responses, projectPath) {
   if (cssFramework !== "tailwind") {
     const vite = await fsp.readFile(path.join(projectPath, `vite.config.${extConfig}`), "utf8");
     ok(/(?:["'])@(?:["'])/.test(vite) || vite.includes("find: @"), "vite @ alias missing");
+  }
+
+  // CSS framework parity (regression gate for the v1.2.0 globals path fix):
+  // the main stylesheet the architecture actually imports must carry the
+  // selected framework's content (main.css for vanilla, globals.css for
+  // tailwind/bootstrap), themes.css must live next to it, and src/index.css
+  // (Vite leftover) must be absent.
+  const mainFileName = cssFramework === "none" ? "main.css" : "globals.css";
+  const mainRel =
+    architecture === "feature-based"
+      ? `src/shared/styles/${mainFileName}`
+      : `src/styles/${mainFileName}`;
+  const themesRel =
+    architecture === "feature-based"
+      ? "src/shared/styles/themes.css"
+      : "src/styles/themes.css";
+  if (await exists(path.join(projectPath, mainRel))) {
+    const main = await fsp.readFile(path.join(projectPath, mainRel), "utf8");
+    if (cssFramework === "tailwind") {
+      ok(/@import[^;]*tailwindcss/.test(main), "css: tailwind import missing");
+    } else if (cssFramework === "none") {
+      ok(main.includes("box-sizing"), "css: reset missing (cssFramework none)");
+      ok(main.includes("var(--color-"), "css: vanilla stylesheet should consume CSS variables");
+    }
+  }
+  ok(
+    !(await exists(path.join(projectPath, "src/index.css"))),
+    "css: src/index.css should not exist"
+  );
+  ok(
+    await exists(path.join(projectPath, themesRel)),
+    "css: themes.css missing"
+  );
+  const homeRel =
+    architecture === "feature-based"
+      ? `src/features/home/pages/HomePage.${language === "ts" ? "tsx" : "jsx"}`
+      : `src/pages/Home/Home.${language === "ts" ? "tsx" : "jsx"}`;
+  if (await exists(path.join(projectPath, homeRel))) {
+    const home = await fsp.readFile(path.join(projectPath, homeRel), "utf8");
+    const hasTailwind = /text-(?:gray|blue|yellow|4xl|xl)|bg-gray-|w-8 h-8/.test(home);
+    const hasBootstrap = /text-muted|d-flex|fw-bold|btn-primary/.test(home);
+    if (cssFramework === "tailwind") {
+      ok(hasTailwind && !hasBootstrap, `home: tailwind markup expected under tailwind`);
+    } else if (cssFramework === "bootstrap") {
+      ok(hasBootstrap && !hasTailwind, `home: bootstrap markup expected under bootstrap`);
+    } else {
+      ok(!hasTailwind && !hasBootstrap, `home: inline markup expected under none`);
+    }
+  }
+  if (architecture === "component-based") {
+    ok(!(await exists(path.join(projectPath, "src/components/layout"))), "components/layout still present");
   }
   return errors;
 }

@@ -35,8 +35,8 @@ node tests/smoke/install.mjs
 A `node:test` smoke that generates the Quick Setup scaffold for **ts and js**
 using a cached Vite base (no installs) and asserts the scaffold is coherent:
 `package.json` scripts (`dev`/`build`/`preview`/`lint`/`format`/`test`, …),
-`src/main` + `src/App`, the `@/*` alias, `eslint.config.*` with `...prettier`
-last, and `README.md` + `LICENSE`.
+`src/main` + `src/App`, the `@/*` alias, `eslint.config.*` with `prettier`
+appended last by reference, and `README.md` + `LICENSE`.
 
 ## Exhaustive harness (`tests/e2e/`)
 
@@ -58,8 +58,14 @@ dependencies**. It asserts the generated filesystem:
 - `eslint-config-prettier` wiring for `eslint` + `prettier` (both the JS array
   form and the TS `tseslint.config(...)` form)
 - `@/*` path alias in `tsconfig.json` / `jsconfig.json`
-- architecture layout (`src/app` vs `src/components`), `StoreProvider` injection
-  for Redux, router files, and generated `README.md` / `LICENSE`
+- architecture layout (`src/app` vs `src/components`), the feature-based
+  `src/shared/` grouping, `StoreProvider` injection for Redux, router files,
+  and generated `README.md` / `LICENSE`
+- the API-client layer per architecture: the split `api.config`/`api.client`
+  client (named `api`) under `src/shared/lib/axios` or `src/shared/api` for
+  feature-based, `user.service` CRUD, and that **unused service barrels** are
+  removed while the public `features/home` barrel and its `types/.gitkeep`
+  are kept
 
 ```bash
 node tests/e2e/exhaustive.mjs            # full matrix (~13 min)

@@ -1,10 +1,10 @@
-import { MainLayout } from "@/layouts/MainLayout";
-import { AppRoutes } from "@/routes";
+import { AppProvider } from '@/providers/AppProvider';
+import { AppRoutes } from '@/router';
 
 export default function App() {
   return (
-    <MainLayout>
+    <AppProvider>
       <AppRoutes />
-    </MainLayout>
+    </AppProvider>
   );
 }

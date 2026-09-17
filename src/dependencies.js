@@ -25,6 +25,20 @@ export async function installDeps(pkgManager, dev, packages, cwd) {
 }
 
 export async function installAllDeps(responses, pkg, cwd) {
+  const { deps, devDeps } = computeDeps(responses);
+
+  if (deps.length > 0) {
+    await installDeps(pkg, false, deps, cwd);
+  }
+  if (devDeps.length > 0) {
+    await installDeps(pkg, true, devDeps, cwd);
+  }
+}
+
+// Pure dependency computation — the package list for a given matrix cell,
+// independent of any package manager or filesystem. Unit-tested directly so
+// the conditional wiring stays verifiable without a network install.
+export function computeDeps(responses) {
   const deps = [];
   const devDeps = [];
 
@@ -107,10 +121,5 @@ export async function installAllDeps(responses, pkg, cwd) {
   // Always re-install react + react-dom for consistency
   deps.push("react", "react-dom");
 
-  if (deps.length > 0) {
-    await installDeps(pkg, false, deps, cwd);
-  }
-  if (devDeps.length > 0) {
-    await installDeps(pkg, true, devDeps, cwd);
-  }
+  return { deps, devDeps };
 }

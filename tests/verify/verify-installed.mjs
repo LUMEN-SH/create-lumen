@@ -58,7 +58,7 @@ async function generate(responses, baseApp, projectPath) {
   await fsp.mkdir(projectPath, { recursive: true });
   execSync(`rsync -a --delete "${baseApp}/" "${projectPath}/"`);
 
-  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language);
+  await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language, responses.cssFramework);
   await injectConditionals(projectPath, TEMPLATES_DIR, responses, responses.architecture, responses.language);
   await injectFormatter(projectPath, TEMPLATES_DIR, responses);
   await setupCssFramework({
@@ -66,6 +66,7 @@ async function generate(responses, baseApp, projectPath) {
     templatesDir: TEMPLATES_DIR,
     language: responses.language,
     cssFramework: responses.cssFramework,
+    architecture: responses.architecture,
     ext: responses.language === "ts" ? "tsx" : "jsx",
     pkg,
   });
@@ -149,9 +150,15 @@ async function gateCell(responses, projectPath) {
     runP(["npm", "test", "--", "--ci"], "jest --ci");
   }
 
-  // --- Type check (TS only): tsc -b over the generated tsconfig graph ---
+  // --- Type check (TS only): the generated `typecheck` script gates tsc -b
+  //      over the generated tsconfig graph ---
   if (responses.language === "ts") {
-    runP([bin("tsc"), "-b"], "tsc -b (zero errors)");
+    const scriptsJson = JSON.parse(await fsp.readFile(path.join(projectPath, "package.json"), "utf8")).scripts || {};
+    results.push({ label: "typecheck script", ok: scriptsJson.typecheck === "tsc -b", out: scriptsJson.typecheck ? "" : "typecheck script missing" });
+    runP(["npm", "run", "typecheck"], "npm run typecheck (tsc -b)");
+  } else {
+    const scriptsJson = JSON.parse(await fsp.readFile(path.join(projectPath, "package.json"), "utf8")).scripts || {};
+    results.push({ label: "no typecheck script (js)", ok: !scriptsJson.typecheck, out: scriptsJson.typecheck ? "typecheck script present in js" : "" });
   }
 
   // --- Build (vite build; typechecking is gated separately per the generated

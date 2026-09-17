@@ -87,36 +87,40 @@ Feature-based (example):
 
 ```
 src/
-├── app
+├── app               # App shell and global providers
 │   ├── App.tsx
+│   ├── contexts
+│   │   └── themecontext.ts   # createContext + ThemeContextValue
 │   ├── providers
-│   │   └── ThemeProvider.tsx
-│   └── router.tsx
-├── components
-│   └── ui
-├── config
-│   └── constants.ts
-├── features
-│   └── logout
+│   │   └── ThemeProvider.tsx # Provider component
+│   ├── hooks
+│   │   └── useTheme.ts       # Hook that reads ThemeContext
+│   └── router        # Data router (per feature area)
+│       ├── guards    # AuthGuard, RoleGuard
+│       ├── routes    # home.routes, auth.routes
+│       └── index.tsx # createBrowserRouter init
+├── features           # Feature modules (business logic owned per feature)
+│   └── home
 │       ├── components
-│       ├── interfaces
+│       ├── hooks
+│       ├── index.ts    # public feature barrel
 │       ├── layouts
 │       ├── pages
 │       ├── services
-│       └── store
-├── hooks
-│   ├── index.ts
-│   └── useLocalStorage.ts
-├── index.css
-├── lib
-├── main.tsx
-├── stores
-├── styles
-│   └── globals.css
-├── test
-│   └── setup.ts
-├── types
-└── utils
+│       ├── store
+│       └── types
+└── shared             # Reusable, business-agnostic resources
+    ├── api/lib        # fetch client → api/; axios init → lib/axios/ (per choice)
+    ├── components
+    │   └── ui
+    ├── hooks
+    ├── layouts
+    ├── stores
+    ├── styles
+    │   ├── globals.css      # Tailwind/Bootstrap directives (or main.css for vanilla)
+    │   └── themes.css       # Theme tokens (Tailwind @theme / Bootstrap data-bs-theme / CSS vars)
+    ├── types
+    └── utils
 ```
 
 Component-based (example):
@@ -126,28 +130,31 @@ src/
 ├── App.tsx
 ├── components
 │   ├── common
-│   ├── form
-│   └── layout
-├── config
-│   ├── constants.ts
-│   └── routes.ts
-├── context
-├── hooks
-├── index.css
+│   └── form
+├── config             # API config (when an axios/fetch client is chosen)
 ├── layouts
 ├── main.tsx
 ├── pages
-├── routes
+├── providers          # Provider components (createContext + Provider in separate files inside providers/)
+│   ├── appcontext.ts      # createContext + AppContextValue
+│   └── AppProvider.tsx    # Provider component
+├── hooks
+│   └── useApp.ts           # Hook that reads AppContext
+├── router             # Centralized data router
+│   ├── guards         # AuthGuard, GuestGuard
+│   └── index.tsx      # Single source of truth for all routes
 ├── services
 ├── store
 ├── styles
+│   ├── globals.css      # Tailwind/Bootstrap directives (or main.css for vanilla)
+│   └── themes.css       # Theme tokens (Tailwind @theme / Bootstrap data-bs-theme / CSS vars)
 ├── test
 └── utils
 ```
 
 ## Roadmap
 
-See `docs/ROADMAP.md` for planned features and upcoming releases.
+Released versions live in [`docs/CHANGELOG.md`](./docs/CHANGELOG.md); planned work is tracked in [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ## Requirements
 

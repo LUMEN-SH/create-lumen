@@ -1,10 +1,24 @@
-import { Button } from "@/components/ui";
+import { Button } from "@/shared/components/ui";
 
 export function HomePage() {
   return (
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to Lumen</h1>
-      <p className="text-gray-600 mb-8">
+    <div style={{ textAlign: "center" }}>
+      <h1
+        style={{
+          fontSize: "2.25rem",
+          fontWeight: 700,
+          color: "var(--color-fg)",
+          marginBottom: "1rem",
+        }}
+      >
+        Welcome to Lumen
+      </h1>
+      <p
+        style={{
+          color: "var(--color-muted)",
+          marginBottom: "2rem",
+        }}
+      >
         Your React + Vite project is ready. Start building!
       </p>
       <Button>Get Started</Button>
