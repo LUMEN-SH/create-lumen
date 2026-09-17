@@ -9,7 +9,7 @@ export async function setupCssFramework({
   cssFramework,
   architecture,
   ext,
-  pkg,
+  pkg: _pkg,
 }) {
   process.chdir(projectPath);
   const cssDir = path.join(templatesDir, "css");

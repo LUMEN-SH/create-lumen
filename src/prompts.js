@@ -1,4 +1,4 @@
-import { cancel, confirm, isCancel, note, select, text } from "@clack/prompts";
+import { confirm, isCancel, note, select } from "@clack/prompts";
 import chalk from "chalk";
 import { configExists, loadConfig, saveConfig } from "@/config-cache.js";
 
@@ -49,8 +49,8 @@ function formatConfig(responses) {
 }
 
 export async function getUserInputs(projectName, { quickSetup = false } = {}) {
-  let oldConfig = {};
-  let useOldConfig = false;
+  let oldConfig;
+  let useOldConfig;
 
   // Non-interactive quick setup: apply defaults without prompting.
   if (quickSetup) {
