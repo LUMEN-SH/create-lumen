@@ -35,8 +35,8 @@ node tests/smoke/install.mjs
 A `node:test` smoke that generates the Quick Setup scaffold for **ts and js**
 using a cached Vite base (no installs) and asserts the scaffold is coherent:
 `package.json` scripts (`dev`/`build`/`preview`/`lint`/`format`/`test`, …),
-`src/main` + `src/App`, the `@/*` alias, `eslint.config.*` with `...prettier`
-last, and `README.md` + `LICENSE`.
+`src/main` + `src/App`, the `@/*` alias, `eslint.config.*` with `prettier`
+appended last by reference, and `README.md` + `LICENSE`.
 
 ## Exhaustive harness (`tests/e2e/`)
 

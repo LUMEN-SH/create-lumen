@@ -132,7 +132,6 @@ src/
 │   ├── common
 │   └── form
 ├── config             # API config (when an axios/fetch client is chosen)
-├── hooks
 ├── layouts
 ├── main.tsx
 ├── pages

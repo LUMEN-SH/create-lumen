@@ -7,7 +7,7 @@ Tests live under `tests/` and are split into three tiers:
 
 | Tier  | Location            | Runner                                  | What it covers                                                              |
 | ----- | ------------------- | --------------------------------------- | --------------------------------------------------------------------------- |
-| Unit  | `tests/unit/`       | `node:test` (via `npm test`)            | Isolated functions: `injectFormatter`, `wireEslintPrettier`, `getPkgManager` |
+| Unit  | `tests/unit/`       | `node:test` (via `npm test`)            | Isolated functions: `injectFormatter`, `wireEslintPrettier`, `getPkgManager`, `computeDeps`, `setupCssFramework`, and the axios/fetch API-client layer layout |
 | Smoke | `tests/smoke/`      | `node:test` + a manual script           | Quick, representative scaffold generation (offline) and a real-install check |
 | E2E   | `tests/e2e/`        | manual `node`                           | Exhaustive option-matrix generation across all valid choice combos           |
 
@@ -30,14 +30,34 @@ generate full scaffolds and are run manually.
 ## Tier details
 
 ### Unit (`tests/unit/`)
-Fast, no filesystem scaffolding. Asserts that individual generator functions
-produce the right config, scripts, and ESLint wiring. See
-`tests/unit/injector.test.mjs` and `tests/unit/pkg-manager.test.mjs`.
+Fast and offline — the tests that scaffold fixture projects only use the OS
+temp dir (removed after each test) and never touch the network. Asserts that
+individual generator functions produce the right config, scripts, and ESLint
+wiring. See
+`tests/unit/injector.test.mjs`, `tests/unit/pkg-manager.test.mjs`,
+`tests/unit/api-client.test.mjs`, `tests/unit/dependencies.test.mjs`, and
+`tests/unit/css.test.mjs`:
+
+- `injector.test.mjs` — formatter config + scripts, `eslint-config-prettier`
+  wiring (array and `tseslint.config(...)` forms), idempotence, project-name
+  resolution.
+- `api-client.test.mjs` — the split axios/fetch layer (`config`/`client`/
+  `user.service`) and the api-vs-lib exclusivity rule, across both
+  architectures and languages.
+- `css.test.mjs` — CSS framework naming (`main.css`/`globals.css` +
+  `themes.css`), the `main.*` CSS-import rewrite, tailwind vite-config swap,
+  bootstrap import prepend, and removal of Vite's leftover `index.css`/`App.css`.
+- `dependencies.test.mjs` — the **pure** conditional dependency matrix
+  (`computeDeps`, no network): `jiti` for eslint+TS, `jest-environment-jsdom` +
+  Babel presets for jest, `eslint-config-prettier` only for eslint+prettier,
+  etc.
+- `pkg-manager.test.mjs` — package-manager detection from the user agent.
 
 ### Smoke (`tests/smoke/`)
 - `generate.test.mjs` — offline `node:test` smoke. Builds a cached Vite base
   once, then generates the Quick Setup scaffold for TS and JS and asserts it is
-  coherent (scripts, `@/*` alias, `...prettier` last, `README`/`LICENSE`).
+  coherent (scripts, `@/*` alias, `eslint-config-prettier` appended last by
+  reference, `README`/`LICENSE`).
 - `install.mjs` — manual real-install smoke. Runs the **full** pipeline including
   `npm create vite` + `npm install` for the Quick Setup default; the only guard
   against install-time breakage.

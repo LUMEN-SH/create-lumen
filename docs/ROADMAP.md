@@ -63,18 +63,20 @@ guiding test for whether a change is breaking:
 
 ### Tag note
 
-`v1.2.0-beta.1` has been tagged and published under the `beta` npm
-dist-tag. `v1.2.0` stable is not released yet — pending broad validation
-(FULL matrix + real-world use). Status in `CHANGELOG.md` is
-`[1.2.0-beta.1]`; status in the current milestone below is 🚧 Beta.
+`v1.2.0` stable was released on 2026-09-17. The beta `v1.2.0-beta.1` (2026-09-07)
+has been promoted after passing the full release bar: `npm test`,
+`npm run verify` (stratified), `npm run verify:matrix` (full offline matrix),
+and `npm run verify:installed` (real install + build) all green.
+Status in `CHANGELOG.md` is `[1.2.0]`; status in the current milestone
+below is ✅ Released.
 
 ---
 
-## 🎯 Current Milestone: v1.2.0
+## 🎯 Current Milestone: v1.2.0 ✅ Released
 
-> **Status:** 🚧 Beta (`v1.2.0-beta.1`) · **Target:** v1.2.0
+> **Status:** ✅ Released (`v1.2.0`) · **Released:** 2026-09-17
 
-The next release consolidates the API layer, providers, router layout,
+The release consolidates the API layer, providers, router layout,
 and CSS framework naming. Landed in this branch:
 
 - [x] Drop feat `shared/{api,lib}` placeholders (`836f877`)
@@ -93,11 +95,12 @@ Pending (work-in-progress commits referenced in `[Unreleased]`):
 - [x] Feature-based `shared/` grouping + api-vs-lib rule (`6e6eda2`, `c36b616`)
 - [x] Public feature barrel + removed unused barrels (`6e6eda2`)
 
-## ⏩ Next Milestone: v1.3.0
+## ⏩ Next Milestone: v2.0.0 (breaking)
 
 > **Status:** ⚠️ Planned · **Target:** TBD
 
-Items land here as v1.2.0 ships. None planned yet.
+Items land here as v1.2.0 ships. Next.js support will require a breaking
+change to the config schema (see Long-term Vision).
 
 ## 🔮 Future Explorations (Icebox)
 

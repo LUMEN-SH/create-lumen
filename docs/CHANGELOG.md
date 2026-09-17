@@ -5,9 +5,14 @@ All notable changes to `create-lumen` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.2.0-beta.1] — 2026-09-07
+## [Unreleased]
 
-> Beta · feature-complete, pending broad validation
+## [1.2.0] — 2026-09-17
+
+> Promoted to stable from `v1.2.0-beta.1` (2026-09-07) after passing the full
+> release bar: `npm test`, `npm run verify` (stratified), `npm run verify:matrix`
+> (full offline matrix), and `npm run verify:installed` (real install + build) all
+> green.
 
 ### Added
 
