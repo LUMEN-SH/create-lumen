@@ -97,10 +97,153 @@ Pending (work-in-progress commits referenced in `[Unreleased]`):
 
 ## ⏩ Next Milestone: v2.0.0 (breaking)
 
-> **Status:** ⚠️ Planned · **Target:** TBD
+> **Status:** ⚠️ Planned · **Target:** TBD · **Tracker:** #32
 
-Items land here as v1.2.0 ships. Next.js support will require a breaking
-change to the config schema (see Long-term Vision).
+v2 ships as **5 functional milestones**. Each one closes with an
+*observable result* — you never wait for a 90%-assembled scaffold to see
+something working. They are GitHub milestones on the repo and are
+grouped in the *create-lumen workflow* Project (view **Milestones**).
+Visual versions (milestone flow, dependency graph, parallel waves,
+pipeline, release train) live in [`docs/PLAN.md`](./PLAN.md).
+
+### 🧱 M1 · `v2.0.0-alpha` — Core: React/Vite + manifest v2
+
+> **DoD:** `npm create lumen@alpha my-app` scaffolds a functional
+> React/Vite project and emits a Zod-validated `lumen.config.json` v2,
+> with Tailwind v4 and tooling parity; published as a pre-release.
+
+- [ ] #13 Manifest v2: nested config schema
+- [ ] #14 Manifest v2: Zod validator + strict v1 rejection
+- [ ] #15 Manifest v2: explicit path mapping
+- [ ] #16 Manifest v2: emit `lumen.config.json`
+- [ ] #4 Manifest v2: publish JSON Schema
+- [ ] #9 Manifest/template contract shared with lumen-cli
+- [ ] #6 Templates: migrate to Tailwind v4
+- [ ] #24 Tooling: eslint/prettier/oxlint/oxfmt parity
+- [ ] #23 React + Vite: validate bundle under manifest v2
+- [ ] #29 create-lumen v2: non-interactive flags
+- [ ] #31 CI: publish v2 pre-releases
+
+### ⚙️ M2 · `v2.0.0-alpha.2` — Engine: capabilities + options
+
+> **DoD:** prompts are gated by declared capabilities and templates are
+> **composed** (no cross-product); shadcn/ui and `none`/`hybrid`
+> architectures land on top.
+
+- [ ] #10 Capabilities-based composition (epic)
+- [ ] #25 Engine: capability declaration model
+- [ ] #26 Engine: gate prompts by declared capabilities
+- [ ] #27 Engine: template composition
+- [ ] #33 UI: shadcn/ui support (Tailwind v4)
+- [ ] #34 Architecture: `none` + `hybrid`
+- [ ] #11 Scaffolder: back navigation in the v2 prompt flow
+
+### ▲ M3 · `v2.0.0-beta` — Next.js support
+
+> **DoD:** Next.js scaffolds and runs: App/Pages Router, filesystem
+> routing, route handlers, server/client boundaries, `next/font` +
+> `next/image`, adapters.
+
+- [ ] #8 Next.js support (epic)
+- [ ] #18 App Router base scaffold
+- [ ] #19 Pages Router variant
+- [ ] #20 filesystem routing + route handlers
+- [ ] #21 server/client boundaries + `next/font` + `next/image`
+- [ ] #22 adapter configuration
+
+### 🧪 M4 · `v2.0.0-rc` — Testing & quality
+
+> **DoD:** the cartesian matrix is replaced by a scalable strategy
+> (pairwise/t-way + per-overlay contract tests) and a real headless e2e.
+
+- [ ] #35 Testing strategy (epic) — supersedes #7
+- [ ] #36 pairwise/t-way generator + capability-scoped matrix
+- [ ] #37 per-overlay contract tests
+- [ ] #28 Manifest v2 contract tests (schema fixtures)
+- [ ] #5 True headless e2e
+- [ ] #7 *close as superseded by #35*
+
+### 📦 M5 · `v2.0.0` — Docs & release
+
+> **DoD:** migration guide + README/ROADMAP/CHANGELOG updated;
+> `v2.0.0` stable published.
+
+- [ ] #17 Docs: v1.x → v2 migration guide
+- [ ] #30 Docs: README + ROADMAP/CHANGELOG for v2
+
+---
+
+## 🔗 Dependency matrix
+
+`cl#` = `create-lumen`, `lc#` = `lumen-cli`. "Enables" lists the issues
+that cannot start until the row lands.
+
+| Issue | Depends on | Enables |
+|-------|------------|---------|
+| cl#13 | — | cl#14, #15, #16, #4, #9, #25 |
+| cl#14 | cl#13 | cl#16, #28 |
+| cl#15 | cl#13 | cl#16 |
+| cl#16 | cl#13, #14, #15 | cl#23, #29, #31, #5 |
+| cl#4  | cl#13 | — |
+| cl#6  | — | cl#23, #33 |
+| cl#24 | — | cl#23 |
+| cl#23 | cl#16, #6, #24 | cl#31 |
+| cl#9  | cl#13 | lc#3 |
+| cl#29 | cl#16 | cl#5 |
+| cl#31 | cl#16, #23 | `v2.0.0-alpha` |
+| cl#25 | cl#13 | cl#26, #27 |
+| cl#26 | cl#25 | cl#27 |
+| cl#27 | cl#25, #26 | cl#33, #34, #8 |
+| cl#33 | cl#6, cl#27 | lc#9 |
+| cl#34 | cl#27 | — |
+| cl#8  | cl#27 | cl#18–#22 |
+| cl#18–#22 | cl#8, cl#27 | — |
+| cl#35 | — | cl#36, #37 |
+| cl#36 | cl#35 | — |
+| cl#37 | cl#35, cl#9 | — |
+| cl#28 | cl#14 | — |
+| cl#5  | cl#29, cl#16 | — |
+| cl#17 | cl#16 | — |
+| cl#30 | M1–M4 | `v2.0.0` |
+| lc#3  | cl#9, cl#13 | lc#4, #5, #7, #20 |
+| lc#5  | lc#2, lc#3, cl M1 | lc#6 |
+| lc#6  | lc#5 | — |
+| lc#7  | lc#3 | lc#8, #11–#14, #17, #20, #21 |
+| lc#9  | lc#7, cl#33 | lc#10 |
+| lc#10 | lc#9 | — |
+| lc#16 | lc#24 | lc#15, #17, #18, #19, #25 |
+| lc#20 | lc#3, lc#7 | — |
+| lc#21 | lc#7 | — |
+| lc#22 | lc#1–#21 | `v1.0.0` |
+
+---
+
+## 🧵 Parallel-work matrix
+
+Four developers, cross-project. A lane starts as soon as its
+prerequisite lands; lanes on the same row can run simultaneously.
+
+| Lane | Workstream | Issues | Starts after | Parallel with |
+|------|------------|--------|--------------|---------------|
+| A | create-lumen manifest core | cl#13,#14,#15,#16,#4 | now | B, C, D, G |
+| B | create-lumen templates/tooling | cl#6,#24 | now | A, C, D, G |
+| C | lumen-cli core skeleton | lc#1,#2 | now | A, B, D, G |
+| D | docs-engine base (port `documentador`) | lc#24,#16 | now | A, B, C, G |
+| G | testing strategy (both repos) | cl#35,#36,#37,#28,#5 | now (cl#28→#14) | A, B, C, D |
+| E | create-lumen engine + options | cl#25,#26,#27,#33,#34,#11 | after A | F |
+| H | lumen-cli generators | lc#7,#8,#11–#14 | after C + cl#9 | F, I, J, K |
+| F | create-lumen Next.js | cl#8,#18–#22 | after E | H, I, J, K |
+| I | lumen-cli UI registry | lc#9,#10 | after H + cl#33 | F, J, K |
+| J | lumen-cli docs engine | lc#15,#17,#18,#19,#25 | after D | F, H, K |
+| K | lumen-cli doctor / barrels | lc#20,#21 | after H | F, J |
+| L | release & docs | cl#17,#30 · lc#22 | at close | — |
+
+Suggested 4-dev split:
+
+- **Dev 1** — A → E → F (manifest core → engine → Next.js)
+- **Dev 2** — B → G → L (templates → tests → release)
+- **Dev 3** — C → H → I → K (lumen-cli core → generators → registry → doctor)
+- **Dev 4** — D → J (docs engine)
 
 ## 🔮 Future Explorations (Icebox)
 
