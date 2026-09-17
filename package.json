@@ -6,6 +6,10 @@
   "bin": {
     "create-lumen": "bin/cli.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LUMEN-SH/create-lumen"
+  },
   "files": [
     "bin/",
     "register.js",
