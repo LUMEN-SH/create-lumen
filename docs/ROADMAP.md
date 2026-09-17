@@ -134,6 +134,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 
 - [ ] #10 Capabilities-based composition (epic)
 - [ ] #25 Engine: capability declaration model
+- [ ] #38 Base: vendor framework bases + `BaseProvider` seam
 - [ ] #26 Engine: gate prompts by declared capabilities
 - [ ] #27 Engine: template composition
 - [ ] #33 UI: shadcn/ui support (Tailwind v4)
@@ -202,6 +203,7 @@ that cannot start until the row lands.
 | create-lumen#29 | create-lumen#16 | create-lumen#5 |
 | create-lumen#31 | create-lumen#16, #23 | `v2.0.0-alpha` |
 | create-lumen#25 | create-lumen#13 | create-lumen#26, #27 |
+| create-lumen#38 | create-lumen#13, create-lumen#25 | create-lumen#18, #19 |
 | create-lumen#26 | create-lumen#25 | create-lumen#27 |
 | create-lumen#27 | create-lumen#25, #26 | create-lumen#33, #34, #8 |
 | create-lumen#33 | create-lumen#6, create-lumen#27 | lumen-cli#9 |
@@ -240,7 +242,7 @@ prerequisite lands; lanes on the same row can run simultaneously.
 | C | lumen-cli core skeleton | lumen-cli#1,#2 | now | A, B, D, G |
 | D | docs-engine base (port `documentador`) | lumen-cli#24,#16 | now | A, B, C, G |
 | G | testing strategy (both repos) | create-lumen#35,#36,#37,#28,#5 | now (create-lumen#28→#14) | A, B, C, D |
-| E | create-lumen engine + options | create-lumen#25,#26,#27,#33,#34,#11 | after A | F |
+| E | create-lumen engine + options | create-lumen#25,#26,#27,#33,#34,#38,#11 | after A | F |
 | H | lumen-cli generators | lumen-cli#7,#8,#11–#14 | after C + create-lumen#9 | F, I, J, K |
 | F | create-lumen Next.js | create-lumen#8,#18–#22 | after E | H, I, J, K |
 | I | lumen-cli UI registry | lumen-cli#9,#10 | after H + create-lumen#33 | F, J, K |
