@@ -7,12 +7,19 @@ on:
     tags:
       - "v*"
 
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      stable: ${{ steps.check.outputs.stable }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,10 +49,12 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           case "$VERSION" in
             *beta*|*alpha*)
+              echo "stable=false" >> "$GITHUB_OUTPUT"
               echo "publishable=false" >> "$GITHUB_OUTPUT"
               echo "::notice::create-lumen@$VERSION is a pre-release (beta/alpha); npm publish skipped."
               ;;
             *)
+              echo "stable=true" >> "$GITHUB_OUTPUT"
               if npm view "create-lumen@$VERSION" version >/dev/null 2>&1; then
                 echo "publishable=false" >> "$GITHUB_OUTPUT"
                 echo "::notice::create-lumen@$VERSION is already published on npm; publish skipped."
@@ -58,3 +67,24 @@ jobs:
       - name: Publish stable release to npm
         if: steps.check.outputs.publishable == 'true'
         run: npm publish --provenance --access public
+
+  release:
+    needs: publish
+    if: needs.publish.outputs.stable == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ needs.publish.outputs.version }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::notice::GitHub Release $TAG already exists; skipping."
+          else
+            gh release create "$TAG" --title "$TAG" --generate-notes
+          fi
