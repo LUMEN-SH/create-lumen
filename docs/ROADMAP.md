@@ -105,6 +105,8 @@ something working. They are GitHub milestones on the repo and are
 grouped in the *create-lumen workflow* Project (view **Milestones**).
 Visual versions (milestone flow, dependency graph, parallel waves,
 pipeline, release train) live in [`docs/PLAN.md`](./PLAN.md).
+Structural decisions are recorded as ADRs in [`docs/adr/`](./adr/) —
+start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strategy.md).
 
 ### 🧱 M1 · `v2.0.0-alpha` — Core: React/Vite + manifest v2
 
@@ -150,6 +152,13 @@ pipeline, release train) live in [`docs/PLAN.md`](./PLAN.md).
 - [ ] #20 filesystem routing + route handlers
 - [ ] #21 server/client boundaries + `next/font` + `next/image`
 - [ ] #22 adapter configuration
+
+> **Base strategy:** Next.js bases are repository-owned snapshots refreshed
+> from a pinned `create-next-app` (dev-time only) — see
+> [ADR 0001](./adr/0001-scaffolder-base-strategy.md). The axes that CLI
+> exposes become first-class v2.0.0 options, implemented as overlays (not
+> flag translation): `bundler` (Turbopack/Webpack), `reactCompiler`,
+> `linter: "biome"`, `agentDocs` (AGENTS.md/CLAUDE.md).
 
 ### 🧪 M4 · `v2.0.0-rc` — Testing & quality
 
@@ -207,7 +216,7 @@ that cannot start until the row lands.
 | create-lumen#17 | create-lumen#16 | — |
 | create-lumen#30 | M1–M4 | `v2.0.0` |
 | lumen-cli#3  | create-lumen#9, create-lumen#13 | lumen-cli#4, #5, #7, #20 |
-| lumen-cli#5  | lumen-cli#2, lumen-cli#3, cl M1 | lumen-cli#6 |
+| lumen-cli#5  | lumen-cli#2, lumen-cli#3, create-lumen M1 | lumen-cli#6 |
 | lumen-cli#6  | lumen-cli#5 | — |
 | lumen-cli#7  | lumen-cli#3 | lumen-cli#8, #11–#14, #17, #20, #21 |
 | lumen-cli#9  | lumen-cli#7, create-lumen#33 | lumen-cli#10 |
@@ -260,12 +269,11 @@ Suggested 4-dev split:
   shared `api` client with types from `shared/types`.
 - [ ] **Expanded test coverage** — additional option combinations not
   yet covered by the offline matrix.
-- [ ] **Next.js template bundle** — investigate which current options
-  port cleanly (TypeScript/JavaScript, Tailwind, state, testing,
-  linter) and which Next.js concepts are framework-specific
-  (filesystem routing, server/client components, `next/font`, image
-  optimization, API routes). Likely target: **v2.0.0** (breaking
-  change to the config model — see Long-term Vision).
+- [ ] **Next.js template bundle** — approach decided in
+  [ADR 0001](./adr/0001-scaffolder-base-strategy.md): repository-owned
+  bases refreshed from a pinned `create-next-app` (dev-time only), with
+  App Router **and** Pages Router snapshots. Option portability and the
+  Next.js-specific concepts are tracked under v2.0.0 M3 (#8, #18–#22).
 - [ ] **Svelte / SvelteKit template bundle** — SvelteKit's
   filesystem-based routing, `load` functions, server/client
   boundaries, and adapter model do not map onto the current
