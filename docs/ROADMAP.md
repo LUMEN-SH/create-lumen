@@ -175,46 +175,47 @@ pipeline, release train) live in [`docs/PLAN.md`](./PLAN.md).
 
 ## 🔗 Dependency matrix
 
-`cl#` = `create-lumen`, `lc#` = `lumen-cli`. "Enables" lists the issues
+References use `repo#issue` — e.g. `create-lumen#13`, `lumen-cli#3`.
+A bare `#N` means the same repo as the row. "Enables" lists the issues
 that cannot start until the row lands.
 
 | Issue | Depends on | Enables |
 |-------|------------|---------|
-| cl#13 | — | cl#14, #15, #16, #4, #9, #25 |
-| cl#14 | cl#13 | cl#16, #28 |
-| cl#15 | cl#13 | cl#16 |
-| cl#16 | cl#13, #14, #15 | cl#23, #29, #31, #5 |
-| cl#4  | cl#13 | — |
-| cl#6  | — | cl#23, #33 |
-| cl#24 | — | cl#23 |
-| cl#23 | cl#16, #6, #24 | cl#31 |
-| cl#9  | cl#13 | lc#3 |
-| cl#29 | cl#16 | cl#5 |
-| cl#31 | cl#16, #23 | `v2.0.0-alpha` |
-| cl#25 | cl#13 | cl#26, #27 |
-| cl#26 | cl#25 | cl#27 |
-| cl#27 | cl#25, #26 | cl#33, #34, #8 |
-| cl#33 | cl#6, cl#27 | lc#9 |
-| cl#34 | cl#27 | — |
-| cl#8  | cl#27 | cl#18–#22 |
-| cl#18–#22 | cl#8, cl#27 | — |
-| cl#35 | — | cl#36, #37 |
-| cl#36 | cl#35 | — |
-| cl#37 | cl#35, cl#9 | — |
-| cl#28 | cl#14 | — |
-| cl#5  | cl#29, cl#16 | — |
-| cl#17 | cl#16 | — |
-| cl#30 | M1–M4 | `v2.0.0` |
-| lc#3  | cl#9, cl#13 | lc#4, #5, #7, #20 |
-| lc#5  | lc#2, lc#3, cl M1 | lc#6 |
-| lc#6  | lc#5 | — |
-| lc#7  | lc#3 | lc#8, #11–#14, #17, #20, #21 |
-| lc#9  | lc#7, cl#33 | lc#10 |
-| lc#10 | lc#9 | — |
-| lc#16 | lc#24 | lc#15, #17, #18, #19, #25 |
-| lc#20 | lc#3, lc#7 | — |
-| lc#21 | lc#7 | — |
-| lc#22 | lc#1–#21 | `v1.0.0` |
+| create-lumen#13 | — | create-lumen#14, #15, #16, #4, #9, #25 |
+| create-lumen#14 | create-lumen#13 | create-lumen#16, #28 |
+| create-lumen#15 | create-lumen#13 | create-lumen#16 |
+| create-lumen#16 | create-lumen#13, #14, #15 | create-lumen#23, #29, #31, #5 |
+| create-lumen#4  | create-lumen#13 | — |
+| create-lumen#6  | — | create-lumen#23, #33 |
+| create-lumen#24 | — | create-lumen#23 |
+| create-lumen#23 | create-lumen#16, #6, #24 | create-lumen#31 |
+| create-lumen#9  | create-lumen#13 | lumen-cli#3 |
+| create-lumen#29 | create-lumen#16 | create-lumen#5 |
+| create-lumen#31 | create-lumen#16, #23 | `v2.0.0-alpha` |
+| create-lumen#25 | create-lumen#13 | create-lumen#26, #27 |
+| create-lumen#26 | create-lumen#25 | create-lumen#27 |
+| create-lumen#27 | create-lumen#25, #26 | create-lumen#33, #34, #8 |
+| create-lumen#33 | create-lumen#6, create-lumen#27 | lumen-cli#9 |
+| create-lumen#34 | create-lumen#27 | — |
+| create-lumen#8  | create-lumen#27 | create-lumen#18–#22 |
+| create-lumen#18–#22 | create-lumen#8, create-lumen#27 | — |
+| create-lumen#35 | — | create-lumen#36, #37 |
+| create-lumen#36 | create-lumen#35 | — |
+| create-lumen#37 | create-lumen#35, create-lumen#9 | — |
+| create-lumen#28 | create-lumen#14 | — |
+| create-lumen#5  | create-lumen#29, create-lumen#16 | — |
+| create-lumen#17 | create-lumen#16 | — |
+| create-lumen#30 | M1–M4 | `v2.0.0` |
+| lumen-cli#3  | create-lumen#9, create-lumen#13 | lumen-cli#4, #5, #7, #20 |
+| lumen-cli#5  | lumen-cli#2, lumen-cli#3, cl M1 | lumen-cli#6 |
+| lumen-cli#6  | lumen-cli#5 | — |
+| lumen-cli#7  | lumen-cli#3 | lumen-cli#8, #11–#14, #17, #20, #21 |
+| lumen-cli#9  | lumen-cli#7, create-lumen#33 | lumen-cli#10 |
+| lumen-cli#10 | lumen-cli#9 | — |
+| lumen-cli#16 | lumen-cli#24 | lumen-cli#15, #17, #18, #19, #25 |
+| lumen-cli#20 | lumen-cli#3, lumen-cli#7 | — |
+| lumen-cli#21 | lumen-cli#7 | — |
+| lumen-cli#22 | lumen-cli#1–#21 | `v1.0.0` |
 
 ---
 
@@ -225,18 +226,18 @@ prerequisite lands; lanes on the same row can run simultaneously.
 
 | Lane | Workstream | Issues | Starts after | Parallel with |
 |------|------------|--------|--------------|---------------|
-| A | create-lumen manifest core | cl#13,#14,#15,#16,#4 | now | B, C, D, G |
-| B | create-lumen templates/tooling | cl#6,#24 | now | A, C, D, G |
-| C | lumen-cli core skeleton | lc#1,#2 | now | A, B, D, G |
-| D | docs-engine base (port `documentador`) | lc#24,#16 | now | A, B, C, G |
-| G | testing strategy (both repos) | cl#35,#36,#37,#28,#5 | now (cl#28→#14) | A, B, C, D |
-| E | create-lumen engine + options | cl#25,#26,#27,#33,#34,#11 | after A | F |
-| H | lumen-cli generators | lc#7,#8,#11–#14 | after C + cl#9 | F, I, J, K |
-| F | create-lumen Next.js | cl#8,#18–#22 | after E | H, I, J, K |
-| I | lumen-cli UI registry | lc#9,#10 | after H + cl#33 | F, J, K |
-| J | lumen-cli docs engine | lc#15,#17,#18,#19,#25 | after D | F, H, K |
-| K | lumen-cli doctor / barrels | lc#20,#21 | after H | F, J |
-| L | release & docs | cl#17,#30 · lc#22 | at close | — |
+| A | create-lumen manifest core | create-lumen#13,#14,#15,#16,#4 | now | B, C, D, G |
+| B | create-lumen templates/tooling | create-lumen#6,#24 | now | A, C, D, G |
+| C | lumen-cli core skeleton | lumen-cli#1,#2 | now | A, B, D, G |
+| D | docs-engine base (port `documentador`) | lumen-cli#24,#16 | now | A, B, C, G |
+| G | testing strategy (both repos) | create-lumen#35,#36,#37,#28,#5 | now (create-lumen#28→#14) | A, B, C, D |
+| E | create-lumen engine + options | create-lumen#25,#26,#27,#33,#34,#11 | after A | F |
+| H | lumen-cli generators | lumen-cli#7,#8,#11–#14 | after C + create-lumen#9 | F, I, J, K |
+| F | create-lumen Next.js | create-lumen#8,#18–#22 | after E | H, I, J, K |
+| I | lumen-cli UI registry | lumen-cli#9,#10 | after H + create-lumen#33 | F, J, K |
+| J | lumen-cli docs engine | lumen-cli#15,#17,#18,#19,#25 | after D | F, H, K |
+| K | lumen-cli doctor / barrels | lumen-cli#20,#21 | after H | F, J |
+| L | release & docs | create-lumen#17,#30 · lumen-cli#22 | at close | — |
 
 Suggested 4-dev split:
 
