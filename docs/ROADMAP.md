@@ -186,46 +186,45 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 ## 🔗 Dependency matrix
 
 References use `repo#issue` — e.g. `create-lumen#13`, `lumen-cli#3`.
-A bare `#N` means the same repo as the row. "Enables" lists the issues
-that cannot start until the row lands.
+A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (must land first). "Enables" = issues directly unblocked by this one.
 
 | Issue | Depends on | Enables | Status |
 |-------|------------|---------|--------|
-| create-lumen#13 | — | create-lumen#14, #15, #16, #4, #9, #25 | ✅ Merged #39 `b423dc9` (2026-09-18) — unblocks #14, #15, #4, #9, #25 |
-| create-lumen#14 | create-lumen#13 ✅ | create-lumen#16, #28 | ✅ Merged #39 — unblocks #16, #28 |
-| create-lumen#15 | create-lumen#13 ✅ | create-lumen#16 | ✅ Merged #40 — unblocks #16 |
-| create-lumen#16 | create-lumen#13 ✅, #14 ✅, #15 ✅ | create-lumen#23, #29, #31, #5 | ✅ Merged #40 — unblocks #23, #29, #31, #5 |
-| create-lumen#4  | create-lumen#13 ✅ | — | ✅ Merged #39 — no downstream |
+| create-lumen#13 | — | create-lumen#14, #15, #16, #4, #9, #25 | ✅ Merged #39 `b423dc9` — core schema done |
+| create-lumen#14 | create-lumen#13 ✅ | create-lumen#16, #28 | ✅ Merged #39 — validator done |
+| create-lumen#15 | create-lumen#13 ✅ | create-lumen#16 | ✅ Merged #40 — path mapping done |
+| create-lumen#16 | create-lumen#13 ✅, #14 ✅, #15 ✅ | create-lumen#23, #29, #31, #5, #17 | ✅ Merged #40 — emit done; unblocks #23, #29, #31, #5, #17 |
+| create-lumen#4  | create-lumen#13 ✅ | (leaf) | ✅ Merged #39 — JSON Schema published |
 | create-lumen#6  | — | create-lumen#23, #33 | ⏳ Not started |
 | create-lumen#24 | — | create-lumen#23 | ⏳ Not started |
-| create-lumen#23 | create-lumen#16 ✅, #6 ⏳, #24 ⏳ | create-lumen#31 | ⏳ Partially unblocked (needs #6 #24) |
+| create-lumen#23 | create-lumen#16 ✅, #6, #24 | create-lumen#31 | ⏳ Partially unblocked (needs #6, #24) |
 | create-lumen#9  | create-lumen#13 ✅ | lumen-cli#3 | ⏳ Ready — #13 done, can start parallel |
-| create-lumen#29 | create-lumen#16 ✅ | create-lumen#5 | ⏳ Ready — #16 merged #40 |
-| create-lumen#31 | create-lumen#16 ✅, #23 ⏳ | `v2.0.0-alpha` | ⏳ Partially unblocked |
+| create-lumen#29 | create-lumen#16 ✅ | create-lumen#5 | ⏳ Ready — #16 done |
+| create-lumen#31 | create-lumen#16 ✅, #23 | `v2.0.0-alpha` | ⏳ Blocked (needs #23) |
 | create-lumen#25 | create-lumen#13 ✅ | create-lumen#26, #27 | ⏳ Ready — #13 done |
-| create-lumen#38 | create-lumen#13 ✅, create-lumen#25 ⏳ | create-lumen#18, #19 | ⏳ Partially unblocked |
-| create-lumen#26 | create-lumen#25 ⏳ | create-lumen#27 | ⏳ Blocked |
-| create-lumen#27 | create-lumen#25 ⏳, #26 ⏳ | create-lumen#33, #34, #8 | ⏳ Blocked |
-| create-lumen#33 | create-lumen#6 ⏳, create-lumen#27 ⏳ | lumen-cli#9 | ⏳ Blocked |
-| create-lumen#34 | create-lumen#27 ⏳ | — | ⏳ Blocked |
-| create-lumen#8  | create-lumen#27 ⏳ | create-lumen#18–#22 | ⏳ Blocked |
-| create-lumen#18–#22 | create-lumen#8 ⏳, create-lumen#27 ⏳ | — | ⏳ Blocked |
+| create-lumen#38 | create-lumen#13 ✅, #25 | create-lumen#18–#22 | ⏳ Partially unblocked (needs #25) |
+| create-lumen#26 | create-lumen#25 | create-lumen#27 | ⏳ Blocked (needs #25) |
+| create-lumen#27 | create-lumen#25, #26 | create-lumen#33, #34, #8 | ⏳ Blocked (needs #25, #26) |
+| create-lumen#33 | create-lumen#6, #27 | lumen-cli#9 | ⏳ Blocked (needs #6, #27) |
+| create-lumen#34 | create-lumen#27 | (leaf) | ⏳ Blocked (needs #27) |
+| create-lumen#8  | create-lumen#27 | create-lumen#18–#22 | ⏳ Blocked (needs #27) |
+| create-lumen#18–#22 | create-lumen#8, #27 | (leaves) | ⏳ Blocked (needs #8, #27) |
 | create-lumen#35 | — | create-lumen#36, #37 | ⏳ Not started |
-| create-lumen#36 | create-lumen#35 ⏳ | — | ⏳ Blocked |
-| create-lumen#37 | create-lumen#35 ⏳, create-lumen#9 ⏳ | — | ⏳ Blocked |
-| create-lumen#28 | create-lumen#14 ✅ | — | ⏳ Ready — #14 done |
-| create-lumen#5  | create-lumen#29 ✅, create-lumen#16 ✅ | — | ⏳ Ready — #16 + #29 merged #40 |
-| create-lumen#17 | create-lumen#16 ✅ | — | ⏳ Ready — #16 merged #40 |
+| create-lumen#36 | create-lumen#35 | (leaf) | ⏳ Blocked (needs #35) |
+| create-lumen#37 | create-lumen#35, #9 | (leaf) | ⏳ Blocked (needs #35, #9) |
+| create-lumen#28 | create-lumen#14 ✅ | (leaf) | ⏳ Ready — #14 done |
+| create-lumen#5  | create-lumen#29, #16 ✅ | (leaf) | ⏳ Ready — #16 + #29 done |
+| create-lumen#17 | create-lumen#16 ✅ | (leaf) | ⏳ Ready — #16 done |
 | create-lumen#30 | M1–M4 | `v2.0.0` | ⏳ Blocked |
-| lumen-cli#3  | create-lumen#9 ⏳, create-lumen#13 ✅ | lumen-cli#4, #5, #7, #20 | ⏳ Partially unblocked |
-| lumen-cli#5  | lumen-cli#2, lumen-cli#3 ⏳, create-lumen M1 ⏳ | lumen-cli#6 | ⏳ Blocked |
-| lumen-cli#6  | lumen-cli#5 ⏳ | — | ⏳ Blocked |
-| lumen-cli#7  | lumen-cli#3 ⏳ | lumen-cli#8, #11–#14, #17, #20, #21 | ⏳ Blocked |
-| lumen-cli#9  | lumen-cli#7 ⏳, create-lumen#33 ⏳ | lumen-cli#10 | ⏳ Blocked |
-| lumen-cli#10 | lumen-cli#9 ⏳ | — | ⏳ Blocked |
+| lumen-cli#3  | create-lumen#9, #13 ✅ | lumen-cli#4, #5, #7, #20 | ⏳ Partially unblocked (needs #9) |
+| lumen-cli#5  | lumen-cli#2, #3, create-lumen M1 | lumen-cli#6 | ⏳ Blocked |
+| lumen-cli#6  | lumen-cli#5 | (leaf) | ⏳ Blocked |
+| lumen-cli#7  | lumen-cli#3 | lumen-cli#8, #11–#14, #17, #20, #21 | ⏳ Blocked (needs #3) |
+| lumen-cli#9  | lumen-cli#7, create-lumen#33 | lumen-cli#10 | ⏳ Blocked (needs #7, #33) |
+| lumen-cli#10 | lumen-cli#9 | (leaf) | ⏳ Blocked |
 | lumen-cli#16 | lumen-cli#24 | lumen-cli#15, #17, #18, #19, #25 | ⏳ Not started |
-| lumen-cli#20 | lumen-cli#3 ⏳, lumen-cli#7 ⏳ | — | ⏳ Blocked |
-| lumen-cli#21 | lumen-cli#7 ⏳ | — | ⏳ Blocked |
+| lumen-cli#20 | lumen-cli#3, #7 | (leaf) | ⏳ Blocked |
+| lumen-cli#21 | lumen-cli#7 | (leaf) | ⏳ Blocked |
 | lumen-cli#22 | lumen-cli#1–#21 | `v1.0.0` | ⏳ Blocked |
 
 ---
