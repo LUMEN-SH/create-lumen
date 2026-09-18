@@ -3,11 +3,11 @@ import globals from "globals";
 
 export default [
   {
-    ignores: ["**/node_modules/**", "tests/**", "templates/**", "**/.omo/**"],
+    ignores: ["**/node_modules/**", "tests/**", "templates/**", "schema/**", "**/.omo/**"],
   },
   js.configs.recommended,
   {
-    files: ["bin/**/*.js", "register.js", "src/**/*.js"],
+    files: ["bin/**/*.js", "register.js", "src/**/*.js", "scripts/**/*.mjs"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",

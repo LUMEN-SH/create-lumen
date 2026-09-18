@@ -32,6 +32,7 @@ function formatConfig(responses) {
       ? "Redux Toolkit"
       : "Zustand";
 
+  const docsLang = responses.docsLanguage === "es" ? "ES" : responses.docsLanguage === "en" ? "EN" : "—";
   return [
     `• ${chalk.bold("Architecture:")} ${chalk.green(arch)}`,
     `• ${chalk.bold("Language:")} ${chalk.green(lang)}`,
@@ -43,6 +44,7 @@ function formatConfig(responses) {
     `• ${chalk.bold("API Client:")} ${responses.apiClient === "axios" ? chalk.green("Axios") : responses.apiClient === "fetch" ? chalk.yellow("Fetch") : chalk.red("None")}`,
     `• ${chalk.bold("Linter:")} ${responses.linter === "oxlint" ? chalk.green("Oxlint") : responses.linter === "eslint" ? chalk.yellow("ESLint") : chalk.red("None")}`,
     `• ${chalk.bold("Formatter:")} ${responses.formatter === "oxfmt" ? chalk.green("Oxfmt") : responses.formatter === "prettier" ? chalk.yellow("Prettier") : chalk.red("None")}`,
+    `• ${chalk.bold("Docs:")} ${chalk.cyan(docsLang)}`,
     `• ${chalk.bold("Git:")} ${responses.gitInit ? chalk.green("Yes") : chalk.red("No")}`,
     `• ${chalk.bold("README:")} ${responses.readme ? chalk.green("Yes") : chalk.red("No")}`,
   ].join("\n");
@@ -66,6 +68,7 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
       apiClient: "none",
       linter: "eslint",
       formatter: "prettier",
+      docsLanguage: "en",
       gitInit: true,
       readme: true,
     };
@@ -101,6 +104,9 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
       if (oldConfig.formatter === undefined) {
         oldConfig.formatter = "none";
       }
+      if (oldConfig.docsLanguage === undefined) {
+        oldConfig.docsLanguage = "en";
+      }
       return { ...oldConfig, projectName };
     }
   }
@@ -126,6 +132,7 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
       apiClient: "none",
       linter: "eslint",
       formatter: "prettier",
+      docsLanguage: "en",
       gitInit: true,
       readme: true,
     };
@@ -261,6 +268,16 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
     if (isCancel(formatter)) onCancel();
   }
 
+  const docsLanguage = await select({
+    message: "Which docs language do you want?",
+    options: [
+      { label: "English", value: "en" },
+      { label: "Español", value: "es" },
+    ],
+    initialValue: "en",
+  });
+  if (isCancel(docsLanguage)) onCancel();
+
   const readme = await confirm({
     message: "Would you like to generate a README.md and LICENSE?",
     initialValue: true,
@@ -279,6 +296,7 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
     apiClient,
     linter,
     formatter,
+    docsLanguage,
     gitInit,
     readme,
   };

@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lumen.dev/schema/lumen.config.v2.json",
+  "title": "Lumen manifest v2",
+  "description": "Schema for lumen.config.json v2 — emitted by create-lumen, consumed by lumen-cli. See docs/manifest-v2.md",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "default": "https://lumen.dev/schema/lumen.config.v2.json",
+      "type": "string",
+      "format": "uri"
+    },
+    "manifestVersion": {
+      "type": "number",
+      "const": 2
+    },
+    "framework": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "react",
+            "next"
+          ]
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "vite",
+            "app-router",
+            "pages-router"
+          ]
+        },
+        "bundler": {
+          "type": "string",
+          "enum": [
+            "turbopack",
+            "webpack"
+          ]
+        },
+        "adapter": {
+          "type": "string",
+          "enum": [
+            "node",
+            "vercel",
+            "cloudflare",
+            "static"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "variant"
+      ],
+      "additionalProperties": false
+    },
+    "styling": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "enum": [
+            "tailwind",
+            "bootstrap",
+            "none"
+          ]
+        }
+      },
+      "required": [
+        "engine"
+      ],
+      "additionalProperties": false
+    },
+    "architecture": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "feature-based",
+            "component-based",
+            "hybrid",
+            "none"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ui": {
+      "type": "object",
+      "properties": {
+        "kit": {
+          "type": "string",
+          "enum": [
+            "shadcn",
+            "none"
+          ]
+        }
+      },
+      "required": [
+        "kit"
+      ],
+      "additionalProperties": false
+    },
+    "docs": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "es"
+          ]
+        }
+      },
+      "required": [
+        "language"
+      ],
+      "additionalProperties": false
+    },
+    "paths": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "type": "string",
+          "minLength": 1
+        },
+        "components": {
+          "type": "string",
+          "minLength": 1
+        },
+        "services": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hooks": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pages": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ui": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "features",
+        "components",
+        "services",
+        "hooks",
+        "pages",
+        "ui"
+      ],
+      "additionalProperties": false
+    },
+    "tooling": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "type": "string",
+          "enum": [
+            "ts",
+            "js"
+          ]
+        },
+        "linter": {
+          "type": "string",
+          "enum": [
+            "eslint",
+            "oxlint",
+            "biome",
+            "none"
+          ]
+        },
+        "formatter": {
+          "type": "string",
+          "enum": [
+            "prettier",
+            "oxfmt",
+            "none"
+          ]
+        }
+      },
+      "required": [
+        "language",
+        "linter",
+        "formatter"
+      ],
+      "additionalProperties": false
+    },
+    "reactCompiler": {
+      "type": "boolean"
+    },
+    "agentDocs": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "manifestVersion",
+    "framework",
+    "styling",
+    "architecture",
+    "ui",
+    "docs",
+    "paths",
+    "tooling"
+  ],
+  "additionalProperties": false
+}
