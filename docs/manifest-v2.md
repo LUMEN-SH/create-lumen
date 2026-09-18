@@ -60,7 +60,7 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
 
 ## Emitter
 
-`create-lumen` writes `lumen.config.json` at project root via the future `src/manifest/emit.js` (`#16`), including `"$schema"` referencing this schema. Until `#16` lands, `parseManifest` already defaults `$schema` to `https://lumen.dev/schema/lumen.config.v2.json`.
+`create-lumen` writes `lumen.config.json` at project root via `src/manifest/emit.js` (`#16`), including `"$schema"` referencing this schema. `buildManifest` produces a stable, Zod-validated manifest from scaffolder responses; `emitManifest` writes byte-deterministic output (2-space indent + trailing newline). Merged in PR #40. See `src/manifest/paths.js` for `resolvePaths` (#15).
 
 ## References
 

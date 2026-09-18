@@ -116,15 +116,15 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 
 - [x] #13 Manifest v2: nested config schema — **merged #39** `b423dc9` (`src/manifest/schema.js` + `docs/manifest-v2.md`, Zod v4 `4.6.5` pinned) ✅
 - [x] #14 Manifest v2: Zod validator + strict v1 rejection — **merged #39** `parseManifest`/`isV1Manifest` + human-friendly `zod-validation-error` ✅
-- [ ] #15 Manifest v2: explicit path mapping — now unblocked (depends on #13 ✅, ready to start)
-- [ ] #16 Manifest v2: emit `lumen.config.json` — now unblocked (depends on #13 ✅ #14 ✅ #15)
+- [x] #15 Manifest v2: explicit path mapping — **merged #40** `src/manifest/paths.js` (`resolvePaths`, framework-aware) ✅
+- [x] #16 Manifest v2: emit `lumen.config.json` — **merged #40** `src/manifest/emit.js` + `src/main.js` wiring, byte-deterministic ✅
 - [x] #4 Manifest v2: publish JSON Schema — **merged #39** `schema/lumen.config.v2.json` via `z.toJSONSchema` + drift gate ✅
 - [ ] #9 Manifest/template contract shared with lumen-cli — now unblocked (depends on #13 ✅)
 - [ ] #6 Templates: migrate to Tailwind v4
 - [ ] #24 Tooling: eslint/prettier/oxlint/oxfmt parity
-- [ ] #23 React + Vite: validate bundle under manifest v2 — partially unblocked (needs #16 + #6 + #24)
-- [ ] #29 create-lumen v2: non-interactive flags — now unblocked (needs #16)
-- [ ] #31 CI: publish v2 pre-releases — blocked until #16 + #23
+- [ ] #23 React + Vite: validate bundle under manifest v2 — partially unblocked (needs #16 ✅ + #6 + #24)
+- [ ] #29 create-lumen v2: non-interactive flags — now unblocked (needs #16 ✅)
+- [ ] #31 CI: publish v2 pre-releases — partially unblocked (needs #16 ✅ + #23 ⏳)
 
 ### ⚙️ M2 · `v2.0.0-alpha.2` — Engine: capabilities + options
 
@@ -193,15 +193,15 @@ that cannot start until the row lands.
 |-------|------------|---------|--------|
 | create-lumen#13 | — | create-lumen#14, #15, #16, #4, #9, #25 | ✅ Merged #39 `b423dc9` (2026-09-18) — unblocks #14, #15, #4, #9, #25 |
 | create-lumen#14 | create-lumen#13 ✅ | create-lumen#16, #28 | ✅ Merged #39 — unblocks #16, #28 |
-| create-lumen#15 | create-lumen#13 ✅ | create-lumen#16 | ⏳ Ready — #13 done |
-| create-lumen#16 | create-lumen#13 ✅, #14 ✅, #15 | create-lumen#23, #29, #31, #5 | ⏳ Partially unblocked (needs #15) |
+| create-lumen#15 | create-lumen#13 ✅ | create-lumen#16 | ✅ Merged #40 — unblocks #16 |
+| create-lumen#16 | create-lumen#13 ✅, #14 ✅, #15 ✅ | create-lumen#23, #29, #31, #5 | ✅ Merged #40 — unblocks #23, #29, #31, #5 |
 | create-lumen#4  | create-lumen#13 ✅ | — | ✅ Merged #39 — no downstream |
 | create-lumen#6  | — | create-lumen#23, #33 | ⏳ Not started |
 | create-lumen#24 | — | create-lumen#23 | ⏳ Not started |
-| create-lumen#23 | create-lumen#16 ⏳, #6 ⏳, #24 ⏳ | create-lumen#31 | ⏳ Blocked |
+| create-lumen#23 | create-lumen#16 ✅, #6 ⏳, #24 ⏳ | create-lumen#31 | ⏳ Partially unblocked (needs #6 #24) |
 | create-lumen#9  | create-lumen#13 ✅ | lumen-cli#3 | ⏳ Ready — #13 done, can start parallel |
-| create-lumen#29 | create-lumen#16 ⏳ | create-lumen#5 | ⏳ Blocked until #16 |
-| create-lumen#31 | create-lumen#16 ⏳, #23 ⏳ | `v2.0.0-alpha` | ⏳ Blocked |
+| create-lumen#29 | create-lumen#16 ✅ | create-lumen#5 | ⏳ Ready — #16 merged #40 |
+| create-lumen#31 | create-lumen#16 ✅, #23 ⏳ | `v2.0.0-alpha` | ⏳ Partially unblocked |
 | create-lumen#25 | create-lumen#13 ✅ | create-lumen#26, #27 | ⏳ Ready — #13 done |
 | create-lumen#38 | create-lumen#13 ✅, create-lumen#25 ⏳ | create-lumen#18, #19 | ⏳ Partially unblocked |
 | create-lumen#26 | create-lumen#25 ⏳ | create-lumen#27 | ⏳ Blocked |
@@ -214,8 +214,8 @@ that cannot start until the row lands.
 | create-lumen#36 | create-lumen#35 ⏳ | — | ⏳ Blocked |
 | create-lumen#37 | create-lumen#35 ⏳, create-lumen#9 ⏳ | — | ⏳ Blocked |
 | create-lumen#28 | create-lumen#14 ✅ | — | ⏳ Ready — #14 done |
-| create-lumen#5  | create-lumen#29 ⏳, create-lumen#16 ⏳ | — | ⏳ Blocked |
-| create-lumen#17 | create-lumen#16 ⏳ | — | ⏳ Blocked |
+| create-lumen#5  | create-lumen#29 ✅, create-lumen#16 ✅ | — | ⏳ Ready — #16 + #29 merged #40 |
+| create-lumen#17 | create-lumen#16 ✅ | — | ⏳ Ready — #16 merged #40 |
 | create-lumen#30 | M1–M4 | `v2.0.0` | ⏳ Blocked |
 | lumen-cli#3  | create-lumen#9 ⏳, create-lumen#13 ✅ | lumen-cli#4, #5, #7, #20 | ⏳ Partially unblocked |
 | lumen-cli#5  | lumen-cli#2, lumen-cli#3 ⏳, create-lumen M1 ⏳ | lumen-cli#6 | ⏳ Blocked |
