@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://lumen.dev/schema/lumen.config.v2.json",
   "title": "Lumen manifest v2",
-  "description": "Schema for lumen.config.json v2 — emitted by create-lumen, consumed by lumen-cli. See docs/manifest-v2.md",
+  "description": "Schema for lumen.config.json v2 - emitted by create-lumen, consumed by lumen-cli. See docs/manifest-v2.md",
   "type": "object",
   "properties": {
     "$schema": {

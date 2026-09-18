@@ -2,7 +2,7 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
 // ---------------------------------------------------------------------------
-// Constants — keep in sync with docs/manifest-v2.md and ROADMAP
+// Constants - keep in sync with docs/manifest-v2.md and ROADMAP
 // ---------------------------------------------------------------------------
 export const MANIFEST_VERSION = 2;
 export const SCHEMA_URL = "https://lumen.dev/schema/lumen.config.v2.json";
@@ -76,7 +76,7 @@ const toolingSchema = z
   .strict();
 
 // ---------------------------------------------------------------------------
-// Top-level manifest v2 — strict, no extra keys except $schema
+// Top-level manifest v2 - strict, no extra keys except $schema
 // ---------------------------------------------------------------------------
 export const manifestSchemaV2 = z
   .object({
@@ -154,7 +154,7 @@ export const manifestSchemaV2 = z
   });
 
 // ---------------------------------------------------------------------------
-// v1 detection — flat shape from create-lumen 1.x
+// v1 detection - flat shape from create-lumen 1.x
 // ---------------------------------------------------------------------------
 const V1_FLAT_KEYS = ["css", "cssFramework", "architecture", "language", "router", "stateManagement", "iconLibrary", "apiClient", "testing"];
 

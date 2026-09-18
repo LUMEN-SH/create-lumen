@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const OUT_PATH = path.resolve(__dirname, "../schema/lumen.config.v2.json");
 
-// zod v4 native JSON Schema generator — drift-free, no external lib needed
+// zod v4 native JSON Schema generator - drift-free, no external lib needed
 const jsonSchema = z.toJSONSchema(manifestSchemaV2, {
   target: "draft-2020-12",
   io: "input",
@@ -20,7 +20,7 @@ jsonSchema.$schema = "https://json-schema.org/draft/2020-12/schema";
 jsonSchema.$id = SCHEMA_URL;
 jsonSchema.title = "Lumen manifest v2";
 jsonSchema.description =
-  "Schema for lumen.config.json v2 — emitted by create-lumen, consumed by lumen-cli. See docs/manifest-v2.md";
+  "Schema for lumen.config.json v2 - emitted by create-lumen, consumed by lumen-cli. See docs/manifest-v2.md";
 
 // Ensure deterministic key ordering at top-level
 const ordered = {};
