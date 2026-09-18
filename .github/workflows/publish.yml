@@ -47,30 +47,48 @@ jobs:
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          # Dist-tag for npm (see ADR 0002): alpha/beta/rc use prerelease tags, stable uses latest
           case "$VERSION" in
-            *beta*|*alpha*)
+            *"-alpha."*)
               echo "stable=false" >> "$GITHUB_OUTPUT"
-              echo "publishable=false" >> "$GITHUB_OUTPUT"
-              echo "::notice::create-lumen@$VERSION is a pre-release (beta/alpha); npm publish skipped."
+              echo "dist_tag=alpha" >> "$GITHUB_OUTPUT"
+              ;;
+            *"-beta."*|*"-beta"*)
+              echo "stable=false" >> "$GITHUB_OUTPUT"
+              echo "dist_tag=beta" >> "$GITHUB_OUTPUT"
+              ;;
+            *"-rc."*)
+              echo "stable=false" >> "$GITHUB_OUTPUT"
+              echo "dist_tag=rc" >> "$GITHUB_OUTPUT"
+              ;;
+            *"-"*)
+              echo "stable=false" >> "$GITHUB_OUTPUT"
+              echo "dist_tag=next" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "stable=true" >> "$GITHUB_OUTPUT"
-              if npm view "create-lumen@$VERSION" version >/dev/null 2>&1; then
-                echo "publishable=false" >> "$GITHUB_OUTPUT"
-                echo "::notice::create-lumen@$VERSION is already published on npm; publish skipped."
-              else
-                echo "publishable=true" >> "$GITHUB_OUTPUT"
-              fi
+              echo "dist_tag=latest" >> "$GITHUB_OUTPUT"
               ;;
           esac
+          if npm view "create-lumen@$VERSION" version >/dev/null 2>&1; then
+            echo "publishable=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::create-lumen@$VERSION is already published on npm; publish skipped."
+          else
+            echo "publishable=true" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Publish stable release to npm
+      - name: Publish to npm (stable -> latest, prerelease -> dist-tag)
         if: steps.check.outputs.publishable == 'true'
-        run: npm publish --provenance --access public
+        run: |
+          if [ "${{ steps.check.outputs.stable }}" = "true" ]; then
+            npm publish --provenance --access public
+          else
+            npm publish --provenance --access public --tag "${{ steps.check.outputs.dist_tag }}"
+          fi
 
   release:
     needs: publish
-    if: needs.publish.outputs.stable == 'true'
+    if: needs.publish.outputs.version != ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -83,8 +101,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="v${{ needs.publish.outputs.version }}"
+          STABLE="${{ needs.publish.outputs.stable }}"
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "::notice::GitHub Release $TAG already exists; skipping."
           else
-            gh release create "$TAG" --title "$TAG" --generate-notes
+            if [ "$STABLE" = "true" ]; then
+              gh release create "$TAG" --title "$TAG" --generate-notes
+            else
+              gh release create "$TAG" --title "$TAG" --generate-notes --prerelease
+            fi
           fi
