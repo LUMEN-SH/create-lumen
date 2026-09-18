@@ -80,9 +80,9 @@ flowchart TD
         style CreateLumen15 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen16 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen4 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
-        style CreateLumen9 stroke:#0e8a16,stroke-width:2px,fill:#fff
-        style CreateLumen25 stroke:#0e8a16,stroke-width:2px,fill:#fff
-        style CreateLumen28 stroke:#0e8a16,stroke-width:2px,fill:#fff
+        style CreateLumen9 stroke:#0e8a16,stroke-width:2px
+        style CreateLumen25 stroke:#0e8a16,stroke-width:2px
+        style CreateLumen28 stroke:#0e8a16,stroke-width:2px
     end
 
     subgraph LC["lumen-cli v1"]
