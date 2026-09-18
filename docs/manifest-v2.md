@@ -46,8 +46,8 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
 | Framework | `framework: "react"` string | `framework: { name, variant, bundler?, adapter? }` |
 | CSS | `css: "tailwind"` | `styling: { engine }` -- Tailwind is always **v4** (no version field, see #6) |
 | Architecture | `architecture: "feature-based"` | `architecture: { type }` scoped per framework: React+Vite `feature/component/none`, Next `feature/hybrid/none` (#34) |
-| UI kit | not modeled | `ui: { kit: "shadcn" \| "none" }` -- shadcn requires `tailwind` (#33) |
-| Docs | not modeled | `docs: { language: "en" \| "es" }` single language, prompted at init, consumed by lumen-cli (#13) |
+| UI kit | not modeled | `ui: { kit: "shadcn" or "none" }` -- shadcn requires `tailwind` (#33) |
+| Docs | not modeled | `docs: { language: "en" or "es" }` single language, prompted at init, consumed by lumen-cli (#13) |
 | Paths | hardcoded in generator | `paths: { features, components, services, hooks, pages, ui }` explicit, framework-aware (#15) |
 | Tooling | `language`, `linter` (eslint/oxlint) | `tooling: { language, linter: +biome, formatter }` (#24), `reactCompiler` boolean, `agentDocs` boolean (ADR 0001) |
 | Validation | no schema | Zod source of truth + JSON Schema 2020-12 derived via `z.toJSONSchema` (#14, #4) |
