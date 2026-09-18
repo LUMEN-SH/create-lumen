@@ -203,6 +203,9 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#31 | create-lumen#16 ✅, #23 | `v2.0.0-alpha` | ⏳ Blocked (needs #23) |
 | create-lumen#25 | create-lumen#13 ✅ | create-lumen#26, #27 | ⏳ Ready — #13 done |
 | create-lumen#38 | create-lumen#13 ✅, #25 | create-lumen#18–#22 | ⏳ Partially unblocked (needs #25) |
+| create-lumen#10 | create-lumen#25 | create-lumen#27 | ⏳ Blocked (needs #25) |
+| create-lumen#11 | create-lumen#25, #27 | (leaf) | ⏳ Blocked (needs #25, #27) |
+| create-lumen#32 | M1–M4 | `v2.0.0` | ⏳ Blocked (umbrella) |
 | create-lumen#26 | create-lumen#25 | create-lumen#27 | ⏳ Blocked (needs #25) |
 | create-lumen#27 | create-lumen#25, #26 | create-lumen#33, #34, #8 | ⏳ Blocked (needs #25, #26) |
 | create-lumen#33 | create-lumen#6, #27 | lumen-cli#9 | ⏳ Blocked (needs #6, #27) |
@@ -236,12 +239,12 @@ prerequisite lands; lanes on the same row can run simultaneously.
 
 | Lane | Workstream | Issues | Starts after | Parallel with |
 |------|------------|--------|--------------|---------------|
-| A | create-lumen manifest core | create-lumen#13,#14,#15,#16,#4 | now | B, C, D, G |
+| A | create-lumen manifest core | create-lumen#13,#14,#15,#16,#4,#9,#25,#17,#29 | now | B, C, D, G |
 | B | create-lumen templates/tooling | create-lumen#6,#24 | now | A, C, D, G |
 | C | lumen-cli core skeleton | lumen-cli#1,#2 | now | A, B, D, G |
 | D | docs-engine base (port `documentador`) | lumen-cli#24,#16 | now | A, B, C, G |
 | G | testing strategy (both repos) | create-lumen#35,#36,#37,#28,#5 | now (create-lumen#28→#14) | A, B, C, D |
-| E | create-lumen engine + options | create-lumen#25,#26,#27,#33,#34,#38,#11 | after A | F |
+| E | create-lumen engine + options | create-lumen#25,#26,#27,#33,#34,#38,#11,#10 | after A | F |
 | H | lumen-cli generators | lumen-cli#7,#8,#11–#14 | after C + create-lumen#9 | F, I, J, K |
 | F | create-lumen Next.js | create-lumen#8,#18–#22 | after E | H, I, J, K |
 | I | lumen-cli UI registry | lumen-cli#9,#10 | after H + create-lumen#33 | F, J, K |
