@@ -10,13 +10,29 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
 {
   "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
   "manifestVersion": 2,
-  "framework": { "name": "react|next", "variant": "vite|app-router|pages-router", "bundler?": "turbopack|webpack", "adapter?": "node|vercel|cloudflare|static" },
+  "framework": {
+    "name": "react|next",
+    "variant": "vite|app-router|pages-router",
+    "bundler?": "turbopack|webpack",
+    "adapter?": "node|vercel|cloudflare|static"
+  },
   "styling": { "engine": "tailwind|bootstrap|none" },
   "architecture": { "type": "feature-based|component-based|hybrid|none" },
   "ui": { "kit": "shadcn|none" },
   "docs": { "language": "en|es" },
-  "paths": { "features":"...", "components":"...", "services":"...", "hooks":"...", "pages":"...", "ui":"..." },
-  "tooling": { "language":"ts|js", "linter":"eslint|oxlint|biome|none", "formatter":"prettier|oxfmt|none" },
+  "paths": {
+    "features": "...",
+    "components": "...",
+    "services": "...",
+    "hooks": "...",
+    "pages": "...",
+    "ui": "..."
+  },
+  "tooling": {
+    "language": "ts|js",
+    "linter": "eslint|oxlint|biome|none",
+    "formatter": "prettier|oxfmt|none"
+  },
   "reactCompiler?": true,
   "agentDocs?": true
 }
