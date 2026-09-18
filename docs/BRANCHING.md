@@ -1,99 +1,99 @@
-# Branch Workflow — Guia humana
+# Branch Workflow — Human Guide
 
-> Para 4 devs, `1.x` congelado (`v1.2.0`), `v2.0.0` en train `alpha -> beta -> rc -> stable`. Ver ADR 0002 para la decision formal y ROADMAP.md para la filosofia SemVer.
+> For 4 devs, `1.x` frozen (`v1.2.0`), `v2.0.0` train `alpha -> beta -> rc -> stable`. See ADR 0002 for the formal decision and ROADMAP.md for the SemVer philosophy.
 
 ## TL;DR
 
-- **Nunca** pushees directo a `main` o `develop`.
-- Crea `feat/*` desde `develop`, abre PR a `develop`.
-- `release/*` solo la crea el release manager para congelar una version.
-- `main` solo recibe `develop` (en `v2.0.0` estable) o `hotfix/*` (emergencia).
+- **Never** push directly to `main` or `develop`.
+- Create `feat/*` from `develop`, open a PR to `develop`.
+- `release/*` is only created by the release manager to freeze a version.
+- `main` only receives `develop` (at `v2.0.0` stable) or `hotfix/*` (emergency).
 
-## El grafo
+## Graph
 
 ```mermaid
 flowchart LR
-    feat["feat/*<br/>(desde develop)"] --> develop["develop<br/>(integracion v2)"]
+    feat["feat/*<br/>(from develop)"] --> develop["develop<br/>(v2 integration)"]
     develop --> rel["release/2.0.0-alpha/beta/rc<br/>(freeze + bump)"]
     rel --> develop
     develop --> main["main<br/>(stable, tag v*, npm latest)"]
-    hotfix["hotfix/*<br/>(desde main)"] --> main
+    hotfix["hotfix/*<br/>(from main)"] --> main
     main -. back-merge .-> develop
 ```
 
-## Ramas
+## Branches
 
-| Rama | Para que | Quien la toca | Cuanto vive |
-|------|----------|---------------|-------------|
-| `main` | Lo que ve el usuario (`npm create lumen`, `npm@latest`). | Solo via PR desde `develop` o `hotfix/*` | Para siempre |
-| `develop` | Donde integramos los 4 devs. Siempre verde (`npm test` + `eslint`). | Todos, via `feat/*`/`release/*` | Para siempre |
-| `release/2.0.0-alpha` | Foto congelada para estabilizar. Se bumpa `package.json` y `CHANGELOG.md`. Solo entran `fix` criticos. | Release manager | Dias/semanas |
-| `feat/login-shadcn` | Tu feature. | Tu | Dias, se borra al mergear |
-| `hotfix/1.2.1` | Emergencia en `main`. Se crea desde `main`, se mergea a `main` y luego a `develop`. | Quien arregla | Horas |
+| Branch | Purpose | Who owns it | Lifetime |
+|--------|---------|-------------|----------|
+| `main` | What users see (`npm create lumen`, `npm@latest`). | Only via PR from `develop` or `hotfix/*` | Permanent |
+| `develop` | Integration for 4 devs. Always green (`npm test` + `eslint`). | Everyone, via `feat/*`/`release/*` | Permanent |
+| `release/2.0.0-alpha` | Frozen snapshot to stabilize. Bump `package.json` and `CHANGELOG.md`. Only critical `fix` allowed. | Release manager | Days/weeks |
+| `feat/login-shadcn` | Your feature. | You | Days, deleted after merge |
+| `hotfix/1.2.1` | Emergency on `main`. Created from `main`, merged to `main` then to `develop`. | Fix author | Hours |
 
-## Nombres
+## Naming
 
-- `feat/<scope>-<descripcion>` ej `feat/manifest-v2`, `feat/tailwind-v4`
-- `fix/<descripcion>` ej `fix/api-client-types`
+- `feat/<scope>-<description>` e.g. `feat/manifest-v2`, `feat/tailwind-v4`
+- `fix/<description>` e.g. `fix/api-client-types`
 - `release/2.0.0-alpha`, `release/2.0.0-beta.1`, `release/2.0.0-rc.1`, `release/2.1.0`
-- `hotfix/<version>` ej `hotfix/2.0.1`
-- `docs/<descripcion>`, `chore/<descripcion>`, `ci/<descripcion>` (no disparan bump)
+- `hotfix/<version>` e.g. `hotfix/2.0.1`
+- `docs/<description>`, `chore/<description>`, `ci/<description>` (no version bump)
 
-Commits: Conventional Commits — `feat:`, `fix:`, `chore(release):`, `docs:`, `ci:` (historial actual: `chore(release): 1.2.0`).
+Commits: Conventional Commits — `feat:`, `fix:`, `chore(release):`, `docs:`, `ci:` (current history: `chore(release): 1.2.0`).
 
-## Como trabajar (paso a paso)
+## How to work (step by step)
 
-### 1. Empezar una feature (todos los dias, 4 devs en paralelo)
+### 1. Start a feature (daily, 4 devs in parallel)
 
 ```bash
 git checkout develop
 git pull origin develop
-git checkout -b feat/mi-feature
-# ... codifica ...
+git checkout -b feat/my-feature
+# ... code ...
 npm test
-npm run verify          # si tocas templates
-git add -A && git commit -m "feat: mi feature"
-git push -u origin feat/mi-feature
-# Abre PR en GitHub: feat/mi-feature -> develop, espera review + CI verde (eslint)
+npm run verify          # if you touched templates
+git add -A && git commit -m "feat: my feature"
+git push -u origin feat/my-feature
+# Open PR on GitHub: feat/my-feature -> develop, wait for review + green CI (eslint)
 ```
 
-> Regla: `feat/*` siempre nace de `develop`, nunca de `release/*`. Asi los 4 devs no se bloquean.
+> Rule: `feat/*` always branches from `develop`, never from `release/*`. This keeps 4 devs unblocked.
 
-### 2. Sacar un alpha/beta/rc (solo release manager)
+### 2. Cut an alpha/beta/rc (release manager only)
 
-Cuando `develop` alcanza el DoD de un milestone (M1: `npm create lumen@alpha my-app` funciona, PLAN.md):
+When `develop` reaches a milestone DoD (M1: `npm create lumen@alpha my-app` works, see PLAN.md):
 
 ```bash
 git checkout develop && git pull
 git checkout -b release/2.0.0-alpha
-# bump de version
+# bump version
 npm version 2.0.0-alpha.0 --no-git-tag-version
-# actualiza CHANGELOG.md [Unreleased] -> [2.0.0-alpha.0]
+# update CHANGELOG.md [Unreleased] -> [2.0.0-alpha.0]
 git commit -am "chore(release): 2.0.0-alpha.0"
 git push -u origin release/2.0.0-alpha
-# Solo fixes criticos desde ahora:
-git checkout -b fix/ajuste release/2.0.0-alpha -> PR fix/* -> release/*
-# Cuando verde (npm test + verify:full):
-# PR release/2.0.0-alpha -> develop (mergea, preserva bump)
-# Tag desde main o desde release: git tag v2.0.0-alpha.0 && git push origin v2.0.0-alpha.0
-# publish.yml publica con npm publish --tag alpha y crea GitHub Release --prerelease
+# Only critical fixes from now on:
+git checkout -b fix/tweak release/2.0.0-alpha -> PR fix/* -> release/*
+# When green (npm test + verify:full):
+# PR release/2.0.0-alpha -> develop (merge, keep bump)
+# Tag from main or release: git tag v2.0.0-alpha.0 && git push origin v2.0.0-alpha.0
+# publish.yml publishes with npm publish --tag alpha and creates GitHub prerelease
 ```
 
-Dist-tags: `alpha` -> `npm create lumen@alpha`, `beta` -> `@beta`, `rc` -> `@rc`, `next` -> generico prerelease, `latest` -> estable.
+Dist-tags: `alpha` -> `npm create lumen@alpha`, `beta` -> `@beta`, `rc` -> `@rc`, `next` -> generic prerelease, `latest` -> stable.
 
-### 3. Release estable `v2.0.0` (M5)
+### 3. Stable release `v2.0.0` (M5)
 
 ```bash
-# develop ya tiene M1-M4
+# develop already has M1-M4
 git checkout main && git pull
 git merge develop --no-ff -m "chore(release): 2.0.0 stable"
-# o PR develop -> main en GitHub
+# or PR develop -> main on GitHub
 npm version 2.0.0 --no-git-tag-version
 git tag v2.0.0 && git push origin main --tags
 # publish.yml: npm publish (latest) + GitHub Release
 ```
 
-### 4. Hotfix (solo si `main` tiene regression y no puede esperar a `develop`)
+### 4. Hotfix (only if `main` has a regression that cannot wait for `develop`)
 
 ```bash
 git checkout main && git pull
@@ -101,39 +101,39 @@ git checkout -b hotfix/2.0.1
 # fix
 git commit -m "fix: ..."
 git push -u origin hotfix/2.0.1
-# PR hotfix/2.0.1 -> main (tag v2.0.1), luego back-merge:
+# PR hotfix/2.0.1 -> main (tag v2.0.1), then back-merge:
 git checkout develop && git merge main
 git push origin develop
 ```
 
-## SemVer en 30 segundos (ROADMAP.md)
+## SemVer in 30 seconds (ROADMAP.md)
 
-- `fix:` -> `2.0.1` (patch, no rompe nada)
-- `feat:` aditivo (nuevo prompt/template/provider opcional) -> `2.1.0` (minor)
-- Romper config schema, CLI flags, template contract, engine -> `3.0.0` (major, ver ROADMAP.md:45-62)
-- `v1.x` -> `v2.0.0` es major porque el config plano pasa a nested (ROADMAP.md:314).
+- `fix:` -> `2.0.1` (patch, no breaking change)
+- `feat:` additive (new optional prompt/template/provider) -> `2.1.0` (minor)
+- Breaking config schema, CLI flags, template contract, engine -> `3.0.0` (major, see ROADMAP.md:45-62)
+- `v1.x` -> `v2.0.0` is major because the flat config becomes nested (ROADMAP.md:314).
 
 ## Checklists
 
-**Antes de abrir PR a `develop`:**
+**Before opening a PR to `develop`:**
 - [ ] `git pull --rebase origin develop`
-- [ ] `npm test` verde
-- [ ] `npx eslint bin src register.js` verde
-- [ ] Si tocas `templates/`, `npm run verify` verde
+- [ ] `npm test` green
+- [ ] `npx eslint bin src register.js` green
+- [ ] If you touched `templates/`, `npm run verify` green
 
-**Antes de crear `release/*`:**
-- [ ] `develop` verde en CI
-- [ ] DoD del milestone cumplido (PLAN.md)
-- [ ] `package.json` y `CHANGELOG.md` bumpeados
+**Before creating `release/*`:**
+- [ ] `develop` green in CI
+- [ ] Milestone DoD met (PLAN.md)
+- [ ] `package.json` and `CHANGELOG.md` bumped
 
 ## Do / Don't
 
-- DO: rebases frecuentes, PRs pequenos, borrar `feat/*` tras merge.
-- DON'T: `feat -> release/*`, `feat -> main`, push directo a `main`/`develop`, dos `release/*` activas a la vez, dejar `release/*` sin back-merge a `develop`.
+- DO: frequent rebases, small PRs, delete `feat/*` after merge.
+- DON'T: `feat -> release/*`, `feat -> main`, direct push to `main`/`develop`, two active `release/*` at once, leave `release/*` without back-merge to `develop`.
 
-## Referencias
+## References
 
 - ADR 0002: `docs/adr/0002-branching-strategy.md`
-- Versionado: `docs/ROADMAP.md` (Versioning Philosophy)
+- Versioning: `docs/ROADMAP.md` (Versioning Philosophy)
 - Plan `v2`: `docs/PLAN.md`
 - CI: `.github/workflows/publish.yml`, `.github/workflows/eslint.yml`
