@@ -77,6 +77,8 @@ flowchart TD
 
         style CreateLumen13 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen14 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen15 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen16 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen4 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
     end
 
