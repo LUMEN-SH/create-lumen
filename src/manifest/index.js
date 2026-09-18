@@ -6,3 +6,6 @@ export {
   MANIFEST_VERSION,
   SCHEMA_URL,
 } from "./schema.js";
+
+export { resolvePaths, PATH_KEYS } from "./paths.js";
+export { buildManifest, emitManifest } from "./emit.js";

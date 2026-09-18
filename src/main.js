@@ -16,6 +16,7 @@ import { runBaseInstall, runGitInit, runViteCreate } from "@/scaffold.js";
 import { installAllDeps } from "@/dependencies.js";
 import { generateReadme } from "@/readme.js";
 import { runProjectFormat } from "@/format.js";
+import { emitManifest } from "@/manifest/emit.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -204,6 +205,17 @@ export async function main(options = {}) {
 
   // 12.5 Copy .env.example into the project
   await copyEnvExample(projectPath, TEMPLATES_DIR);
+
+  // 12.6 Emit lumen.config.json (manifest v2) — byte-deterministic, Zod-validated
+  const manifestSpin = spinner();
+  manifestSpin.start("Writing lumen.config.json...");
+  try {
+    await emitManifest(projectPath, responses);
+    manifestSpin.stop(chalk.green("lumen.config.json written."));
+  } catch (err) {
+    manifestSpin.stop(chalk.red("Failed to write lumen.config.json."));
+    throw err;
+  }
 
   // 13. Generate README.md + LICENSE (if requested)
   if (responses.readme) {
