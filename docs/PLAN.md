@@ -163,6 +163,8 @@ flowchart TB
     LaneI --> LaneL
     LaneJ --> LaneL
     LaneK --> LaneL
+
+    style LaneA fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
 ```
 
 Suggested split: **Dev 1** A→E→F · **Dev 2** B→G→L · **Dev 3**
