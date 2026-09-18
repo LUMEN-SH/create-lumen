@@ -22,7 +22,7 @@ test("schema drift: committed JSON Schema matches Zod source (#4)", async () => 
   generated.$id = SCHEMA_URL;
   generated.title = "Lumen manifest v2";
   generated.description =
-    "Schema for lumen.config.json v2 — emitted by create-lumen, consumed by lumen-cli. See docs/manifest-v2.md";
+    "Schema for lumen.config.json v2 - emitted by create-lumen, consumed by lumen-cli. See docs/manifest-v2.md";
 
   // deterministic ordering helper mirrors scripts/generate-schema.mjs
   const order = (obj) => {
