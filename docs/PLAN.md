@@ -39,12 +39,12 @@ flowchart TD
         CreateLumen16["✅ create-lumen#16 · emit lumen.config.json<br/>merged #40"]
         CreateLumen4["✅ create-lumen#4 · publish JSON Schema<br/>merged #39"]
         CreateLumen9["✅ create-lumen#9 · shared contract<br/>unblocked (needs #13 ✅)"]
+        CreateLumen25["✅ create-lumen#25 · capability model<br/>unblocked (needs #13 ✅)"]
         CreateLumen6["create-lumen#6 · Tailwind v4"]
         CreateLumen24["create-lumen#24 · tooling parity"]
         CreateLumen23["create-lumen#23 · validate React/Vite under v2"]
         CreateLumen29["create-lumen#29 · non-interactive flags<br/>needs #16"]
         CreateLumen31["create-lumen#31 · CI pre-releases<br/>needs #16 #23"]
-        CreateLumen25["✅ create-lumen#25 · capability model<br/>unblocked (needs #13 ✅)"]
         CreateLumen26["create-lumen#26 · gate prompts"]
         CreateLumen27["create-lumen#27 · template composition"]
         CreateLumen33["create-lumen#33 · shadcn/ui"]
@@ -128,7 +128,7 @@ Everything in a wave can run at the same time.
 flowchart TB
     subgraph W0["🌊 Wave 0 — start now (fully parallel)"]
         direction LR
-        LaneA["Lane A<br/>create-lumen manifest core<br/>#13 #14 #4 ✅ merged #39<br/>#15 #16 ✅ merged #40"]
+        LaneA["Lane A<br/>create-lumen manifest core<br/>#13 #14 #4 ✅ merged #39<br/>#15 #16 ✅ merged #40<br/>#9 #25 ✅ unblocked (#13)"]
         LaneB["Lane B<br/>create-lumen templates / tooling<br/>create-lumen#6 #24"]
         LaneC["Lane C<br/>lumen-cli skeleton<br/>lumen-cli#1 #2"]
         LaneD["Lane D<br/>lumen-cli docs-engine port<br/>lumen-cli#24 #16"]
