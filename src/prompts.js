@@ -50,9 +50,62 @@ function formatConfig(responses) {
   ].join("\n");
 }
 
-export async function getUserInputs(projectName, { quickSetup = false } = {}) {
+import { loadManifestArg } from "@/cli-flags.js";
+
+export async function getUserInputs(projectName, { quickSetup = false, manifest = null, template = null } = {}) {
   let oldConfig;
   let useOldConfig;
+
+  // Non-interactive manifest: scaffold directly from manifest specification
+  if (manifest) {
+    const loadedManifest = typeof manifest === "string" ? await loadManifestArg(manifest) : manifest;
+    const arch = loadedManifest.architecture?.type === "none" ? "feature-based" : (loadedManifest.architecture?.type || "feature-based");
+    const responses = {
+      projectName,
+      architecture: arch,
+      language: loadedManifest.tooling?.language || "ts",
+      cssFramework: loadedManifest.styling?.engine || "tailwind",
+      testing: "vitest",
+      router: true,
+      stateManagement: "none",
+      iconLibrary: "none",
+      apiClient: "none",
+      linter: loadedManifest.tooling?.linter === "oxlint" ? "oxlint" : loadedManifest.tooling?.linter === "none" ? "none" : "eslint",
+      formatter: loadedManifest.tooling?.formatter === "oxfmt" ? "oxfmt" : loadedManifest.tooling?.formatter === "none" ? "none" : "prettier",
+      docsLanguage: loadedManifest.docs?.language || "en",
+      uiKit: loadedManifest.ui?.kit || "none",
+      gitInit: true,
+      readme: true,
+      reactCompiler: loadedManifest.reactCompiler,
+      agentDocs: loadedManifest.agentDocs,
+      rawManifest: loadedManifest,
+    };
+    await saveConfig(responses);
+    return responses;
+  }
+
+  // Non-interactive template shortcut: apply preset choices
+  if (template) {
+    const isJs = template === "react-js" || template === "js";
+    const responses = {
+      projectName,
+      architecture: "feature-based",
+      language: isJs ? "js" : "ts",
+      cssFramework: "tailwind",
+      testing: "vitest",
+      router: true,
+      stateManagement: "none",
+      iconLibrary: "none",
+      apiClient: "none",
+      linter: "eslint",
+      formatter: "prettier",
+      docsLanguage: "en",
+      gitInit: true,
+      readme: true,
+    };
+    await saveConfig(responses);
+    return responses;
+  }
 
   // Non-interactive quick setup: apply defaults without prompting.
   if (quickSetup) {

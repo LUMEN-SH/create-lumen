@@ -3,14 +3,23 @@
 import { readFile } from "node:fs/promises";
 import chalk from "chalk";
 import "../register.js";
+import { parseArgs, getHelpText } from "@/cli-flags.js";
 
 const { version } = JSON.parse(
   await readFile(new URL("../package.json", import.meta.url), "utf8")
 );
 
-const args = process.argv.slice(2);
-const quickSetup = args.includes("-y");
-const projectName = args.find((a) => !a.startsWith("-"));
+const parsed = parseArgs(process.argv.slice(2));
+
+if (parsed.help) {
+  console.log("\n" + getHelpText(version) + "\n");
+  process.exit(0);
+}
+
+if (parsed.version) {
+  console.log(version);
+  process.exit(0);
+}
 
 console.log(
   chalk.bold.cyan("\n  ✦ LUMEN") +
@@ -22,7 +31,12 @@ console.log(
 
 const { main } = await import("@/main.js");
 
-main({ quickSetup, projectName }).catch((e) => {
+main({
+  quickSetup: parsed.quickSetup,
+  projectName: parsed.projectName,
+  manifest: parsed.manifest,
+  template: parsed.template,
+}).catch((e) => {
   console.error(chalk.red("\nError:"), e.message || e);
   process.exit(1);
 });

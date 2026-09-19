@@ -13,6 +13,10 @@ import { resolvePaths } from "./paths.js";
  * @returns {object} ordered manifest object ready to JSON.stringify
  */
 export function buildManifest(responses, opts = {}) {
+  if (responses.rawManifest) {
+    return parseManifest(responses.rawManifest);
+  }
+
   const frameworkName = opts.frameworkName || responses.frameworkName || "react";
   const frameworkVariant =
     opts.frameworkVariant ||

@@ -18,20 +18,22 @@ import { generateReadme } from "@/readme.js";
 import { runProjectFormat } from "@/format.js";
 import { emitManifest } from "@/manifest/emit.js";
 
+import { parseArgs } from "@/cli-flags.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const TEMPLATES_DIR = path.join(__dirname, "../templates");
 const CURRENT_DIR = process.cwd();
 
-export function resolveProjectName({ quickSetup = false, projectName: nameArg, cwd = CURRENT_DIR } = {}) {
-  const cliArgs = (process.argv.slice(2) ?? []).filter((arg) => arg && !arg.startsWith("-"));
-  const cliArg = nameArg || cliArgs[0] || null;
+export function resolveProjectName({ quickSetup = false, projectName: nameArg, cwd = CURRENT_DIR, rawArgs } = {}) {
+  const parsed = parseArgs(rawArgs || process.argv.slice(2));
+  const cliArg = nameArg || parsed.projectName || null;
 
   if (cliArg && cliArg.trim()) {
     return cliArg.trim();
   }
 
-  if (quickSetup) {
+  if (quickSetup || parsed.quickSetup || parsed.manifest || parsed.template) {
     const defaultName = path.basename(cwd).trim() || "my-app";
     return defaultName === "." ? "my-app" : defaultName;
   }
@@ -40,11 +42,15 @@ export function resolveProjectName({ quickSetup = false, projectName: nameArg, c
 }
 
 export async function main(options = {}) {
-  const { quickSetup = false, projectName: nameArg } = options;
+  const { quickSetup = false, projectName: nameArg, manifest = null, template = null } = options;
   const pkg = getPkgManager();
 
   // 1. Project name
-  let projectName = resolveProjectName({ quickSetup, projectName: nameArg, cwd: CURRENT_DIR });
+  let projectName = resolveProjectName({
+    quickSetup: quickSetup || !!manifest || !!template,
+    projectName: nameArg,
+    cwd: CURRENT_DIR,
+  });
 
   if (projectName) {
     log.step(chalk.gray(`Project name: ${chalk.bold(projectName)}`));
@@ -63,7 +69,7 @@ export async function main(options = {}) {
   await confirmEmptyFolder(projectName);
 
   // 3. Collect user preferences
-  const responses = await getUserInputs(projectName, { quickSetup });
+  const responses = await getUserInputs(projectName, { quickSetup, manifest, template });
 
   const projectPath = path.resolve(CURRENT_DIR, projectName);
 
