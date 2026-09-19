@@ -64,6 +64,7 @@ async function generate(responses, baseApp, projectPath) {
   await copyEnvExample(projectPath, TEMPLATES_DIR);
   await emitManifest(projectPath, responses);
   await generateReadme(projectPath, "app", responses);
+  await emitManifest(projectPath, responses);
   await fsp.symlink(path.join(VENDOR, "node_modules"), path.join(projectPath, "node_modules"), "junction");
   if (responses.formatter && responses.formatter !== "none") {
     await runProjectFormat(projectPath, responses);
@@ -392,6 +393,13 @@ async function audit(responses, projectPath) {
     const vite = await fsp.readFile(path.join(projectPath, `vite.config.${extConfig}`), "utf8");
     ok(/(?:["'])@(?:["'])/.test(vite) || vite.includes("find: @"), "vite @ alias missing");
   }
+
+  // Manifest v2 contract verification (#23)
+  ok(await exists(path.join(projectPath, "lumen.config.json")), "lumen.config.json missing (#23)");
+  const manifest = parseManifest(JSON.parse(await fsp.readFile(path.join(projectPath, "lumen.config.json"), "utf8")));
+  ok(manifest.manifestVersion === 2, "manifestVersion must be 2");
+  ok(manifest.framework.name === "react", "framework must be react");
+  ok(manifest.tooling.language === language, "language mismatch in manifest");
 
   // CSS framework parity (regression gate for the v1.2.0 globals path fix):
   // the main stylesheet the architecture actually imports must carry the

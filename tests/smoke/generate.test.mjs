@@ -32,7 +32,7 @@ async function exists(p) {
   }
 }
 
-// Build a real Vite base once per language (cached offline) — no installs.
+// Build a real Vite base once per language (cached offline) â€” no installs.
 async function ensureBase(language) {
   const baseApp = path.join(CACHE, `base-${language}`, "app");
   if (await exists(baseApp)) return baseApp;
@@ -64,6 +64,7 @@ async function generate(responses, baseApp, projectPath) {
   await copyEnvExample(projectPath, TEMPLATES_DIR);
   await emitManifest(projectPath, responses);
   if (responses.readme) await generateReadme(projectPath, "app", responses);
+  await emitManifest(projectPath, responses);
   process.chdir(REPO);
   return projectPath;
 }
@@ -140,13 +141,17 @@ async function check(responses, projectPath) {
   assert.ok(readme.includes("ESLint + Prettier"), "README: description missing 'ESLint + Prettier'");
   assert.ok(await exists(path.join(projectPath, "LICENSE")), "LICENSE missing");
 
-  // Manifest v2 contract gate (#23, #16)
+  // Manifest v2 contract verification (#23)
   const manifestPath = path.join(projectPath, "lumen.config.json");
-  assert.ok(await exists(manifestPath), "lumen.config.json missing");
-  const rawManifest = JSON.parse(await fsp.readFile(manifestPath, "utf8"));
-  const parsedManifest = parseManifest(rawManifest);
-  assert.strictEqual(parsedManifest.manifestVersion, 2, "manifestVersion !== 2");
-  assert.strictEqual(parsedManifest.framework.name, "react", "manifest framework mismatch");
+  assert.ok(await exists(manifestPath), "lumen.config.json missing (#23)");
+  const manifestRaw = JSON.parse(await fsp.readFile(manifestPath, "utf8"));
+  const manifest = parseManifest(manifestRaw);
+  assert.equal(manifest.manifestVersion, 2);
+  assert.equal(manifest.framework.name, "react");
+  assert.equal(manifest.framework.variant, "vite");
+  assert.equal(manifest.tooling.language, language);
+  assert.ok(manifest.paths.features);
+  assert.ok(manifest.paths.pages);
 }
 
 for (const language of ["ts", "js"]) {
