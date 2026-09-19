@@ -123,7 +123,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [x] #6 Templates: migrate to Tailwind v4 — **merged #41** `60f10b2` ✅
 - [x] #24 Tooling: eslint/prettier/oxlint/oxfmt parity — matrix parity, Next.js seam, format idempotence ✅
 - [x] #23 React + Vite: validate bundle under manifest v2 — all cells pass `verify:offline` with manifest v2 ✅
-- [ ] #29 create-lumen v2: non-interactive flags — now unblocked (needs #16 ✅)
+- [x] #29 create-lumen v2: non-interactive flags — ✅ implemented via `src/cli-args.js` (manifests + presets)
 - [x] #31 CI: publish v2 pre-releases — implemented in `.github/workflows/publish.yml` (dist-tags alpha/beta/rc/next) ✅
 
 ### ⚙️ M2 · `v2.0.0-alpha.2` — Engine: capabilities + options
@@ -133,8 +133,8 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 > architectures land on top.
 
 - [ ] #10 Capabilities-based composition (epic)
-- [ ] #25 Engine: capability declaration model
-- [ ] #38 Base: vendor framework bases + `BaseProvider` seam
+- [x] #25 Engine: capability declaration model
+- [x] #38 Base: vendor framework bases + `BaseProvider` seam (BaseProvider + ViteReact/NextAppRouter/NextPagesRouter providers)
 - [ ] #26 Engine: gate prompts by declared capabilities
 - [ ] #27 Engine: template composition
 - [ ] #33 UI: shadcn/ui support (Tailwind v4)
@@ -169,7 +169,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [ ] #35 Testing strategy (epic) — supersedes #7
 - [ ] #36 pairwise/t-way generator + capability-scoped matrix
 - [ ] #37 per-overlay contract tests
-- [ ] #28 Manifest v2 contract tests (schema fixtures)
+- [x] #28 Manifest v2 contract tests (schema fixtures)
 - [ ] #5 True headless e2e
 - [ ] #7 *close as superseded by #35*
 
@@ -199,10 +199,11 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#24 | — | create-lumen#23 | ✅ Completed — tooling parity done |
 | create-lumen#23 | create-lumen#16 ✅, #6 ✅, #24 ✅ | create-lumen#31 | ✅ Completed — all cells verified under manifest v2 |
 | create-lumen#9  | create-lumen#13 ✅ | lumen-cli#3 | ✅ Documented in docs/manifest-v2.md |
-| create-lumen#29 | create-lumen#16 ✅ | create-lumen#5 | ⏳ Ready — #16 done |
+| create-lumen#9  | create-lumen#13 ✅ | lumen-cli#3 | ✅ Documented in docs/manifest-v2.md |
+| create-lumen#29 | create-lumen#16 ✅ | create-lumen#5 | ✅ Completed — non-interactive flags (#29) |
 | create-lumen#31 | create-lumen#16 ✅, #23 ✅ | `v2.0.0-alpha` | ✅ Completed in .github/workflows/publish.yml |
-| create-lumen#25 | create-lumen#13 ✅ | create-lumen#26, #27 | ⏳ Ready — #13 done |
-| create-lumen#38 | create-lumen#13 ✅, #25 | create-lumen#18–#22 | ⏳ Partially unblocked (needs #25) |
+| create-lumen#25 | create-lumen#13 ✅ | create-lumen#26, #27 | ✅ Completed — capability model + BaseProvider seam |
+| create-lumen#38 | create-lumen#13 ✅, #25 ✅ | create-lumen#18–#22 | ✅ Unblocked — #25 done; BaseProvider seam implemented |
 | create-lumen#10 | create-lumen#25 | create-lumen#27 | ⏳ Blocked (needs #25) |
 | create-lumen#11 | create-lumen#25, #27 | (leaf) | ⏳ Blocked (needs #25, #27) |
 | create-lumen#32 | M1–M4 | `v2.0.0` | ⏳ Blocked (umbrella) |
@@ -215,7 +216,7 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#35 | — | create-lumen#36, #37 | ⏳ Not started |
 | create-lumen#36 | create-lumen#35 | (leaf) | ⏳ Blocked (needs #35) |
 | create-lumen#37 | create-lumen#35, #9 | (leaf) | ⏳ Blocked (needs #35, #9) |
-| create-lumen#28 | create-lumen#14 ✅ | (leaf) | ⏳ Ready — #14 done |
+| create-lumen#28 | create-lumen#14 ✅ | (leaf) | ✅ Completed — schema fixtures + contract tests (PR #44) |
 | create-lumen#5  | create-lumen#29, #16 ✅ | (leaf) | ⏳ Ready — #16 + #29 done |
 | create-lumen#17 | create-lumen#16 ✅ | (leaf) | ⏳ Ready — #16 done |
 | create-lumen#30 | M1–M4 | `v2.0.0` | ⏳ Blocked |
