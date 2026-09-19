@@ -25,15 +25,15 @@ const __dirname = path.dirname(__filename);
 const TEMPLATES_DIR = path.join(__dirname, "../templates");
 const CURRENT_DIR = process.cwd();
 
-export function resolveProjectName({ quickSetup = false, projectName: nameArg, cwd = CURRENT_DIR } = {}) {
-  const cli = parseCliArgs(process.argv.slice(2));
+export function resolveProjectName({ quickSetup = false, projectName: nameArg, cwd = CURRENT_DIR, rawArgs } = {}) {
+  const cli = parseCliArgs(rawArgs || process.argv.slice(2));
   const cliArg = nameArg || cli.projectName || null;
 
   if (cliArg && cliArg.trim()) {
     return cliArg.trim();
   }
 
-  if (quickSetup || cli.quickSetup) {
+  if (quickSetup || cli.quickSetup || cli.manifest || cli.template) {
     const defaultName = path.basename(cwd).trim() || "my-app";
     return defaultName === "." ? "my-app" : defaultName;
   }
