@@ -45,7 +45,7 @@ test("capabilities: architecture compatibility per framework", () => {
 
   // React/Vite
   assert.equal(isOptionCompatible(react, "architecture", "feature-based"), true);
-  assert.equal(isOptionCompatible(react, "architecture", "component-based"), true);
+  assert.equal(isOptionCompatible(react, "architecture", "type-based"), true);
   assert.equal(isOptionCompatible(react, "architecture", "none"), true);
   assert.equal(isOptionCompatible(react, "architecture", "hybrid"), false);
 
@@ -53,7 +53,7 @@ test("capabilities: architecture compatibility per framework", () => {
   assert.equal(isOptionCompatible(next, "architecture", "feature-based"), true);
   assert.equal(isOptionCompatible(next, "architecture", "hybrid"), true);
   assert.equal(isOptionCompatible(next, "architecture", "none"), true);
-  assert.equal(isOptionCompatible(next, "architecture", "component-based"), false);
+  assert.equal(isOptionCompatible(next, "architecture", "type-based"), false);
 });
 
 test("capabilities: router option gating (filesystem routing suppresses external router)", () => {
@@ -82,7 +82,7 @@ test("capabilities: getCompatibleOptions returns structured descriptors", () => 
   const react = { name: "react", variant: "vite" };
   const opts = getCompatibleOptions(react);
   assert.ok(opts.architectures.includes("feature-based"));
-  assert.ok(opts.architectures.includes("component-based"));
+  assert.ok(opts.architectures.includes("type-based"));
   assert.ok(!opts.architectures.includes("hybrid"));
   assert.equal(opts.supportsRouterPrompt, true);
 });

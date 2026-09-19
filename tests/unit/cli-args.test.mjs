@@ -100,7 +100,7 @@ test("cli-args: loadManifestSource reads manifest file and validates schema", as
     manifestVersion: 2,
     framework: { name: "react", variant: "vite" },
     styling: { engine: "bootstrap" },
-    architecture: { type: "component-based" },
+    architecture: { type: "type-based" },
     ui: { kit: "none" },
     docs: { language: "es" },
     paths: {
@@ -118,7 +118,7 @@ test("cli-args: loadManifestSource reads manifest file and validates schema", as
   const parsed = loadManifestSource(manifestPath);
   assert.equal(parsed.framework.name, "react");
   assert.equal(parsed.styling.engine, "bootstrap");
-  assert.equal(parsed.architecture.type, "component-based");
+  assert.equal(parsed.architecture.type, "type-based");
   assert.equal(parsed.docs.language, "es");
 });
 
@@ -166,10 +166,14 @@ test("cli-args: manifestToResponses correctly maps manifest properties", () => {
 test("cli-args: presets catalog contains valid presets", () => {
   assert.ok(PRESETS["react-ts"]);
   assert.ok(PRESETS["react-js"]);
+  assert.ok(PRESETS["react-type-ts"]);
+  assert.ok(PRESETS["react-type-js"]);
   assert.ok(PRESETS["react-component-ts"]);
   assert.ok(PRESETS["react-component-js"]);
   assert.equal(PRESETS["react-ts"].language, "ts");
   assert.equal(PRESETS["react-ts"].architecture, "feature-based");
+  assert.equal(PRESETS["react-type-js"].language, "js");
+  assert.equal(PRESETS["react-type-js"].architecture, "type-based");
   assert.equal(PRESETS["react-component-js"].language, "js");
-  assert.equal(PRESETS["react-component-js"].architecture, "component-based");
+  assert.equal(PRESETS["react-component-js"].architecture, "type-based");
 });

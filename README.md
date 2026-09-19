@@ -1,6 +1,6 @@
 # create-lumen
 
-A scaffolder that generates production-ready React + Vite projects (feature-based or component-based).
+A scaffolder that generates production-ready React + Vite projects (feature-based or type-based).
 
 Note: this repository is the CLI scaffolder itself, not a generated app. Generated projects live in the target folder you create.
 
@@ -26,12 +26,12 @@ npm create lumen -- -y my-app
 npm create lumen my-app -- --yes
 ```
 
-Scaffold using a template preset (`react-ts`, `react-js`, `react-component-ts`, `react-component-js`):
+Scaffold using a template preset (`react-ts`, `react-js`, `react-type-ts`, `react-type-js`):
 
 ```bash
 npm create lumen my-app -- --template react-ts
 # or
-npm create lumen my-app -- -t react-js
+npm create lumen my-app -- -t react-type-js
 ```
 
 Drive scaffolding directly from a manifest file or inline JSON (manifest v2):
@@ -64,7 +64,7 @@ create-lumen my-app      # after npm link
 
 ## Features
 
-- Architecture choice: feature-based or component-based
+- Architecture choice: feature-based or type-based
 - TypeScript or JavaScript output
 - CSS frameworks: Tailwind, Bootstrap, or none
 - Optional state management: Zustand or Redux Toolkit

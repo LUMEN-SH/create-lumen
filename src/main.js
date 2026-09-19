@@ -135,7 +135,7 @@ export async function main(options = {}) {
   // 7. Inject architecture templates
   const archSpin = spinner();
   archSpin.start(
-    `Setting up ${responses.architecture === "feature-based" ? "feature-based" : "component-based"} architecture...`
+    `Setting up ${responses.architecture === "feature-based" ? "feature-based" : "type-based"} architecture...`
   );
   try {
     await injectArchitecture(
@@ -276,7 +276,7 @@ export async function main(options = {}) {
   log.step(chalk.green("\nProject setup complete!"));
   log.message(
     chalk.gray(
-      `  Architecture: ${responses.architecture === "feature-based" ? "Feature-based" : "Component-based"}`
+      `  Architecture: ${responses.architecture === "feature-based" ? "Feature-based" : "Type-based"}`
     )
   );
 

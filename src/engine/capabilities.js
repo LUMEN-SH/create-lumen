@@ -29,7 +29,7 @@ export const FRAMEWORK_CAPABILITIES = {
       CAPABILITIES.SPA_FALLBACK,
       CAPABILITIES.AGENT_DOCS,
     ],
-    allowedArchitectures: ["feature-based", "component-based", "none"],
+    allowedArchitectures: ["feature-based", "type-based", "none"],
     allowedStyling: ["tailwind", "bootstrap", "none"],
     allowedUiKits: ["shadcn", "none"],
     allowedLanguages: ["ts", "js"],

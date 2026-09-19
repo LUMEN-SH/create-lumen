@@ -35,8 +35,9 @@ export function buildManifest(responses, opts = {}) {
     engine: responses.cssFramework || "tailwind",
   };
 
+  const rawArch = responses.architecture || "feature-based";
   const architecture = {
-    type: responses.architecture || "feature-based",
+    type: rawArch === "component-based" ? "type-based" : rawArch,
   };
 
   const ui = {

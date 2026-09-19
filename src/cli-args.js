@@ -73,10 +73,44 @@ export const PRESETS = {
     gitInit: true,
     readme: true,
   },
+  "react-type-ts": {
+    frameworkName: "react",
+    frameworkVariant: "vite",
+    architecture: "type-based",
+    language: "ts",
+    cssFramework: "tailwind",
+    testing: "vitest",
+    router: true,
+    stateManagement: "none",
+    iconLibrary: "none",
+    apiClient: "none",
+    linter: "eslint",
+    formatter: "prettier",
+    docsLanguage: "en",
+    gitInit: true,
+    readme: true,
+  },
+  "react-type-js": {
+    frameworkName: "react",
+    frameworkVariant: "vite",
+    architecture: "type-based",
+    language: "js",
+    cssFramework: "tailwind",
+    testing: "vitest",
+    router: true,
+    stateManagement: "none",
+    iconLibrary: "none",
+    apiClient: "none",
+    linter: "eslint",
+    formatter: "prettier",
+    docsLanguage: "en",
+    gitInit: true,
+    readme: true,
+  },
   "react-component-ts": {
     frameworkName: "react",
     frameworkVariant: "vite",
-    architecture: "component-based",
+    architecture: "type-based",
     language: "ts",
     cssFramework: "tailwind",
     testing: "vitest",
@@ -93,7 +127,7 @@ export const PRESETS = {
   "react-component-js": {
     frameworkName: "react",
     frameworkVariant: "vite",
-    architecture: "component-based",
+    architecture: "type-based",
     language: "js",
     cssFramework: "tailwind",
     testing: "vitest",
@@ -235,10 +269,10 @@ ${chalk.bold("OPTIONS")}
   ${chalk.yellow("-v, --version")}          Show version number
 
 ${chalk.bold("PRESETS")}
-  ${chalk.cyan("react-ts")}            React + Vite + TypeScript (feature-based)
-  ${chalk.cyan("react-js")}            React + Vite + JavaScript (feature-based)
-  ${chalk.cyan("react-component-ts")}  React + Vite + TypeScript (component-based)
-  ${chalk.cyan("react-component-js")}  React + Vite + JavaScript (component-based)
+  ${chalk.cyan("react-ts")}       React + Vite + TypeScript (feature-based)
+  ${chalk.cyan("react-js")}       React + Vite + JavaScript (feature-based)
+  ${chalk.cyan("react-type-ts")}  React + Vite + TypeScript (type-based)
+  ${chalk.cyan("react-type-js")}  React + Vite + JavaScript (type-based)
 
 ${chalk.bold("EXAMPLES")}
   ${chalk.gray("# Interactive setup")}
