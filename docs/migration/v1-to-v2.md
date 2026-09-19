@@ -90,24 +90,30 @@ This fail-fast behavior protects your codebase from accidental file generation i
 
 ## 4. Field-by-Field Mapping Reference
 
-| v1 Field (Flat) | v2 Target Path | Notes & Migration Details |
-|---|---|---|
-| *(none)* | `"$schema"` | Required in canonical output: `"https://lumen.dev/schema/lumen.config.v2.json"`. |
-| *(none)* | `"manifestVersion"` | Must be integer `2`. |
-| `"framework": "react"` | `"framework": { "name": "react", "variant": "vite" }` | In v2, `framework` is an object. `name` is `"react"` or `"next"`. For React, `variant` is always `"vite"`. |
-| *(none)* | `"framework.bundler"` | Optional, Next.js only (`"turbopack"` or `"webpack"`). Omit for React. |
-| *(none)* | `"framework.adapter"` | Optional, Next.js only (`"node"`, `"vercel"`, `"cloudflare"`, `"static"`). Omit for React. |
-| `"css": "tailwind"` or `"cssFramework"` | `"styling": { "engine": "tailwind" }` | Engines: `"tailwind"`, `"bootstrap"`, `"none"`. Tailwind is always v4. |
-| `"architecture": "feature-based"` | `"architecture": { "type": "feature-based" }` | React supports: `"feature-based"`, `"type-based"`, `"none"`. Next.js supports: `"feature-based"`, `"hybrid"`, `"none"`. |
-| *(none)* | `"ui": { "kit": "none" }` | Options: `"none"` or `"shadcn"`. If `"shadcn"`, `styling.engine` must be `"tailwind"`. |
-| *(none)* | `"docs": { "language": "en" }` | Single documentation language chosen at init: `"en"` or `"es"`. |
-| *(hardcoded in v1)* | `"paths": { ... }` | Explicit object containing 6 required POSIX directory paths: `features`, `components`, `services`, `hooks`, `pages`, `ui`. See table below. |
-| `"language": "ts"` | `"tooling.language"` | `"ts"` or `"js"`. |
-| `"linter": "eslint"` | `"tooling.linter"` | `"eslint"`, `"oxlint"`, `"biome"`, or `"none"`. |
-| `"formatter": "prettier"` | `"tooling.formatter"` | `"prettier"`, `"oxfmt"`, or `"none"`. |
-| *(none)* | `"reactCompiler"` | Optional boolean flag (`true` to enable React 19 Compiler). |
-| *(none)* | `"agentDocs"` | Optional boolean flag (`true` to generate AI-agent developer docs). |
-| `"router"`, `"stateManagement"`, `"iconLibrary"`, `"apiClient"`, `"testing"` | *Removed from manifest* | Runtime dependencies remain configured in `package.json`. These are no longer stored in the manifest. |
+Every key from v1 has a designated equivalent, is scoped into a nested namespace, or has been intentionally removed from the top-level manifest.
+
+| v1 Field (Flat) | v1 Type / Values | v2 Location & Shape | Description & Migration Notes |
+| :--- | :--- | :--- | :--- |
+| *(none)* | *(absent)* | `"manifestVersion": 2` | **Required integer.** Explicit schema version gate. Must be `2`. |
+| *(none)* | *(absent)* | `"$schema": "https://lumen.dev/schema/lumen.config.v2.json"` | **Optional / Defaulted.** Provides IDE autocompletion and hover documentation. |
+| `framework` | `"react"` | `"framework": { "name": "react", "variant": "vite" }` | Framework is now an object. In v2, `react` requires `variant: "vite"`. Next.js targets use `name: "next"` with `variant: "app-router"` or `"pages-router"`. |
+| *(none)* | *(absent)* | `"framework.bundler": "turbopack" \| "webpack"` | Optional Next.js bundler selector. Invalid on React+Vite. |
+| *(none)* | *(absent)* | `"framework.adapter": "node" \| "vercel" \| "cloudflare" \| "static"` | Optional Next.js deployment adapter. Invalid on React+Vite. |
+| `css` / `cssFramework` | `"tailwind"`, `"bootstrap"`, `"none"` | `"styling": { "engine": "tailwind" \| "bootstrap" \| "none" }` | Renamed and nested under `styling`. **Important:** Tailwind in v2 is strictly **Tailwind CSS v4** (Tailwind v3 is dropped). |
+| `architecture` | `"feature-based"`, `"component-based"` | `"architecture": { "type": "feature-based" \| "type-based" \| "hybrid" \| "none" }` | Scoped per framework: React allows `feature-based`, `type-based`, and `none`. Next.js allows `feature-based`, `hybrid`, and `none` (Next.js supports `hybrid` instead of `type-based`). |
+| *(none)* | *(absent)* | `"ui": { "kit": "shadcn" \| "none" }` | UI kit selection. **Constraint:** `shadcn` requires `styling.engine: "tailwind"`. |
+| *(none)* | *(absent)* | `"docs": { "language": "en" \| "es" }` | Project documentation language choice for generated readmes and CLI generators. |
+| *(none)* | *(hardcoded)* | `"paths": { "features", "components", "services", "hooks", "pages", "ui" }` | **Required object.** Explicit relative paths from project root, resolved deterministically per framework and architecture. See [Path Resolution](#5-path-resolution-reference). |
+| `language` | `"ts"`, `"js"` | `"tooling": { "language": "ts" \| "js", ... }` | Moved into the `tooling` object. |
+| `linter` | `"eslint"`, `"oxlint"`, `"none"` | `"tooling": { "linter": "eslint" \| "oxlint" \| "biome" \| "none", ... }` | Moved into `tooling`. Added support for `biome`. |
+| *(none)* | *(absent)* | `"tooling": { "formatter": "prettier" \| "oxfmt" \| "none" }` | Formatter selection moved into `tooling`. |
+| `router` | `"react-router"`, `"none"` | **Removed from manifest** | In React+Vite, router selection is handled at scaffold time via templates/overlays. In Next.js, routing is intrinsic to the framework variant. |
+| `stateManagement` | `"zustand"`, `"redux"`, `"none"` | **Removed from manifest** | State management dependencies are scaffolded into `package.json` and store directories; not required in generator manifest. |
+| `iconLibrary` | `"lucide"`, `"hugeicons"`, `"none"` | **Removed from manifest** | Overlay dependency handled during project initialization. |
+| `apiClient` | `"axios"`, `"fetch"`, `"none"` | **Removed from manifest** | Handled in `src/shared/lib/axios` vs `src/shared/api` by scaffolder templates; path mapping in v2 points to `services`. |
+| `testing` | `"vitest"`, `"jest"`, `"none"` | **Removed from manifest** | Test runner scripts and dependencies live directly in `package.json`. |
+| *(none)* | *(absent)* | `"reactCompiler": true \| false` | Optional cross-cutting compiler flag (Next.js & future React 19 toolchains). |
+| *(none)* | *(absent)* | `"agentDocs": true \| false` | Optional flag indicating inclusion of LLM assistant guidelines (`AGENTS.md`). |
 
 ---
 

@@ -72,12 +72,12 @@ interface StylingConfig {
 #### Architecture (`architecture`)
 ```typescript
 interface ArchitectureConfig {
-  type: "feature-based" | "component-based" | "hybrid" | "none";
+  type: "feature-based" | "type-based" | "hybrid" | "none";
 }
 ```
 *Constraints:*
-- For `framework.name === "react"`, allowed types are: `"feature-based"`, `"component-based"`, `"none"`.
-- For `framework.name === "next"`, allowed types are: `"feature-based"`, `"hybrid"`, `"none"`.
+- For `framework.name === "react"`, allowed types are: `"feature-based"`, `"type-based"`, `"none"`.
+- For `framework.name === "next"`, allowed types are: `"feature-based"`, `"hybrid"`, `"none"` (Next.js supports `hybrid` instead of `type-based`).
 
 #### UI Kit (`ui`)
 ```typescript
@@ -126,7 +126,7 @@ interface PathsConfig {
 | Framework | Architecture | `features` | `components` | `services` | `hooks` | `pages` | `ui` |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **React + Vite** | `feature-based` | `src/features` | `src/shared/components` | `src/shared/services` | `src/shared/hooks` | `src/app/router` | `src/shared/components/ui` |
-| **React + Vite** | `component-based` | `src/features` | `src/components` | `src/services` | `src/hooks` | `src/pages` | `src/ui` |
+| **React + Vite** | `type-based` | `src/features` | `src/components` | `src/services` | `src/hooks` | `src/pages` | `src/ui` |
 | **React + Vite** | `none` | `src` | `src` | `src` | `src` | `src` | `src` |
 | **Next.js (App)** | `feature-based` | `src/features` | `src/shared/components` | `src/shared/services` | `src/shared/hooks` | `app` | `src/shared/components/ui` |
 | **Next.js (App)** | `hybrid` | `src/features` | `src/shared/components` | `src/shared/services` | `src/shared/hooks` | `app` | `src/shared/components/ui` |
@@ -167,7 +167,7 @@ When generating a new feature module under `paths.features` (e.g., `src/features
 ### 3. Path Alias Guarantee
 Both `create-lumen` templates and `lumen-cli` generator templates rely on the path alias:
 - `@/*` is guaranteed to resolve to `<root>/src/*` (or `<root>/*` for flat setups) via `tsconfig.json` / `jsconfig.json` and Vite / Next bundler configuration.
-- Shared resources must be imported via `@/shared/...` (in feature-based) or `@/...` (in component-based).
+- Shared resources must be imported via `@/shared/...` (in feature-based) or `@/...` (in type-based).
 
 ---
 
@@ -197,7 +197,7 @@ If the schema or contract must introduce a breaking change in the future:
 
 The contract between `create-lumen` and `lumen-cli` is validated across repos using standardized fixtures representing the canonical permutations:
 - `react-vite-feature-ts.json`
-- `react-vite-component-ts.json`
+- `react-vite-type-based.json`
 - `react-vite-none-js.json`
 - `next-app-feature-ts.json`
 - `next-app-hybrid-ts.json`

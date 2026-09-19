@@ -1,4 +1,4 @@
-﻿import test from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { parseManifest, isV1Manifest, SCHEMA_URL } from "../../src/manifest/schema.js";
 
@@ -59,7 +59,12 @@ test("parseManifest rejects next + type-based", () => {
 });
 
 test("parseManifest accepts react + type-based", () => {
-  const m = { ...baseValid, architecture: { type: "type-based" } };
+  // Asserts react+vite + type-based is the canonical non-Next cell
+  const m = {
+    ...baseValid,
+    framework: { name: "react", variant: "vite" },
+    architecture: { type: "type-based" },
+  };
   assert.doesNotThrow(() => parseManifest(m));
 });
 

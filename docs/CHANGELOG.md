@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - **Tooling: eslint / prettier / oxlint / oxfmt parity in v2 templates** (#24) — full linter × formatter matrix (`eslint`/`oxlint` × `prettier`/`oxfmt`), prompt option to select Oxfmt with ESLint, Next.js seam with `eslint-config-next` and `eslint.config.mjs`, automatic conditional `eslint-config-prettier` wiring, consistent package scripts (`lint`, `lint:fix`, `format`, `format:check`), and format idempotence across multiple passes.
 - **React + Vite: validate bundle under manifest v2** (#23) — wired `emitManifest` in verification harnesses and smoke tests, verified byte-deterministic emission and Zod schema compliance of `lumen.config.json` v2 across all matrix cells.
 - **CI: publish create-lumen v2 pre-releases to npm** (#31) — configured `.github/workflows/publish.yml` to publish pre-releases (`alpha`, `beta`, `rc`, `next`) to npm under dist-tags and create GitHub pre-releases.
-- **Manifest/template contract documentation** (#9) — formalized and documented the shared manifest v2 and path mapping contract in `docs/manifest-v2.md` consumed by `lumen-cli`.
+- **Manifest/template contract documentation** (#9) — formalized and documented the shared manifest v2 and path mapping contract in `docs/contracts/manifest-v2-contract.md` consumed by `lumen-cli`.
+- **Architecture naming aligned to `type-based`** — renamed the traditional React layout from `component-based` to `type-based` across manifest v2 schema (`ARCHITECTURE_TYPES`), paths resolution (`resolvePaths`), JSON Schema, contract, and documentation. Next.js is explicitly scoped to `hybrid` (and `feature-based` / `none`) instead of `type-based`.
 
 ### Removed
 

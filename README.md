@@ -64,7 +64,7 @@ create-lumen my-app      # after npm link
 
 ## Features
 
-- Architecture choice: feature-based or type-based
+- Architecture choice: feature-based or type-based (with Next.js hybrid/none in v2)
 - TypeScript or JavaScript output
 - CSS frameworks: Tailwind CSS v4 (CSS-first `@theme`, v3 dropped), Bootstrap 5.3+, or none
 - Optional state management: Zustand or Redux Toolkit

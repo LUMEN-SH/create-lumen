@@ -45,7 +45,7 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
 | Version | no `manifestVersion` | `manifestVersion: 2` required, `literal(2)` |
 | Framework | `framework: "react"` string | `framework: { name, variant, bundler?, adapter? }` |
 | CSS | `css: "tailwind"` | `styling: { engine }` -- Tailwind is always **v4** (no version field, see #6) |
-| Architecture | `architecture: "feature-based"` | `architecture: { type }` scoped per framework: React+Vite `feature/component/none`, Next `feature/hybrid/none` (#34) |
+| Architecture | `architecture: "feature-based"` | `architecture: { type }` scoped per framework: React+Vite `feature/type/none`, Next `feature/hybrid/none` (#34) |
 | UI kit | not modeled | `ui: { kit: "shadcn" or "none" }` -- shadcn requires `tailwind` (#33) |
 | Docs | not modeled | `docs: { language: "en" or "es" }` single language, prompted at init, consumed by lumen-cli (#13) |
 | Paths | hardcoded in generator | `paths: { features, components, services, hooks, pages, ui }` explicit, framework-aware (#15) |
