@@ -58,6 +58,11 @@ test("parseManifest rejects next + type-based", () => {
   assert.throws(() => parseManifest(m), /not valid for framework "next"/);
 });
 
+test("parseManifest accepts react + type-based", () => {
+  const m = { ...baseValid, architecture: { type: "type-based" } };
+  assert.doesNotThrow(() => parseManifest(m));
+});
+
 test("parseManifest rejects shadcn without tailwind (#33)", () => {
   const m = {
     ...baseValid,

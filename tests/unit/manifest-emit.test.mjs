@@ -1,4 +1,4 @@
-﻿import test from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { promises as fsp } from "fs";
 import os from "os";
@@ -41,6 +41,15 @@ test("buildManifest: produces valid v2 manifest with $schema and correct paths",
 
 test("buildManifest: type-based maps to src/pages etc", () => {
   const m = buildManifest({ ...baseResponses, architecture: "type-based" });
+  assert.equal(m.architecture.type, "type-based");
+  assert.equal(m.paths.components, "src/components");
+  assert.equal(m.paths.pages, "src/pages");
+  assert.equal(m.paths.ui, "src/ui");
+});
+
+test("buildManifest: legacy component-based normalizes to type-based", () => {
+  const m = buildManifest({ ...baseResponses, architecture: "component-based" });
+  assert.equal(m.architecture.type, "type-based");
   assert.equal(m.paths.components, "src/components");
   assert.equal(m.paths.pages, "src/pages");
   assert.equal(m.paths.ui, "src/ui");
@@ -75,8 +84,8 @@ test("emitManifest: writes lumen.config.json with trailing newline and byte-dete
   assert.equal(content1, content2, "double emission must be byte-identical");
 });
 
-test("emitManifest: passes Zod validator for every generated cell (feature/component x ts/js)", async () => {
-  for (const arch of ["feature-based", "type-based"]) {
+test("emitManifest: passes Zod validator for every generated cell (feature/type x ts/js)", async () => {
+  for (const arch of ["feature-based", "type-based", "component-based"]) {
     for (const lang of ["ts", "js"]) {
       const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "lumen-emit-cell-"));
       await emitManifest(dir, { ...baseResponses, architecture: arch, language: lang });
