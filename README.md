@@ -14,15 +14,31 @@ cd my-app
 npm run dev
 ```
 
-Non-interactive Quick Setup (TypeScript + Tailwind + Feature-based + Router + ESLint + Prettier + Vitest), no prompts:
+### Non-interactive flags
 
 ```bash
+# Quick Setup defaults (-y, --yes): TS + Tailwind v4 + Feature-based + Router + ESLint + Prettier + Vitest
 npm create lumen my-app -- -y
-# or
-npm create lumen -- -y my-app
+npm create lumen my-app -- --yes
+
+# Scaffold directly from a manifest file or inline JSON (-m, --manifest)
+npm create lumen my-app -- --manifest ./lumen.config.json
+npm create lumen my-app -- -m ./lumen.config.json
+
+# Use a preset template (-t, --template)
+npm create lumen my-app -- --template react-ts
+
+# Display usage and available options (-h, --help)
+npm create lumen -- --help
 ```
 
-The CLI ignores flag arguments when resolving the project name, so `-y` can appear before or after the app name without being mistaken for the folder name.
+The CLI cleanly ignores flag arguments when resolving the project name, so options can appear before or after the app name without ambiguity.
+
+### Documentation & Specifications
+
+- **Migration Guide**: [`docs/migration/v1-to-v2.md`](./docs/migration/v1-to-v2.md) — step-by-step instructions for moving from v1 flat configs to v2 nested manifests.
+- **Manifest v2**: [`docs/manifest-v2.md`](./docs/manifest-v2.md) — complete specification of `lumen.config.json`.
+- **Cross-Repo Contract**: [`docs/manifest-template-contract.md`](./docs/manifest-template-contract.md) — shared contract between `create-lumen` and `lumen-cli`.
 
 Run the scaffolder locally (development / testing the generator):
 
