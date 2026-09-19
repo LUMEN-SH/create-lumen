@@ -253,7 +253,8 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
       linter === "eslint"
         ? [
             { label: "None", value: "none" },
-            { label: "Prettier", value: "prettier" },
+            { label: "Prettier (Recommended)", value: "prettier" },
+            { label: "Oxfmt", value: "oxfmt" },
           ]
         : [
             { label: "None", value: "none" },

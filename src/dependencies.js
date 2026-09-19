@@ -102,11 +102,13 @@ export function computeDeps(responses) {
 
   // Linter
   if (responses.linter === "eslint") {
-    devDeps.push("eslint", "@eslint/js", "eslint-plugin-react-hooks", "eslint-plugin-react-refresh", "globals");
-    if (responses.language === "ts") {
-      devDeps.push("typescript-eslint");
-      // ESLint >= 10 loads TS config files (eslint.config.ts) via jiti.
-      devDeps.push("jiti");
+    if (responses.framework === "next") {
+      devDeps.push("eslint", "eslint-config-next");
+    } else {
+      devDeps.push("eslint", "@eslint/js", "eslint-plugin-react-hooks", "eslint-plugin-react-refresh", "globals");
+      if (responses.language === "ts") {
+        devDeps.push("typescript-eslint", "jiti");
+      }
     }
   } else if (responses.linter === "oxlint") {
     devDeps.push("oxlint");

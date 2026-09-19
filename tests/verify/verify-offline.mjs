@@ -7,6 +7,8 @@ import { cleanupBoilerplate } from "../../src/cleanup.js";
 import { generateReadme } from "../../src/readme.js";
 import { runProjectFormat } from "../../src/format.js";
 import { getPkgManager } from "../../src/utils/pkg-manager.js";
+import { emitManifest } from "../../src/manifest/emit.js";
+import { parseManifest } from "../../src/manifest/schema.js";
 import { DEFAULT_CELLS, matrix } from "../e2e/matrix.mjs";
 import { promises as fsp } from "fs";
 import path from "path";
@@ -60,6 +62,7 @@ async function generate(responses, baseApp, projectPath) {
   await configureProject(projectPath, responses.language, responses.cssFramework);
   await cleanupBoilerplate(projectPath);
   await copyEnvExample(projectPath, TEMPLATES_DIR);
+  await emitManifest(projectPath, responses);
   await generateReadme(projectPath, "app", responses);
   await fsp.symlink(path.join(VENDOR, "node_modules"), path.join(projectPath, "node_modules"), "junction");
   if (responses.formatter && responses.formatter !== "none") {
@@ -111,9 +114,11 @@ const PARITY_FILE_CANDIDATES = [
 
 // Run a tool binary from the vendored toolchain against the project.
 function tool(projectPath, bin, args, opts = {}) {
+  const isWin = process.platform === "win32";
   const res = spawnSync(path.join(projectPath, "node_modules", ".bin", bin), args.split(/\s+/), {
     cwd: projectPath,
     encoding: "utf8",
+    shell: isWin,
     ...opts,
   });
   const out = (res.stdout || "") + (res.stderr || "");
@@ -362,6 +367,18 @@ async function audit(responses, projectPath) {
   if (linter === "oxlint") {
     ok(await exists(path.join(projectPath, "oxlintrc.json")), "oxlintrc.json missing");
   }
+
+  // Manifest v2 contract gate (#23, #16)
+  const manifestPath = path.join(projectPath, "lumen.config.json");
+  ok(await exists(manifestPath), "lumen.config.json missing");
+  try {
+    const raw = JSON.parse(await fsp.readFile(manifestPath, "utf8"));
+    const parsed = parseManifest(raw);
+    ok(parsed.manifestVersion === 2, "manifestVersion !== 2");
+    ok(parsed.framework.name === (responses.framework || "react"), "manifest framework mismatch");
+  } catch (err) {
+    ok(false, `lumen.config.json schema validation failed: ${err.message}`);
+  }
   const pkgJson = JSON.parse(await fsp.readFile(path.join(projectPath, "package.json"), "utf8"));
   const scripts = pkgJson.scripts || {};
   if (formatter === "prettier") {
@@ -459,6 +476,16 @@ async function runCell(responses, index, { determinism, quiet }) {
   // Cross-tool parity probe only when a formatter was chosen.
   if (responses.formatter === "prettier") gates.push(await gateCrossProbe(projectPath, "oxfmt"));
   if (responses.formatter === "oxfmt") gates.push(await gateCrossProbe(projectPath, "prettier"));
+
+  // Format idempotence gate (#24 AC): second format pass must remain fully clean
+  if (responses.formatter && responses.formatter !== "none") {
+    await runProjectFormat(projectPath, responses);
+    if (responses.formatter === "prettier") {
+      gates.push(gateNative(projectPath, "prettier", "--check .", "prettier-idempotence"));
+    } else if (responses.formatter === "oxfmt") {
+      gates.push(gateNative(projectPath, "oxfmt", "--check .", "oxfmt-idempotence"));
+    }
+  }
 
   const auditErrors = await audit(responses, projectPath);
   const failures = gates.filter((g) => !g.ok);

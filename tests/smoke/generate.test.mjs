@@ -14,6 +14,8 @@ import { configureProject } from "../../src/configure.js";
 import { cleanupBoilerplate } from "../../src/cleanup.js";
 import { generateReadme } from "../../src/readme.js";
 import { getPkgManager } from "../../src/utils/pkg-manager.js";
+import { emitManifest } from "../../src/manifest/emit.js";
+import { parseManifest } from "../../src/manifest/schema.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(__dirname, "..", "..");
@@ -60,6 +62,7 @@ async function generate(responses, baseApp, projectPath) {
   await configureProject(projectPath, responses.language, responses.cssFramework);
   await cleanupBoilerplate(projectPath);
   await copyEnvExample(projectPath, TEMPLATES_DIR);
+  await emitManifest(projectPath, responses);
   if (responses.readme) await generateReadme(projectPath, "app", responses);
   process.chdir(REPO);
   return projectPath;
@@ -136,6 +139,14 @@ async function check(responses, projectPath) {
   const readme = await fsp.readFile(path.join(projectPath, "README.md"), "utf8");
   assert.ok(readme.includes("ESLint + Prettier"), "README: description missing 'ESLint + Prettier'");
   assert.ok(await exists(path.join(projectPath, "LICENSE")), "LICENSE missing");
+
+  // Manifest v2 contract gate (#23, #16)
+  const manifestPath = path.join(projectPath, "lumen.config.json");
+  assert.ok(await exists(manifestPath), "lumen.config.json missing");
+  const rawManifest = JSON.parse(await fsp.readFile(manifestPath, "utf8"));
+  const parsedManifest = parseManifest(rawManifest);
+  assert.strictEqual(parsedManifest.manifestVersion, 2, "manifestVersion !== 2");
+  assert.strictEqual(parsedManifest.framework.name, "react", "manifest framework mismatch");
 }
 
 for (const language of ["ts", "js"]) {

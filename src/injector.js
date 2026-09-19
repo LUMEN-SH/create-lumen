@@ -118,12 +118,12 @@ export async function injectFormatter(projectPath, templatesDir, responses) {
 
   // Wire eslint-config-prettier only for the eslint + prettier combination
   if (responses.linter === "eslint" && responses.formatter === "prettier") {
-    await wireEslintPrettier(projectPath, responses.language);
+    await wireEslintPrettier(projectPath, responses.language, responses.framework);
   }
 }
 
-async function wireEslintPrettier(projectPath, language) {
-  const ext = language === "ts" ? "ts" : "js";
+async function wireEslintPrettier(projectPath, language, framework) {
+  const ext = framework === "next" ? "mjs" : language === "ts" ? "ts" : "js";
   const eslintConfigPath = path.join(projectPath, `eslint.config.${ext}`);
   try {
     let content = await fsp.readFile(eslintConfigPath, "utf8");
@@ -156,6 +156,11 @@ async function wireEslintPrettier(projectPath, language) {
     if (result.includes("tseslint.config(")) {
       result = result.replace(
         /(export default tseslint\.config\([\s\S]*?)(\n\s*\);)/,
+        pushLast
+      );
+    } else if (result.includes("const eslintConfig = [")) {
+      result = result.replace(
+        /(const eslintConfig = \[[\s\S]*?)(\n\s*\];)/,
         pushLast
       );
     } else {
@@ -238,9 +243,9 @@ export async function injectConditionals(projectPath, templatesDir, responses, a
 
   // 6. Linter
   if (responses.linter === "eslint") {
-    await injectLinter(projectPath, templatesDir, "eslint", language);
+    await injectLinter(projectPath, templatesDir, "eslint", language, responses.framework);
   } else if (responses.linter === "oxlint") {
-    await injectLinter(projectPath, templatesDir, "oxlint", language);
+    await injectLinter(projectPath, templatesDir, "oxlint", language, responses.framework);
   }
 
   // 7. Create feature script (feature-based only)
@@ -378,16 +383,24 @@ async function injectTesting(projectPath, templatesDir, framework, language, arc
   } catch {}
 }
 
-async function injectLinter(projectPath, templatesDir, linter, language) {
+export async function injectLinter(projectPath, templatesDir, linter, language, framework) {
   const lintingDir = path.join(templatesDir, "conditional", "linting", linter);
 
   if (linter === "eslint") {
-    const configExt = language === "ts" ? "ts" : "js";
-    const configSrc = path.join(lintingDir, `eslint.config.${configExt}`);
-    try {
-      await fsp.access(configSrc);
-      await fsp.copyFile(configSrc, path.join(projectPath, `eslint.config.${configExt}`));
-    } catch {}
+    if (framework === "next") {
+      const configSrc = path.join(lintingDir, "next", "eslint.config.mjs");
+      try {
+        await fsp.access(configSrc);
+        await fsp.copyFile(configSrc, path.join(projectPath, "eslint.config.mjs"));
+      } catch {}
+    } else {
+      const configExt = language === "ts" ? "ts" : "js";
+      const configSrc = path.join(lintingDir, `eslint.config.${configExt}`);
+      try {
+        await fsp.access(configSrc);
+        await fsp.copyFile(configSrc, path.join(projectPath, `eslint.config.${configExt}`));
+      } catch {}
+    }
   } else if (linter === "oxlint") {
     const configSrc = path.join(lintingDir, "oxlintrc.json");
     try {

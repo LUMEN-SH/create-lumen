@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - **Templates: migrate to Tailwind CSS v4 (v3 dropped)** (#6) — single `@import "tailwindcss";` template in `templates/css/tailwind/src/globals.css`, CSS-first `@theme` tokens in `themes.css`, `@tailwindcss/vite` plugin for React + Vite, and `@tailwindcss/postcss` with `postcss.config.mjs` for Next.js.
+- **Tooling: eslint / prettier / oxlint / oxfmt parity in v2 templates** (#24) — full linter × formatter matrix (`eslint`/`oxlint` × `prettier`/`oxfmt`), prompt option to select Oxfmt with ESLint, Next.js seam with `eslint-config-next` and `eslint.config.mjs`, automatic conditional `eslint-config-prettier` wiring, consistent package scripts (`lint`, `lint:fix`, `format`, `format:check`), and format idempotence across multiple passes.
+- **React + Vite: validate bundle under manifest v2** (#23) — wired `emitManifest` in verification harnesses and smoke tests, verified byte-deterministic emission and Zod schema compliance of `lumen.config.json` v2 across all matrix cells.
+- **CI: publish create-lumen v2 pre-releases to npm** (#31) — configured `.github/workflows/publish.yml` to publish pre-releases (`alpha`, `beta`, `rc`, `next`) to npm under dist-tags and create GitHub pre-releases.
+- **Manifest/template contract documentation** (#9) — formalized and documented the shared manifest v2 and path mapping contract in `docs/manifest-v2.md` consumed by `lumen-cli`.
 
 ## [1.2.0] — 2026-09-17
 
