@@ -27,24 +27,27 @@ flowchart LR
 ## 2. Dependency graph (cross-project)
 
 Solid arrows = hard dependency. Dotted arrows = cross-repo dependency
-from `create-lumen` to `lumen-cli`.
+from `create-lumen` to `lumen-cli`. Green fill = merged (done). ✅ in text without fill = unblocked, ready to do.
 
 ```mermaid
 flowchart TD
     subgraph CL["create-lumen v2"]
         direction TB
-        CreateLumen13["create-lumen#13 · nested schema"]
-        CreateLumen14["create-lumen#14 · Zod validator"]
-        CreateLumen15["create-lumen#15 · path mapping"]
-        CreateLumen16["create-lumen#16 · emit lumen.config.json"]
-        CreateLumen4["create-lumen#4 · publish JSON Schema"]
-        CreateLumen9["create-lumen#9 · shared contract"]
-        CreateLumen6["create-lumen#6 · Tailwind v4 ✅"]
+        CreateLumen13["✅ create-lumen#13 · nested schema<br/>merged #39 b423dc9"]
+        CreateLumen14["✅ create-lumen#14 · Zod validator<br/>merged #39"]
+        CreateLumen15["✅ create-lumen#15 · path mapping<br/>merged #40"]
+        CreateLumen16["✅ create-lumen#16 · emit lumen.config.json<br/>merged #40"]
+        CreateLumen4["✅ create-lumen#4 · publish JSON Schema<br/>merged #39"]
+        CreateLumen9["✅ create-lumen#9 · shared contract<br/>unblocked (needs #13 ✅)"]
+        CreateLumen6["✅ create-lumen#6 · Tailwind v4"]
+        CreateLumen25["✅ create-lumen#25 · capability model<br/>unblocked (needs #13 ✅)"]
+        CreateLumen10["create-lumen#10 · capabilities epic<br/>needs #25"]
+        CreateLumen11["create-lumen#11 · back navigation<br/>needs #25 #27"]
         CreateLumen24["create-lumen#24 · tooling parity"]
-        CreateLumen23["create-lumen#23 · validate React/Vite under v2"]
-        CreateLumen29["create-lumen#29 · non-interactive flags"]
-        CreateLumen31["create-lumen#31 · CI pre-releases"]
-        CreateLumen25["create-lumen#25 · capability model"]
+        CreateLumen23["create-lumen#23 · validate React/Vite under v2<br/>needs #16 #6 #24"]
+        CreateLumen29["create-lumen#29 · non-interactive flags<br/>needs #16 ✅"]
+        CreateLumen31["create-lumen#31 · CI pre-releases<br/>needs #16 #23"]
+        CreateLumen38["create-lumen#38 · vendor bases + BaseProvider<br/>needs #13 #25"]
         CreateLumen26["create-lumen#26 · gate prompts"]
         CreateLumen27["create-lumen#27 · template composition"]
         CreateLumen33["create-lumen#33 · shadcn/ui"]
@@ -54,15 +57,20 @@ flowchart TD
         CreateLumen35["create-lumen#35 · testing epic"]
         CreateLumen36["create-lumen#36 · pairwise/t-way"]
         CreateLumen37["create-lumen#37 · per-overlay contract tests"]
-        CreateLumen28["create-lumen#28 · schema fixtures"]
+        CreateLumen28["✅ create-lumen#28 · schema fixtures<br/>unblocked (needs #14 ✅)"]
         CreateLumen5["create-lumen#5 · headless e2e"]
-        CreateLumen17["create-lumen#17 · migration guide"]
+        CreateLumen17["create-lumen#17 · migration guide<br/>needs #16 ✅"]
+        CreateLumen32["create-lumen#32 · backlog v2.0.0<br/>(umbrella)"]
 
         CreateLumen13 --> CreateLumen14 --> CreateLumen16
         CreateLumen13 --> CreateLumen15 --> CreateLumen16
         CreateLumen13 --> CreateLumen4
         CreateLumen13 --> CreateLumen9
         CreateLumen13 --> CreateLumen25 --> CreateLumen26 --> CreateLumen27
+        CreateLumen13 --> CreateLumen10
+        CreateLumen13 --> CreateLumen38
+        CreateLumen25 --> CreateLumen11
+        CreateLumen27 --> CreateLumen11
         CreateLumen6 --> CreateLumen23
         CreateLumen24 --> CreateLumen23
         CreateLumen16 --> CreateLumen23 --> CreateLumen31
@@ -74,6 +82,17 @@ flowchart TD
         CreateLumen27 --> CreateLumen8 --> CreateLumenNext
         CreateLumen35 --> CreateLumen36
         CreateLumen35 --> CreateLumen37
+
+        style CreateLumen13 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen14 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen15 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen16 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen4 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen9 stroke:#0e8a16,stroke-width:2px
+        style CreateLumen25 stroke:#0e8a16,stroke-width:2px
+        style CreateLumen28 stroke:#0e8a16,stroke-width:2px
+        style CreateLumen17 stroke:#0e8a16,stroke-width:2px
+        style CreateLumen29 stroke:#0e8a16,stroke-width:2px
     end
 
     subgraph LC["lumen-cli v1"]
@@ -119,16 +138,16 @@ Everything in a wave can run at the same time.
 flowchart TB
     subgraph W0["🌊 Wave 0 — start now (fully parallel)"]
         direction LR
-        LaneA["Lane A<br/>create-lumen manifest core<br/>create-lumen#13 #14 #15 #16 #4"]
+        LaneA["Lane A<br/>create-lumen manifest core<br/>#13 #14 #4 ✅ merged #39<br/>#15 #16 ✅ merged #40<br/>#9 #25 ✅ unblocked (#13)<br/>#17 #29 ✅ unblocked (#16)<br/>#23 ⏳ partial (#16 ✅ + #6 #24)"]
         LaneB["Lane B<br/>create-lumen templates / tooling<br/>create-lumen#6 #24"]
         LaneC["Lane C<br/>lumen-cli skeleton<br/>lumen-cli#1 #2"]
         LaneD["Lane D<br/>lumen-cli docs-engine port<br/>lumen-cli#24 #16"]
-        LaneG["Lane G<br/>testing strategy<br/>create-lumen#35 #36 #37 #28 #5"]
+        LaneG["Lane G<br/>testing strategy<br/>create-lumen#35 #36 #37 #28 #5<br/>#28 now ready (#14 ✅)"]
     end
 
     subgraph W1["🌊 Wave 1"]
         direction LR
-        LaneE["Lane E<br/>create-lumen engine + options<br/>create-lumen#25 #26 #27 #33 #34 #11"]
+        LaneE["Lane E<br/>create-lumen engine + options<br/>create-lumen#25 #26 #27 #33 #34 #11 #10 #38"]
         LaneH["Lane H<br/>lumen-cli generators<br/>lumen-cli#7 #8 #11–#14"]
     end
 
@@ -154,6 +173,8 @@ flowchart TB
     LaneI --> LaneL
     LaneJ --> LaneL
     LaneK --> LaneL
+
+    style LaneA fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
 ```
 
 Suggested split: **Dev 1** A→E→F · **Dev 2** B→G→L · **Dev 3**
