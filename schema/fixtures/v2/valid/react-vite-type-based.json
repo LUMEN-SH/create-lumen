@@ -2,32 +2,32 @@
   "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
   "manifestVersion": 2,
   "framework": {
-    "name": "next",
-    "variant": "app-router"
+    "name": "react",
+    "variant": "vite"
   },
   "styling": {
-    "engine": "tailwind"
+    "engine": "bootstrap"
   },
   "architecture": {
-    "type": "component-based"
+    "type": "type-based"
   },
   "ui": {
     "kit": "none"
   },
   "docs": {
-    "language": "en"
+    "language": "es"
   },
   "paths": {
-    "features": "src/components",
+    "features": "src/features",
     "components": "src/components",
     "services": "src/services",
     "hooks": "src/hooks",
-    "pages": "app",
-    "ui": "src/components/ui"
+    "pages": "src/pages",
+    "ui": "src/ui"
   },
   "tooling": {
-    "language": "ts",
-    "linter": "eslint",
-    "formatter": "prettier"
+    "language": "js",
+    "linter": "oxlint",
+    "formatter": "oxfmt"
   }
 }

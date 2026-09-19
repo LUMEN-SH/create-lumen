@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
 // ---------------------------------------------------------------------------
@@ -13,7 +13,7 @@ export const FRAMEWORK_BUNDLERS = ["turbopack", "webpack"];
 export const FRAMEWORK_ADAPTERS = ["node", "vercel", "cloudflare", "static"];
 
 export const STYLING_ENGINES = ["tailwind", "bootstrap", "none"];
-export const ARCHITECTURE_TYPES = ["feature-based", "component-based", "hybrid", "none"];
+export const ARCHITECTURE_TYPES = ["feature-based", "type-based", "hybrid", "none"];
 export const UI_KITS = ["shadcn", "none"];
 export const DOCS_LANGUAGES = ["en", "es"];
 export const TOOLING_LANGUAGES = ["ts", "js"];
@@ -133,7 +133,7 @@ export const manifestSchemaV2 = z
     // architecture scoping per framework (#34)
     const allowedByFramework =
       framework.name === "react"
-        ? ["feature-based", "component-based", "none"]
+        ? ["feature-based", "type-based", "none"]
         : ["feature-based", "hybrid", "none"];
     if (!allowedByFramework.includes(architecture.type)) {
       ctx.addIssue({

@@ -1,4 +1,4 @@
-# Migration Guide: create-lumen v1.x → v2.0.0
+﻿# Migration Guide: create-lumen v1.x â†’ v2.0.0
 
 > **Target Audience**: Developers with projects scaffolded using `create-lumen` 1.x or maintaining custom `lumen.config.json` files.  
 > **Applicable Versions**: `create-lumen` >= 2.0.0, `lumen-cli` >= 1.0.0  
@@ -86,7 +86,7 @@ This fail-fast behavior protects your codebase from accidental file generation i
 | *(none)* | `"framework.bundler"` | Optional, Next.js only (`"turbopack"` or `"webpack"`). Omit for React. |
 | *(none)* | `"framework.adapter"` | Optional, Next.js only (`"node"`, `"vercel"`, `"cloudflare"`, `"static"`). Omit for React. |
 | `"css": "tailwind"` or `"cssFramework"` | `"styling": { "engine": "tailwind" }` | Engines: `"tailwind"`, `"bootstrap"`, `"none"`. Tailwind is always v4. |
-| `"architecture": "feature-based"` | `"architecture": { "type": "feature-based" }` | React supports: `"feature-based"`, `"component-based"`, `"none"`. Next.js supports: `"feature-based"`, `"hybrid"`, `"none"`. |
+| `"architecture": "feature-based"` | `"architecture": { "type": "feature-based" }` | React supports: `"feature-based"`, `"type-based"`, `"none"`. Next.js supports: `"feature-based"`, `"hybrid"`, `"none"`. |
 | *(none)* | `"ui": { "kit": "none" }` | Options: `"none"` or `"shadcn"`. If `"shadcn"`, `styling.engine` must be `"tailwind"`. |
 | *(none)* | `"docs": { "language": "en" }` | Single documentation language chosen at init: `"en"` or `"es"`. |
 | *(hardcoded in v1)* | `"paths": { ... }` | Explicit object containing 6 required POSIX directory paths: `features`, `components`, `services`, `hooks`, `pages`, `ui`. See table below. |
@@ -115,7 +115,7 @@ In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly ins
 }
 ```
 
-### React + Vite Component-Based:
+### React + Vite type-based:
 ```json
 "paths": {
   "features": "src/features",

@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import { parseManifest, isV1Manifest } from "../../src/manifest/schema.js";
 import { loadValidFixtures, loadInvalidFixtures, getFixture } from "../../schema/fixtures/index.js";
@@ -31,7 +31,7 @@ test("manifest v2 contract tests: invalid fixtures fail with expected errors (#2
 
   const expectations = {
     "react-hybrid": /architecture\.type.*hybrid.*not valid for framework "react"/i,
-    "next-component-based": /architecture\.type.*component-based.*not valid for framework "next"/i,
+    "next-type-based": /architecture\.type.*type-based.*not valid for framework "next"/i,
     "shadcn-without-tailwind": /ui\.kit "shadcn" requires styling\.engine "tailwind"/i,
     "react-variant-mismatch": /framework\.variant must be "vite" when framework\.name is "react"/i,
     "react-bundler": /framework\.bundler is only valid when framework\.name is "next"/i,

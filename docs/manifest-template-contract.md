@@ -1,4 +1,4 @@
-# Manifest and Template Contract: create-lumen ↔ lumen-cli
+﻿# Manifest and Template Contract: create-lumen â†” lumen-cli
 
 > **Contract Version**: 2.0  
 > **Participating Packages**: `create-lumen` (scaffolder/producer), `lumen-cli` (developer CLI/consumer)  
@@ -35,7 +35,7 @@ The manifest is emitted at `<projectRoot>/lumen.config.json` as a UTF-8 JSON fil
     "engine": "tailwind | bootstrap | none"
   },
   "architecture": {
-    "type": "feature-based | component-based | hybrid | none"
+    "type": "feature-based | type-based | hybrid | none"
   },
   "ui": {
     "kit": "shadcn | none"
@@ -79,7 +79,7 @@ All paths in `paths` MUST:
 | Framework | Variant | Architecture | `features` | `components` | `services` | `hooks` | `pages` | `ui` |
 |-----------|---------|--------------|------------|--------------|------------|---------|---------|------|
 | `react` | `vite` | `feature-based` | `src/features` | `src/shared/components` | `src/shared/services` | `src/shared/hooks` | `src/app/router` | `src/shared/components/ui` |
-| `react` | `vite` | `component-based` | `src/features` | `src/components` | `src/services` | `src/hooks` | `src/pages` | `src/ui` |
+| `react` | `vite` | `type-based` | `src/features` | `src/components` | `src/services` | `src/hooks` | `src/pages` | `src/ui` |
 | `react` | `vite` | `none` | `src` | `src/components` | `src/services` | `src/hooks` | `src/pages` | `src/components/ui` |
 | `next` | `app-router` | `feature-based` | `src/features` | `src/shared/components` | `src/shared/services` | `src/shared/hooks` | `app` | `src/shared/components/ui` |
 | `next` | `app-router` | `hybrid` | `src/features` | `src/shared/components` | `src/shared/services` | `src/shared/hooks` | `app` | `src/shared/components/ui` |

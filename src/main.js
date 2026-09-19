@@ -1,4 +1,4 @@
-import { isCancel, log, spinner, text } from "@clack/prompts";
+﻿import { isCancel, log, spinner, text } from "@clack/prompts";
 import chalk from "chalk";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -111,7 +111,7 @@ export async function main(options = {}) {
   // 7. Inject architecture templates
   const archSpin = spinner();
   archSpin.start(
-    `Setting up ${responses.architecture === "feature-based" ? "feature-based" : "component-based"} architecture...`
+    `Setting up ${responses.architecture === "feature-based" ? "feature-based" : "type-based"} architecture...`
   );
   try {
     await injectArchitecture(
@@ -212,7 +212,7 @@ export async function main(options = {}) {
   // 12.5 Copy .env.example into the project
   await copyEnvExample(projectPath, TEMPLATES_DIR);
 
-  // 12.6 Emit lumen.config.json (manifest v2) — byte-deterministic, Zod-validated
+  // 12.6 Emit lumen.config.json (manifest v2) â€” byte-deterministic, Zod-validated
   const manifestSpin = spinner();
   manifestSpin.start("Writing lumen.config.json...");
   try {
@@ -252,7 +252,7 @@ export async function main(options = {}) {
   log.step(chalk.green("\nProject setup complete!"));
   log.message(
     chalk.gray(
-      `  Architecture: ${responses.architecture === "feature-based" ? "Feature-based" : "Component-based"}`
+      `  Architecture: ${responses.architecture === "feature-based" ? "Feature-based" : "type-based"}`
     )
   );
 

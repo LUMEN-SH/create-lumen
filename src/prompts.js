@@ -1,4 +1,4 @@
-import { confirm, isCancel, note, select } from "@clack/prompts";
+﻿import { confirm, isCancel, note, select } from "@clack/prompts";
 import chalk from "chalk";
 import { configExists, loadConfig, saveConfig } from "@/config-cache.js";
 
@@ -12,7 +12,7 @@ function formatConfig(responses) {
   const arch =
     responses.architecture === "feature-based"
       ? "Feature-based"
-      : "Component-based";
+      : "type-based";
   const css =
     responses.cssFramework === "none"
       ? "None"
@@ -32,21 +32,21 @@ function formatConfig(responses) {
       ? "Redux Toolkit"
       : "Zustand";
 
-  const docsLang = responses.docsLanguage === "es" ? "ES" : responses.docsLanguage === "en" ? "EN" : "—";
+  const docsLang = responses.docsLanguage === "es" ? "ES" : responses.docsLanguage === "en" ? "EN" : "â€”";
   return [
-    `• ${chalk.bold("Architecture:")} ${chalk.green(arch)}`,
-    `• ${chalk.bold("Language:")} ${chalk.green(lang)}`,
-    `• ${chalk.bold("CSS:")} ${chalk.yellow(css)}`,
-    `• ${chalk.bold("Testing:")} ${chalk.magenta(testing)}`,
-    `• ${chalk.bold("Router:")} ${responses.router ? chalk.green("Yes") : chalk.red("No")}`,
-    `• ${chalk.bold("State:")} ${chalk.blue(state)}`,
-    `• ${chalk.bold("Icons:")} ${chalk.blue(responses.iconLibrary === "none" ? "None" : responses.iconLibrary === "lucide" ? "Lucide" : "Huge")}`,
-    `• ${chalk.bold("API Client:")} ${responses.apiClient === "axios" ? chalk.green("Axios") : responses.apiClient === "fetch" ? chalk.yellow("Fetch") : chalk.red("None")}`,
-    `• ${chalk.bold("Linter:")} ${responses.linter === "oxlint" ? chalk.green("Oxlint") : responses.linter === "eslint" ? chalk.yellow("ESLint") : chalk.red("None")}`,
-    `• ${chalk.bold("Formatter:")} ${responses.formatter === "oxfmt" ? chalk.green("Oxfmt") : responses.formatter === "prettier" ? chalk.yellow("Prettier") : chalk.red("None")}`,
-    `• ${chalk.bold("Docs:")} ${chalk.cyan(docsLang)}`,
-    `• ${chalk.bold("Git:")} ${responses.gitInit ? chalk.green("Yes") : chalk.red("No")}`,
-    `• ${chalk.bold("README:")} ${responses.readme ? chalk.green("Yes") : chalk.red("No")}`,
+    `â€¢ ${chalk.bold("Architecture:")} ${chalk.green(arch)}`,
+    `â€¢ ${chalk.bold("Language:")} ${chalk.green(lang)}`,
+    `â€¢ ${chalk.bold("CSS:")} ${chalk.yellow(css)}`,
+    `â€¢ ${chalk.bold("Testing:")} ${chalk.magenta(testing)}`,
+    `â€¢ ${chalk.bold("Router:")} ${responses.router ? chalk.green("Yes") : chalk.red("No")}`,
+    `â€¢ ${chalk.bold("State:")} ${chalk.blue(state)}`,
+    `â€¢ ${chalk.bold("Icons:")} ${chalk.blue(responses.iconLibrary === "none" ? "None" : responses.iconLibrary === "lucide" ? "Lucide" : "Huge")}`,
+    `â€¢ ${chalk.bold("API Client:")} ${responses.apiClient === "axios" ? chalk.green("Axios") : responses.apiClient === "fetch" ? chalk.yellow("Fetch") : chalk.red("None")}`,
+    `â€¢ ${chalk.bold("Linter:")} ${responses.linter === "oxlint" ? chalk.green("Oxlint") : responses.linter === "eslint" ? chalk.yellow("ESLint") : chalk.red("None")}`,
+    `â€¢ ${chalk.bold("Formatter:")} ${responses.formatter === "oxfmt" ? chalk.green("Oxfmt") : responses.formatter === "prettier" ? chalk.yellow("Prettier") : chalk.red("None")}`,
+    `â€¢ ${chalk.bold("Docs:")} ${chalk.cyan(docsLang)}`,
+    `â€¢ ${chalk.bold("Git:")} ${responses.gitInit ? chalk.green("Yes") : chalk.red("No")}`,
+    `â€¢ ${chalk.bold("README:")} ${responses.readme ? chalk.green("Yes") : chalk.red("No")}`,
   ].join("\n");
 }
 
@@ -200,12 +200,12 @@ export async function getUserInputs(projectName, { quickSetup = false, manifest 
       {
         label: "Feature-based",
         value: "feature-based",
-        hint: "Scales to large apps — code grouped by business domain",
+        hint: "Scales to large apps â€” code grouped by business domain",
       },
       {
-        label: "Component-based",
-        value: "component-based",
-        hint: "Small apps / component libraries — code grouped by UI type",
+        label: "type-based",
+        value: "type-based",
+        hint: "Small apps / component libraries â€” code grouped by UI type",
       },
     ],
     initialValue: "feature-based",
@@ -326,7 +326,7 @@ export async function getUserInputs(projectName, { quickSetup = false, manifest 
     message: "Which docs language do you want?",
     options: [
       { label: "English", value: "en" },
-      { label: "Español", value: "es" },
+      { label: "EspaÃ±ol", value: "es" },
     ],
     initialValue: "en",
   });

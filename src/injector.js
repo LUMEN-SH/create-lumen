@@ -1,4 +1,4 @@
-import { promises as fsp } from "fs";
+﻿import { promises as fsp } from "fs";
 import path from "path";
 import { copyDirRecursive, writeFileRecursive } from "@/utils/fs.js";
 
@@ -30,7 +30,7 @@ export async function injectArchitecture(projectPath, templatesDir, architecture
   try { await fsp.rm(defaultAppTsx, { force: true }); } catch {}
   try { await fsp.rm(defaultAppJsx, { force: true }); } catch {}
   // Remove Vite's default index.css (framework CSS lives in src/styles/,
-  // copied below — never at the src/ root).
+  // copied below â€” never at the src/ root).
   try { await fsp.rm(path.join(projectPath, "src", "index.css"), { force: true }); } catch {}
   try { await fsp.rm(path.join(projectPath, "src", "App.css"), { force: true }); } catch {}
 
@@ -147,7 +147,7 @@ async function wireEslintPrettier(projectPath, language, framework) {
 
     // Append prettier as the LAST element of the eslint config.
     // eslint-config-prettier exports a flat-config object (not an iterable),
-    // so it must be passed by reference, not spread — passing `...prettier`
+    // so it must be passed by reference, not spread â€” passing `...prettier`
     // breaks under ESLint's jiti-based TS config loading.
     // The JS template exports an array (`export default [...]`); the TS
     // template uses a function call (`export default tseslint.config(...)`).
@@ -259,7 +259,7 @@ export async function injectConditionals(projectPath, templatesDir, responses, a
 }
 
 // Remove .gitkeep placeholders from src/ directories that now contain real
-// files (e.g. component-based `services/.gitkeep` after the axios/fetch client
+// files (e.g. type-based `services/.gitkeep` after the axios/fetch client
 // overlay lands). A folder with nothing but its placeholder keeps it.
 async function pruneRedundantGitkeeps(projectPath) {
   const walk = async (dir) => {
@@ -285,9 +285,9 @@ async function pruneRedundantGitkeeps(projectPath) {
 }
 
 // Overlays that ship presentational components (router, icons) carry optional
-// tailwind/bootstrap subfolders. Copy the root version first — it holds the
+// tailwind/bootstrap subfolders. Copy the root version first â€” it holds the
 // framework-agnostic skeleton (routed App, route tables) plus the inline
-// markup defaults used for cssFramework "none" — then overlay the framework's
+// markup defaults used for cssFramework "none" â€” then overlay the framework's
 // subfolder so its markup-specific files (transitive layouts, home pages)
 // win; `copyDirRecursive` overwrites on name collision.
 async function injectOverlayVariant(projectPath, templatesDir, rel, cssFramework, language) {
@@ -341,7 +341,7 @@ async function injectTesting(projectPath, templatesDir, framework, language, arc
   } catch {}
 
   // Jest keeps its setup at the template root (jest.setup.ts/js), referenced by
-  // jest.config as <rootDir>/jest.setup.ts — copy it to the project root.
+  // jest.config as <rootDir>/jest.setup.ts â€” copy it to the project root.
   if (framework === "jest") {
     const jestSetupSrc = path.join(testingDir, `jest.setup.${configExt}`);
     try {

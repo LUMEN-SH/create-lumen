@@ -1,4 +1,4 @@
-# Manifest v2 - nested schema (create-lumen#13, #14, #4)
+﻿# Manifest v2 - nested schema (create-lumen#13, #14, #4)
 
 ## Rationale
 
@@ -17,7 +17,7 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
     "adapter?": "node|vercel|cloudflare|static"
   },
   "styling": { "engine": "tailwind|bootstrap|none" },
-  "architecture": { "type": "feature-based|component-based|hybrid|none" },
+  "architecture": { "type": "feature-based|type-based|hybrid|none" },
   "ui": { "kit": "shadcn|none" },
   "docs": { "language": "en|es" },
   "paths": {

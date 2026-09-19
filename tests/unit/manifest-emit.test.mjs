@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import { promises as fsp } from "fs";
 import os from "os";
@@ -39,8 +39,8 @@ test("buildManifest: produces valid v2 manifest with $schema and correct paths",
   assert.doesNotThrow(() => parseManifest(m));
 });
 
-test("buildManifest: component-based maps to src/pages etc", () => {
-  const m = buildManifest({ ...baseResponses, architecture: "component-based" });
+test("buildManifest: type-based maps to src/pages etc", () => {
+  const m = buildManifest({ ...baseResponses, architecture: "type-based" });
   assert.equal(m.paths.components, "src/components");
   assert.equal(m.paths.pages, "src/pages");
   assert.equal(m.paths.ui, "src/ui");
@@ -76,7 +76,7 @@ test("emitManifest: writes lumen.config.json with trailing newline and byte-dete
 });
 
 test("emitManifest: passes Zod validator for every generated cell (feature/component x ts/js)", async () => {
-  for (const arch of ["feature-based", "component-based"]) {
+  for (const arch of ["feature-based", "type-based"]) {
     for (const lang of ["ts", "js"]) {
       const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "lumen-emit-cell-"));
       await emitManifest(dir, { ...baseResponses, architecture: arch, language: lang });
