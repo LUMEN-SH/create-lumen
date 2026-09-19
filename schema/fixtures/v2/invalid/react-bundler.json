@@ -1,0 +1,34 @@
+{
+  "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+  "manifestVersion": 2,
+  "framework": {
+    "name": "react",
+    "variant": "vite",
+    "bundler": "turbopack"
+  },
+  "styling": {
+    "engine": "tailwind"
+  },
+  "architecture": {
+    "type": "feature-based"
+  },
+  "ui": {
+    "kit": "none"
+  },
+  "docs": {
+    "language": "en"
+  },
+  "paths": {
+    "features": "src/features",
+    "components": "src/shared/components",
+    "services": "src/shared/services",
+    "hooks": "src/shared/hooks",
+    "pages": "src/app/router",
+    "ui": "src/shared/components/ui"
+  },
+  "tooling": {
+    "language": "ts",
+    "linter": "eslint",
+    "formatter": "prettier"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "framework": "react",
+  "css": "tailwind",
+  "architecture": "feature-based",
+  "language": "ts",
+  "router": true,
+  "stateManagement": "none",
+  "iconLibrary": "none",
+  "apiClient": "none",
+  "testing": "vitest"
+}

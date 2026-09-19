@@ -1,0 +1,17 @@
+{
+  "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+  "manifestVersion": 2,
+  "framework": {
+    "name": "react",
+    "variant": "vite"
+  },
+  "styling": {
+    "engine": "tailwind"
+  },
+  "architecture": {
+    "type": "feature-based"
+  },
+  "ui": {
+    "kit": "none"
+  }
+}
