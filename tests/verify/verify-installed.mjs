@@ -55,8 +55,7 @@ async function ensureBase(language) {
 async function generate(responses, baseApp, projectPath) {
   process.chdir(REPO);
   await fsp.rm(projectPath, { recursive: true, force: true });
-  await fsp.mkdir(projectPath, { recursive: true });
-  execSync(`rsync -a --delete "${baseApp}/" "${projectPath}/"`);
+  await fsp.cp(baseApp, projectPath, { recursive: true });
 
   await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language, responses.cssFramework);
   await injectConditionals(projectPath, TEMPLATES_DIR, responses, responses.architecture, responses.language);

@@ -43,8 +43,7 @@ async function ensureBase(language) {
 async function generate(responses, baseApp, projectPath) {
   process.chdir(REPO);
   await fsp.rm(projectPath, { recursive: true, force: true });
-  await fsp.mkdir(projectPath, { recursive: true });
-  execSync(`rsync -a --delete "${baseApp}/" "${projectPath}/"`);
+  await fsp.cp(baseApp, projectPath, { recursive: true });
 
   await injectArchitecture(projectPath, TEMPLATES_DIR, responses.architecture, responses.language, responses.cssFramework);
   await injectConditionals(projectPath, TEMPLATES_DIR, responses, responses.architecture, responses.language);
@@ -62,7 +61,7 @@ async function generate(responses, baseApp, projectPath) {
   await cleanupBoilerplate(projectPath);
   await copyEnvExample(projectPath, TEMPLATES_DIR);
   await generateReadme(projectPath, "app", responses);
-  execSync(`ln -s "${VENDOR}/node_modules" "${projectPath}/node_modules"`);
+  await fsp.symlink(path.join(VENDOR, "node_modules"), path.join(projectPath, "node_modules"), "junction");
   if (responses.formatter && responses.formatter !== "none") {
     await runProjectFormat(projectPath, responses);
   }

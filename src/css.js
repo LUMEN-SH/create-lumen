@@ -10,6 +10,7 @@ export async function setupCssFramework({
   architecture,
   ext,
   pkg: _pkg,
+  framework = "vite",
 }) {
   process.chdir(projectPath);
   const cssDir = path.join(templatesDir, "css");
@@ -31,13 +32,23 @@ export async function setupCssFramework({
   }
 
   if (cssFramework === "tailwind") {
-    const viteConfigFile = `vite.config.${language === "ts" ? "ts" : "js"}`;
-    const viteConfigTarget = path.join(projectPath, viteConfigFile);
-    const viteConfigContent = await fsp.readFile(
-      path.join(cssDir, "tailwind", viteConfigFile),
-      "utf8"
-    );
-    await fsp.writeFile(viteConfigTarget, viteConfigContent, "utf8");
+    if (framework === "next") {
+      const postcssConfigFile = "postcss.config.mjs";
+      const postcssConfigTarget = path.join(projectPath, postcssConfigFile);
+      const postcssConfigContent = await fsp.readFile(
+        path.join(cssDir, "tailwind", postcssConfigFile),
+        "utf8"
+      );
+      await fsp.writeFile(postcssConfigTarget, postcssConfigContent, "utf8");
+    } else {
+      const viteConfigFile = `vite.config.${language === "ts" ? "ts" : "js"}`;
+      const viteConfigTarget = path.join(projectPath, viteConfigFile);
+      const viteConfigContent = await fsp.readFile(
+        path.join(cssDir, "tailwind", viteConfigFile),
+        "utf8"
+      );
+      await fsp.writeFile(viteConfigTarget, viteConfigContent, "utf8");
+    }
 
     const globalsContent = await fsp.readFile(
       path.join(cssDir, "tailwind", "src", "globals.css"),
