@@ -1,0 +1,33 @@
+{
+  "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+  "manifestVersion": 2,
+  "framework": {
+    "name": "react",
+    "variant": "vite"
+  },
+  "styling": {
+    "engine": "bootstrap"
+  },
+  "architecture": {
+    "type": "type-based"
+  },
+  "ui": {
+    "kit": "none"
+  },
+  "docs": {
+    "language": "es"
+  },
+  "paths": {
+    "features": "src/features",
+    "components": "src/components",
+    "services": "src/services",
+    "hooks": "src/hooks",
+    "pages": "src/pages",
+    "ui": "src/ui"
+  },
+  "tooling": {
+    "language": "js",
+    "linter": "oxlint",
+    "formatter": "oxfmt"
+  }
+}

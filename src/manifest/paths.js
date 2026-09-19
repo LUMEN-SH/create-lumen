@@ -1,5 +1,5 @@
-/**
- * Path mapping for lumen.config.json — #15
+﻿/**
+ * Path mapping for lumen.config.json â€” #15
  * Resolves the 6 generator target directories from framework + architecture.
  * Paths are relative to project root and use posix separators.
  */
@@ -44,8 +44,8 @@ export function resolvePaths({ architecture, framework = {} } = {}) {
     };
   }
 
-  // -- component-based (React + Vite only; also allowed as fallback for hybrid/none if needed)
-  if (arch === "component-based") {
+  // -- type-based (React + Vite only; also allowed as fallback for hybrid/none if needed)
+  if (arch === "type-based") {
     if (isNext) {
       // Not a valid combo per schema, but provide a deterministic fallback
       // to keep resolver total (hybrid should be used for Next)
@@ -93,7 +93,7 @@ export function resolvePaths({ architecture, framework = {} } = {}) {
     };
   }
 
-  // -- none (minimal flat src/ — no imposed convention)
+  // -- none (minimal flat src/ â€” no imposed convention)
   if (arch === "none") {
     if (isNext) {
       const nextRoot = nextPagesForVariant(variant);

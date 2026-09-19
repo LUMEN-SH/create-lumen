@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import { parseManifest, isV1Manifest, SCHEMA_URL } from "../../src/manifest/schema.js";
 
@@ -49,11 +49,11 @@ test("parseManifest rejects react + hybrid (scoped architecture #34)", () => {
   assert.throws(() => parseManifest(m), /architecture\.type.*hybrid.*not valid for framework "react"/i);
 });
 
-test("parseManifest rejects next + component-based", () => {
+test("parseManifest rejects next + type-based", () => {
   const m = {
     ...baseValid,
     framework: { name: "next", variant: "app-router" },
-    architecture: { type: "component-based" },
+    architecture: { type: "type-based" },
   };
   assert.throws(() => parseManifest(m), /not valid for framework "next"/);
 });

@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import { resolvePaths } from "../../src/manifest/paths.js";
 
@@ -14,8 +14,8 @@ test("resolvePaths: feature-based react/vite -> canonical shared paths", () => {
   });
 });
 
-test("resolvePaths: component-based react/vite", () => {
-  const p = resolvePaths({ architecture: "component-based", framework: { name: "react", variant: "vite" } });
+test("resolvePaths: type-based react/vite", () => {
+  const p = resolvePaths({ architecture: "type-based", framework: { name: "react", variant: "vite" } });
   assert.deepEqual(p, {
     features: "src/features",
     components: "src/components",
@@ -69,7 +69,7 @@ test("resolvePaths: none next pages-router -> pages root", () => {
 });
 
 test("resolvePaths: lumen-cli can resolve every target from manifest alone (keys present)", () => {
-  for (const arch of ["feature-based", "component-based", "hybrid", "none"]) {
+  for (const arch of ["feature-based", "type-based", "hybrid", "none"]) {
     for (const fw of [{ name: "react", variant: "vite" }, { name: "next", variant: "app-router" }, { name: "next", variant: "pages-router" }]) {
       const p = resolvePaths({ architecture: arch, framework: fw });
       for (const k of ["features", "components", "services", "hooks", "pages", "ui"]) {

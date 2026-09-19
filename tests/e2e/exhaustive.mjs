@@ -1,4 +1,4 @@
-import { runViteCreate } from "../../src/scaffold.js";
+﻿import { runViteCreate } from "../../src/scaffold.js";
 import { injectArchitecture, injectConditionals, injectFormatter } from "../../src/injector.js";
 import { copyEnvExample } from "../../src/env.js";
 import { setupCssFramework } from "../../src/css.js";
@@ -74,7 +74,7 @@ async function check(responses, projectPath) {
   if (architecture === "feature-based") {
     assert.ok(await exists(path.join(projectPath, "src/app")), "feature-based: src/app missing");
   } else {
-    assert.ok(await exists(path.join(projectPath, "src/components")), "component-based: src/components missing");
+    assert.ok(await exists(path.join(projectPath, "src/components")), "type-based: src/components missing");
   }
 
   // Main entry present, opposite removed
@@ -187,7 +187,7 @@ async function check(responses, projectPath) {
     assert.strictEqual(scripts.lint, "oxlint .", "oxlint: lint script");
   } else {
     // linter "none": the Vite base template may already ship an eslint config
-    // and a `lint` script, which the generator leaves in place — so we don't
+    // and a `lint` script, which the generator leaves in place â€” so we don't
     // assert their absence here.
   }
 
@@ -230,9 +230,9 @@ async function check(responses, projectPath) {
   }
 
   // types/ parity: both architectures ship a types index in the active language
-  // (component-based at src/types, feature-based at src/shared/types)
+  // (type-based at src/types, feature-based at src/shared/types)
   const typesRel =
-    architecture === "component-based"
+    architecture === "type-based"
       ? `src/types/index.${language === "ts" ? "ts" : "js"}`
       : `src/shared/types/index.${language === "ts" ? "ts" : "js"}`;
   assert.ok(
@@ -242,7 +242,7 @@ async function check(responses, projectPath) {
 
   // axios API client layer
   if (apiClient === "axios") {
-    if (architecture === "component-based") {
+    if (architecture === "type-based") {
       assert.ok(await exists(path.join(projectPath, `src/config/axios.config.${extConfig}`)), "axios: config/axios.config missing");
       assert.ok(await exists(path.join(projectPath, `src/services/axios.client.${extConfig}`)), "axios: services/axios.client missing");
       assert.ok(await exists(path.join(projectPath, `src/services/user.service.${extConfig}`)), "axios: services/user.service missing");
@@ -253,8 +253,8 @@ async function check(responses, projectPath) {
       assert.ok(await exists(path.join(projectPath, `src/features/home/services/user.service.${extConfig}`)), "axios: features/home/services/user.service missing");
     }
     assert.ok(
-      !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/axios.ts" : "src/shared/lib/axios.ts"))) &&
-        !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/axios.jsx" : "src/shared/lib/axios.jsx"))),
+      !(await exists(path.join(projectPath, architecture === "type-based" ? "src/services/axios.ts" : "src/shared/lib/axios.ts"))) &&
+        !(await exists(path.join(projectPath, architecture === "type-based" ? "src/services/axios.jsx" : "src/shared/lib/axios.jsx"))),
       "axios: old flat axios file present"
     );
     if (architecture === "feature-based") {
@@ -264,7 +264,7 @@ async function check(responses, projectPath) {
     }
   } else if (apiClient === "fetch") {
     const fetchRoutes =
-      architecture === "component-based"
+      architecture === "type-based"
         ? [
             `src/config/api.config.${extConfig}`,
             `src/services/api.client.${extConfig}`,
@@ -280,8 +280,8 @@ async function check(responses, projectPath) {
       assert.ok(await exists(path.join(projectPath, rel)), `fetch: ${rel} missing`);
     }
     assert.ok(
-      !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/api.ts" : "src/shared/api.ts"))) &&
-        !(await exists(path.join(projectPath, architecture === "component-based" ? "src/services/api.jsx" : "src/shared/api.jsx"))),
+      !(await exists(path.join(projectPath, architecture === "type-based" ? "src/services/api.ts" : "src/shared/api.ts"))) &&
+        !(await exists(path.join(projectPath, architecture === "type-based" ? "src/services/api.jsx" : "src/shared/api.jsx"))),
       "fetch: old monolithic api file present"
     );
     if (architecture === "feature-based") {
@@ -310,7 +310,7 @@ async function check(responses, projectPath) {
   }
 
   // Pase 4: dead service barrels (no consumers) removed in both architectures.
-  const deadSvc = architecture === "component-based" ? "src/services/index" : "src/features/home/services/index";
+  const deadSvc = architecture === "type-based" ? "src/services/index" : "src/features/home/services/index";
   assert.ok(
     !(await exists(path.join(projectPath, `${deadSvc}.${extConfig}`))) &&
       !(await exists(path.join(projectPath, `${deadSvc}.${extConfig === "ts" ? "js" : "ts"}`))),
@@ -378,7 +378,7 @@ async function check(responses, projectPath) {
   } else {
     assert.ok(!hasTailwind && !hasBootstrap, "home: inline markup expected under none");
   }
-  if (architecture === "component-based") {
+  if (architecture === "type-based") {
     assert.ok(!(await exists(path.join(projectPath, "src/components/layout"))), "components/layout still present");
   }
 

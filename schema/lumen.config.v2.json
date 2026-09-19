@@ -79,7 +79,7 @@
           "type": "string",
           "enum": [
             "feature-based",
-            "component-based",
+            "type-based",
             "hybrid",
             "none"
           ]

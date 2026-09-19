@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import { promises as fsp } from "fs";
 import os from "os";
@@ -62,7 +62,7 @@ async function scaffoldArk({ architecture, language, cssFramework, framework }) 
 }
 
 const CELLS = [];
-for (const architecture of ["feature-based", "component-based"]) {
+for (const architecture of ["feature-based", "type-based"]) {
   for (const language of ["ts", "js"]) {
     for (const cssFramework of ["tailwind", "bootstrap", "none"]) {
       CELLS.push({ architecture, language, cssFramework });
@@ -130,7 +130,7 @@ test("setupCssFramework: tailwind next.js writes postcss.config.mjs with @tailwi
 });
 
 test("setupCssFramework: bootstrap prepends the bootstrap css import into main", async () => {
-  const { dir, mainExt } = await scaffoldArk({ architecture: "component-based", language: "js", cssFramework: "bootstrap" });
+  const { dir, mainExt } = await scaffoldArk({ architecture: "type-based", language: "js", cssFramework: "bootstrap" });
   const main = await fsp.readFile(path.join(dir, "src", `main.${mainExt}`), "utf8");
   assert.match(main, /bootstrap\.min\.css/, "bootstrap css import missing in main");
   await fsp.rm(dir, { recursive: true, force: true });

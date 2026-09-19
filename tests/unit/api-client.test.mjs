@@ -1,4 +1,4 @@
-import test from "node:test";
+﻿import test from "node:test";
 import assert from "node:assert/strict";
 import { promises as fsp } from "fs";
 import os from "os";
@@ -20,14 +20,14 @@ const AXIOS_RESPONSES = {
 };
 
 const COMBOS = [
-  { architecture: "component-based", language: "ts" },
-  { architecture: "component-based", language: "js" },
+  { architecture: "type-based", language: "ts" },
+  { architecture: "type-based", language: "js" },
   { architecture: "feature-based", language: "ts" },
   { architecture: "feature-based", language: "js" },
 ];
 
 const ROUTES = (architecture, ext) =>
-  architecture === "component-based"
+  architecture === "type-based"
     ? [
         `src/config/axios.config.${ext}`,
         `src/services/axios.client.${ext}`,
@@ -43,7 +43,7 @@ const ROUTES = (architecture, ext) =>
 // Barrels that re-exported userService / api under services are removed in
 // pase 4 (no consumers): services/index (comp) and features/home/services/index (feat).
 const DEAD_SERVICE_BARRELS = (architecture, ext) =>
-  architecture === "component-based"
+  architecture === "type-based"
     ? [`src/services/index.${ext}`]
     : [`src/features/home/services/index.${ext}`];
 
@@ -87,7 +87,7 @@ for (const { architecture, language } of COMBOS) {
 
     // Old flat axios files are gone.
     const oldFlat =
-      architecture === "component-based"
+      architecture === "type-based"
         ? ["src/services/axios.ts", "src/services/axios.jsx"]
         : ["src/shared/lib/axios.ts", "src/shared/lib/axios.jsx"];
     for (const rel of oldFlat) {
@@ -96,7 +96,7 @@ for (const { architecture, language } of COMBOS) {
 
     // The client is named api end to end (client export + barrel re-export).
     const clientRel =
-      architecture === "component-based"
+      architecture === "type-based"
         ? `src/services/axios.client.${ext}`
         : `src/shared/lib/axios/api.client.${ext}`;
     const client = await fsp.readFile(path.join(dir, clientRel), "utf8");
@@ -124,13 +124,13 @@ for (const { architecture, language } of COMBOS) {
     const dir = await scaffold(architecture, language);
     const languageExt = language === "ts" ? "ts" : "js";
     const serviceRel =
-      architecture === "component-based"
+      architecture === "type-based"
         ? `src/services/user.service.${languageExt}`
         : `src/features/home/services/user.service.${languageExt}`;
     const service = await fsp.readFile(path.join(dir, serviceRel), "utf8");
 
     assert.match(service, /@\/types|@\/shared\/types/, "user.service does not reference types");
-    if (architecture === "component-based") {
+    if (architecture === "type-based") {
       assert.match(service, /import api from "@\/services\/axios\.client";/, "comp user.service missing api import");
     } else {
       assert.match(service, /import \{ api \} from "@\/shared\/lib\/axios";/, "feat user.service missing api import");
@@ -144,7 +144,7 @@ for (const { architecture, language } of COMBOS) {
     const dir = await scaffold(architecture, language);
     const languageExt = language === "ts" ? "ts" : "js";
     const configRel =
-      architecture === "component-based"
+      architecture === "type-based"
         ? `src/config/axios.config.${languageExt}`
         : `src/shared/lib/axios/api.config.${languageExt}`;
     const config = await fsp.readFile(path.join(dir, configRel), "utf8");
@@ -171,7 +171,7 @@ for (const { architecture, language } of COMBOS) {
     const ext = language === "ts" ? "ts" : "js";
 
     const routes =
-      architecture === "component-based"
+      architecture === "type-based"
         ? [
             `src/config/api.config.${ext}`,
             `src/services/api.client.${ext}`,
@@ -196,7 +196,7 @@ for (const { architecture, language } of COMBOS) {
 
     // Old monolithic wrappers are gone.
     const oldMonolithic =
-      architecture === "component-based"
+      architecture === "type-based"
         ? ["src/services/api.ts", "src/services/api.jsx"]
         : ["src/shared/api.ts", "src/shared/api.jsx", "src/shared/lib/index.ts", "src/shared/lib/index.js"];
     for (const rel of oldMonolithic) {
@@ -205,7 +205,7 @@ for (const { architecture, language } of COMBOS) {
 
     // api.client exposes get/post/put/delete and is named api, not apiClient.
     const clientRel =
-      architecture === "component-based"
+      architecture === "type-based"
         ? `src/services/api.client.${ext}`
         : `src/shared/api/api.client.${ext}`;
     const client = await fsp.readFile(path.join(dir, clientRel), "utf8");
@@ -235,13 +235,13 @@ for (const { architecture, language } of COMBOS) {
     const dir = await scaffoldFetch(architecture, language);
     const languageExt = language === "ts" ? "ts" : "js";
     const serviceRel =
-      architecture === "component-based"
+      architecture === "type-based"
         ? `src/services/user.service.${languageExt}`
         : `src/features/home/services/user.service.${languageExt}`;
     const service = await fsp.readFile(path.join(dir, serviceRel), "utf8");
 
     assert.match(service, /@\/types|@\/shared\/types/, "user.service does not reference types");
-    if (architecture === "component-based") {
+    if (architecture === "type-based") {
       assert.match(service, /import api from "@\/services\/api\.client";/, "comp user.service missing api import");
     } else {
       assert.match(service, /import \{ api \} from "@\/shared\/api";/, "feat user.service missing api import");
@@ -258,7 +258,7 @@ for (const { architecture, language } of COMBOS) {
     const dir = await scaffoldFetch(architecture, language);
     const languageExt = language === "ts" ? "ts" : "js";
     const configRel =
-      architecture === "component-based"
+      architecture === "type-based"
         ? `src/config/api.config.${languageExt}`
         : `src/shared/api/api.config.${languageExt}`;
     const config = await fsp.readFile(path.join(dir, configRel), "utf8");

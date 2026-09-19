@@ -1,4 +1,4 @@
-# Manifest v2 - nested schema (create-lumen#13, #14, #4)
+﻿# Manifest v2 - nested schema (create-lumen#13, #14, #4)
 
 ## Rationale
 
@@ -17,7 +17,7 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
     "adapter?": "node|vercel|cloudflare|static"
   },
   "styling": { "engine": "tailwind|bootstrap|none" },
-  "architecture": { "type": "feature-based|component-based|hybrid|none" },
+  "architecture": { "type": "feature-based|type-based|hybrid|none" },
   "ui": { "kit": "shadcn|none" },
   "docs": { "language": "en|es" },
   "paths": {
@@ -62,10 +62,18 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
 
 `create-lumen` writes `lumen.config.json` at project root via `src/manifest/emit.js` (`#16`), including `"$schema"` referencing this schema. `buildManifest` produces a stable, Zod-validated manifest from scaffolder responses; `emitManifest` writes byte-deterministic output (2-space indent + trailing newline). Merged in PR #40. See `src/manifest/paths.js` for `resolvePaths` (#15).
 
+## Contract & Shared Fixtures
+
+* The formal specification between `create-lumen` and `lumen-cli` is documented in [`docs/manifest-template-contract.md`](./manifest-template-contract.md) (`#9`).
+* Versioned contract fixtures reside in `schema/fixtures/v2/` (`#28`) and are validated via `tests/unit/manifest.test.mjs`. Both valid and invalid fixture matrices are published in the npm package for consumption by `lumen-cli#3`.
+
 ## References
 
-* Issues: #13 #14 #15 #16 #4 #9 #34 #33 #8
+* Issues: #13 #14 #15 #16 #4 #9 #17 #28 #34 #33 #8
+* Contract: `docs/manifest-template-contract.md`
+* Migration Guide: `docs/migration/v1-to-v2.md`
 * ADR 0001: `docs/adr/0001-scaffolder-base-strategy.md`
 * Schema: `schema/lumen.config.v2.json`
+* Fixtures: `schema/fixtures/`
 * Source: `src/manifest/schema.js`
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 // Real-install verification: scaffolds a sampled project, runs a genuine
 // `npm install`, then gates lint (zero-warnings), format idempotence, tests,
 // and the production build. Requires network + a package manager.
@@ -30,9 +30,9 @@ const pkg = getPkgManager();
 // the offline harness cannot exercise: real dep resolution + build + test).
 const INSTALL_CELLS = [
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "prettier" },
-  { architecture: "component-based", language: "js", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
+  { architecture: "type-based", language: "js", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "none", testing: "vitest", router: false, stateManagement: "zustand", iconLibrary: "lucide", apiClient: "axios", linter: "oxlint", formatter: "oxfmt" },
-  { architecture: "component-based", language: "ts", cssFramework: "none", testing: "jest", router: false, stateManagement: "redux", iconLibrary: "none", apiClient: "axios", linter: "eslint", formatter: "prettier" },
+  { architecture: "type-based", language: "ts", cssFramework: "none", testing: "jest", router: false, stateManagement: "redux", iconLibrary: "none", apiClient: "axios", linter: "eslint", formatter: "prettier" },
 ];
 
 async function exists(p) {

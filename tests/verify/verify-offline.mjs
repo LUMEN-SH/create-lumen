@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import { injectArchitecture, injectConditionals, injectFormatter } from "../../src/injector.js";
 import { copyEnvExample } from "../../src/env.js";
 import { setupCssFramework } from "../../src/css.js";
@@ -64,6 +64,7 @@ async function generate(responses, baseApp, projectPath) {
   await copyEnvExample(projectPath, TEMPLATES_DIR);
   await emitManifest(projectPath, responses);
   await generateReadme(projectPath, "app", responses);
+  await emitManifest(projectPath, responses);
   await fsp.symlink(path.join(VENDOR, "node_modules"), path.join(projectPath, "node_modules"), "junction");
   if (responses.formatter && responses.formatter !== "none") {
     await runProjectFormat(projectPath, responses);
@@ -176,7 +177,7 @@ async function gateCrossProbe(projectPath, toolBin) {
     rcName = ".oxfmtrc.json";
     rcSource = path.join(TEMPLATES_DIR, "conditional/formatter/oxfmt/.oxfmtrc.json");
   }
-  // Stage the other toolchain's rc under its canonical name — snowflake
+  // Stage the other toolchain's rc under its canonical name â€” snowflake
   // suffixes break both tools' config loaders.
   const rcPath = path.join(projectPath, rcName);
   const hadRc = await exists(rcPath);
@@ -236,13 +237,13 @@ async function audit(responses, projectPath) {
 
   ok(await exists(path.join(projectPath, `src/main.${language === "ts" ? "tsx" : "jsx"}`)), "main entry missing");
   const typesRel =
-    architecture === "component-based"
+    architecture === "type-based"
       ? `src/types/index.${language === "ts" ? "ts" : "js"}`
       : `src/shared/types/index.${language === "ts" ? "ts" : "js"}`;
   ok(await exists(path.join(projectPath, typesRel)), `${typesRel} missing`);
 
   const axiosRoutes =
-    architecture === "component-based"
+    architecture === "type-based"
       ? [
           `src/config/axios.config.${extConfig}`,
           `src/services/axios.client.${extConfig}`,
@@ -258,7 +259,7 @@ async function audit(responses, projectPath) {
     for (const rel of axiosRoutes) {
       ok(await exists(path.join(projectPath, rel)), `${rel} missing`);
     }
-    const oldFlat = architecture === "component-based" ? "src/services" : "src/shared/lib";
+    const oldFlat = architecture === "type-based" ? "src/services" : "src/shared/lib";
     ok(
       !(await exists(path.join(projectPath, oldFlat, "axios.ts"))) &&
         !(await exists(path.join(projectPath, oldFlat, "axios.jsx"))),
@@ -266,7 +267,7 @@ async function audit(responses, projectPath) {
     );
   } else if (apiClient === "fetch") {
     const fetchRoutes =
-      architecture === "component-based"
+      architecture === "type-based"
         ? [
             `src/config/api.config.${extConfig}`,
             `src/services/api.client.${extConfig}`,
@@ -281,7 +282,7 @@ async function audit(responses, projectPath) {
     for (const rel of fetchRoutes) {
       ok(await exists(path.join(projectPath, rel)), `${rel} missing`);
     }
-    const oldMono = architecture === "component-based" ? "src/services" : "src/shared";
+    const oldMono = architecture === "type-based" ? "src/services" : "src/shared";
     ok(
       !(await exists(path.join(projectPath, oldMono, "api.ts"))) &&
         !(await exists(path.join(projectPath, oldMono, "api.jsx"))),
@@ -302,8 +303,8 @@ async function audit(responses, projectPath) {
     );
     ok(!(await exists(path.join(projectPath, "src/lib/axios"))), `stray lib/axios (${apiClient})`);
     // feature-based ships `shared/lib` only when axios is chosen, so an empty
-    // placeholder never leaks alone — check real client files for leaks.
-    if (architecture === "component-based") {
+    // placeholder never leaks alone â€” check real client files for leaks.
+    if (architecture === "type-based") {
       ok(!(await exists(path.join(projectPath, "src/shared/lib/axios"))), `stray shared/lib/axios (${apiClient})`);
     } else {
       ok(
@@ -323,7 +324,7 @@ async function audit(responses, projectPath) {
       `stray config/api.config (${apiClient})`
     );
     ok(!(await exists(path.join(projectPath, "src/lib/api"))), `stray lib/api (${apiClient})`);
-    if (architecture === "component-based") {
+    if (architecture === "type-based") {
       ok(!(await exists(path.join(projectPath, "src/shared/api"))), `stray shared/api (${apiClient})`);
     } else {
       ok(
@@ -341,7 +342,7 @@ async function audit(responses, projectPath) {
 
   // Pase 4: dead service barrels (no consumers) are removed in both architectures,
   // while the public feature barrel and per-feature types/.gitkeep are kept.
-  const deadSvcBarrels = architecture === "component-based" ? ["src/services/index"] : ["src/features/home/services/index"];
+  const deadSvcBarrels = architecture === "type-based" ? ["src/services/index"] : ["src/features/home/services/index"];
   for (const rel of deadSvcBarrels) {
     ok(
       !(await exists(path.join(projectPath, `${rel}.${extConfig}`))) &&
@@ -393,6 +394,13 @@ async function audit(responses, projectPath) {
     ok(/(?:["'])@(?:["'])/.test(vite) || vite.includes("find: @"), "vite @ alias missing");
   }
 
+  // Manifest v2 contract verification (#23)
+  ok(await exists(path.join(projectPath, "lumen.config.json")), "lumen.config.json missing (#23)");
+  const manifest = parseManifest(JSON.parse(await fsp.readFile(path.join(projectPath, "lumen.config.json"), "utf8")));
+  ok(manifest.manifestVersion === 2, "manifestVersion must be 2");
+  ok(manifest.framework.name === "react", "framework must be react");
+  ok(manifest.tooling.language === language, "language mismatch in manifest");
+
   // CSS framework parity (regression gate for the v1.2.0 globals path fix):
   // the main stylesheet the architecture actually imports must carry the
   // selected framework's content (main.css for vanilla, globals.css for
@@ -440,7 +448,7 @@ async function audit(responses, projectPath) {
       ok(!hasTailwind && !hasBootstrap, `home: inline markup expected under none`);
     }
   }
-  if (architecture === "component-based") {
+  if (architecture === "type-based") {
     ok(!(await exists(path.join(projectPath, "src/components/layout"))), "components/layout still present");
   }
   return errors;

@@ -1,5 +1,5 @@
-export const axes = {
-  architecture: ["feature-based", "component-based"],
+﻿export const axes = {
+  architecture: ["feature-based", "type-based"],
   language: ["ts", "js"],
   cssFramework: ["tailwind", "bootstrap", "none"],
   testing: ["vitest", "jest", "none"],
@@ -41,15 +41,15 @@ export const DEFAULT_CELLS = [
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "oxfmt" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "oxfmt" },
   { architecture: "feature-based", language: "js", cssFramework: "none", testing: "vitest", router: true, stateManagement: "zustand", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "prettier" },
-  { architecture: "component-based", language: "js", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
+  { architecture: "type-based", language: "js", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "none", router: false, stateManagement: "redux", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "none", testing: "none", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "none" },
-  { architecture: "component-based", language: "js", cssFramework: "none", testing: "none", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "oxfmt" },
+  { architecture: "type-based", language: "js", cssFramework: "none", testing: "none", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "oxfmt" },
   { architecture: "feature-based", language: "ts", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "none", iconLibrary: "huge", apiClient: "fetch", linter: "oxlint", formatter: "none" },
-  { architecture: "component-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "redux", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "none" },
+  { architecture: "type-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "redux", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "none" },
 ];
 
-// A dedicated subgroup: the "feature parity" cells — same cell under both
+// A dedicated subgroup: the "feature parity" cells â€” same cell under both
 // formatter toolchains, which is what the cross-tool probe validates.
 export const PARITY_CELLS = (base) =>
   ["prettier", "oxfmt"].map((formatter) => ({ ...base, formatter }));

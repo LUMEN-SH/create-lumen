@@ -1,4 +1,4 @@
-import { promises as fsp } from "fs";
+﻿import { promises as fsp } from "fs";
 import path from "path";
 import { deleteIfExists } from "@/utils/fs.js";
 
@@ -15,7 +15,7 @@ export async function setupCssFramework({
   process.chdir(projectPath);
   const cssDir = path.join(templatesDir, "css");
   // Feature-based main.* imports ./shared/styles/globals.css (or main.css when
-  // framework is "none"); component-based imports ./styles/globals.css (or
+  // framework is "none"); type-based imports ./styles/globals.css (or
   // main.css). The chosen framework's styles land in the file the architecture
   // actually imports.
   const stylesDir =
@@ -24,7 +24,7 @@ export async function setupCssFramework({
       : path.join(projectPath, "src", "styles");
 
   // Vanilla CSS gets a stylesheet named main.css; tailwind/bootstrap keep
-  // globals.css (their idiomatic name — they inject framework directives).
+  // globals.css (their idiomatic name â€” they inject framework directives).
   const mainFileName = cssFramework === "none" ? "main.css" : "globals.css";
 
   async function writeCss(content, fileName) {
@@ -100,7 +100,7 @@ export async function setupCssFramework({
   await syncMainCssImport(projectPath, ext, architecture, mainFileName);
 
   // Ensure the styles dir exists (for the .gitkeep placeholder when no real
-  // file lives there yet — pruneRedundantGitkeeps removes it after overlays).
+  // file lives there yet â€” pruneRedundantGitkeeps removes it after overlays).
   await fsp.mkdir(stylesDir, { recursive: true });
 
   // Clean up Vite's default CSS files; src/index.css is the framework-agnostic
