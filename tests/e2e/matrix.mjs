@@ -13,8 +13,6 @@ export const axes = {
 export const formatterFor = (linter) =>
   linter === "none"
     ? ["none"]
-    : linter === "eslint"
-    ? ["none", "prettier"]
     : ["none", "oxfmt", "prettier"];
 
 // Cartesian product over the 9 axes, then expand formatter per linter.
@@ -41,6 +39,7 @@ export function* matrix() {
 export const DEFAULT_CELLS = [
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "oxfmt" },
+  { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "oxfmt" },
   { architecture: "feature-based", language: "js", cssFramework: "none", testing: "vitest", router: true, stateManagement: "zustand", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "prettier" },
   { architecture: "component-based", language: "js", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "none", router: false, stateManagement: "redux", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "prettier" },

@@ -81,7 +81,8 @@ async function generate(responses, baseApp, projectPath) {
 }
 
 function run(cwd, argv, opts = {}) {
-  const res = spawnSync(argv[0], argv.slice(1), { cwd, encoding: "utf8", ...opts });
+  const isWin = process.platform === "win32";
+  const res = spawnSync(argv[0], argv.slice(1), { cwd, encoding: "utf8", shell: isWin, ...opts });
   const out = (res.stdout || "") + (res.stderr || "");
   return { status: res.status, out };
 }

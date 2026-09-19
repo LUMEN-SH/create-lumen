@@ -4,7 +4,7 @@ import { promises as fsp } from "fs";
 import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
-import { injectFormatter } from "../../src/injector.js";
+import { injectFormatter, injectLinter } from "../../src/injector.js";
 import { resolveProjectName } from "../../src/main.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -123,6 +123,62 @@ test("eslint + prettier is idempotent (re-run adds exactly one import and one pr
   const cfg = await read(dir, "eslint.config.js");
   assert.equal((cfg.match(/eslint-config-prettier/g) || []).length, 1);
   assert.equal((cfg.match(/prettier,\n/g) || []).length, 1);
+});
+
+test("eslint + oxfmt injects .oxfmtrc.json and oxfmt script, leaves eslint config untouched", async () => {
+  const dir = await makeProject({ eslintConfig: TS_ESLINT, ext: "ts" });
+  await injectFormatter(dir, TEMPLATES_DIR, { formatter: "oxfmt", linter: "eslint", language: "ts" });
+
+  assert.ok(await fsp.stat(path.join(dir, ".oxfmtrc.json")));
+  const pkg = JSON.parse(await read(dir, "package.json"));
+  assert.equal(pkg.scripts.format, "oxfmt .");
+  assert.equal(pkg.scripts["format:check"], "oxfmt --check .");
+  const cfg = await read(dir, "eslint.config.ts");
+  assert.ok(!cfg.includes("eslint-config-prettier"));
+});
+
+test("oxfmt + oxlint is idempotent across multiple injection passes", async () => {
+  const dir = await makeProject({ eslintConfig: null, ext: "js" });
+  const responses = { formatter: "oxfmt", linter: "oxlint", language: "js" };
+  await injectFormatter(dir, TEMPLATES_DIR, responses);
+  await injectFormatter(dir, TEMPLATES_DIR, responses);
+
+  assert.ok(await fsp.stat(path.join(dir, ".oxfmtrc.json")));
+  const pkg = JSON.parse(await read(dir, "package.json"));
+  assert.equal(pkg.scripts.format, "oxfmt .");
+  assert.equal(pkg.scripts["format:check"], "oxfmt --check .");
+});
+
+test("injectLinter (Next.js) injects eslint.config.mjs and lint scripts", async () => {
+  const dir = await makeProject({ eslintConfig: null, ext: "js" });
+  await injectLinter(dir, TEMPLATES_DIR, "eslint", "ts", "next");
+
+  assert.ok(await fsp.stat(path.join(dir, "eslint.config.mjs")));
+  const cfg = await read(dir, "eslint.config.mjs");
+  assert.ok(cfg.includes("next/core-web-vitals"));
+  const pkg = JSON.parse(await read(dir, "package.json"));
+  assert.equal(pkg.scripts.lint, "eslint .");
+  assert.equal(pkg.scripts["lint:fix"], "eslint . --fix");
+});
+
+test("eslint + prettier (Next.js) wires prettier into eslint.config.mjs", async () => {
+  const NEXT_ESLINT = `import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const compat = new FlatCompat();
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals"),
+];
+
+export default eslintConfig;
+`;
+  const dir = await makeProject({ eslintConfig: NEXT_ESLINT, ext: "mjs" });
+  await injectFormatter(dir, TEMPLATES_DIR, { formatter: "prettier", linter: "eslint", language: "ts", framework: "next" });
+
+  const cfg = await read(dir, "eslint.config.mjs");
+  assert.ok(cfg.includes('import prettier from "eslint-config-prettier";'));
+  assert.ok(/prettier,\s*\n\s*[)\]];/.test(cfg), "prettier not wired into eslint.config.mjs");
 });
 
 test("quick setup falls back to the current folder name when no project name argument is passed", () => {

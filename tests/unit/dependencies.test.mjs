@@ -128,6 +128,23 @@ test("oxfmt installs oxfmt", () => {
   has(devDeps, "oxfmt");
 });
 
+test("eslint + oxfmt installs oxfmt and does not wire eslint-config-prettier", () => {
+  const { devDeps } = cellDeps({ linter: "eslint", formatter: "oxfmt" });
+  has(devDeps, "eslint", "oxfmt");
+  lacks(devDeps, "eslint-config-prettier", "prettier");
+});
+
+test("eslint next.js declares eslint-config-next and no react-refresh or jiti", () => {
+  const { devDeps } = cellDeps({ linter: "eslint", framework: "next", language: "ts" });
+  has(devDeps, "eslint", "eslint-config-next");
+  lacks(devDeps, "eslint-plugin-react-refresh", "typescript-eslint", "jiti", "@eslint/js");
+});
+
+test("eslint + prettier next.js wires eslint-config-prettier and eslint-config-next", () => {
+  const { devDeps } = cellDeps({ linter: "eslint", formatter: "prettier", framework: "next" });
+  has(devDeps, "eslint", "eslint-config-next", "prettier", "eslint-config-prettier");
+});
+
 test("no formatter = no format deps", () => {
   const { devDeps } = cellDeps({ linter: "eslint", formatter: "none" });
   lacks(devDeps, "prettier", "oxfmt", "eslint-config-prettier");
