@@ -39,7 +39,7 @@ flowchart TD
         CreateLumen16["create-lumen#16 · emit lumen.config.json"]
         CreateLumen4["create-lumen#4 · publish JSON Schema"]
         CreateLumen9["create-lumen#9 · shared contract"]
-        CreateLumen6["create-lumen#6 · Tailwind v4"]
+        CreateLumen6["create-lumen#6 · Tailwind v4 ✅"]
         CreateLumen24["create-lumen#24 · tooling parity"]
         CreateLumen23["create-lumen#23 · validate React/Vite under v2"]
         CreateLumen29["create-lumen#29 · non-interactive flags"]

@@ -120,7 +120,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [ ] #16 Manifest v2: emit `lumen.config.json`
 - [ ] #4 Manifest v2: publish JSON Schema
 - [ ] #9 Manifest/template contract shared with lumen-cli
-- [ ] #6 Templates: migrate to Tailwind v4
+- [x] #6 Templates: migrate to Tailwind v4
 - [ ] #24 Tooling: eslint/prettier/oxlint/oxfmt parity
 - [ ] #23 React + Vite: validate bundle under manifest v2
 - [ ] #29 create-lumen v2: non-interactive flags

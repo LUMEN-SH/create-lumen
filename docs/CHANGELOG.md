@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Templates: migrate to Tailwind CSS v4 (v3 dropped)** (#6) — single `@import "tailwindcss";` template in `templates/css/tailwind/src/globals.css`, CSS-first `@theme` tokens in `themes.css`, `@tailwindcss/vite` plugin for React + Vite, and `@tailwindcss/postcss` with `postcss.config.mjs` for Next.js.
+
 ## [1.2.0] — 2026-09-17
 
 > Promoted to stable from `v1.2.0-beta.1` (2026-09-07) after passing the full
