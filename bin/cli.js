@@ -3,7 +3,7 @@
 import { readFile } from "node:fs/promises";
 import chalk from "chalk";
 import "../register.js";
-import { parseArgs, getHelpText } from "@/cli-flags.js";
+import { parseArgs, getHelpText } from "../src/cli-flags.js";
 
 const { version } = JSON.parse(
   await readFile(new URL("../package.json", import.meta.url), "utf8")
