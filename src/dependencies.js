@@ -44,7 +44,11 @@ export function computeDeps(responses) {
 
   // CSS framework
   if (responses.cssFramework === "tailwind") {
-    devDeps.push("tailwindcss", "@tailwindcss/vite");
+    if (responses.framework === "next") {
+      devDeps.push("tailwindcss", "@tailwindcss/postcss", "postcss");
+    } else {
+      devDeps.push("tailwindcss", "@tailwindcss/vite");
+    }
     deps.push("clsx", "tailwind-merge");
   } else if (responses.cssFramework === "bootstrap") {
     deps.push("bootstrap", "react-bootstrap");

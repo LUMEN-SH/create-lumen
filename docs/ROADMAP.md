@@ -120,7 +120,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [x] #16 Manifest v2: emit `lumen.config.json` — **merged #40** `src/manifest/emit.js` + `src/main.js` wiring, byte-deterministic ✅
 - [x] #4 Manifest v2: publish JSON Schema — **merged #39** `schema/lumen.config.v2.json` via `z.toJSONSchema` + drift gate ✅
 - [ ] #9 Manifest/template contract shared with lumen-cli — now unblocked (depends on #13 ✅)
-- [ ] #6 Templates: migrate to Tailwind v4
+- [x] #6 Templates: migrate to Tailwind v4
 - [ ] #24 Tooling: eslint/prettier/oxlint/oxfmt parity
 - [ ] #23 React + Vite: validate bundle under manifest v2 — partially unblocked (needs #16 ✅ + #6 + #24)
 - [ ] #29 create-lumen v2: non-interactive flags — now unblocked (needs #16 ✅)

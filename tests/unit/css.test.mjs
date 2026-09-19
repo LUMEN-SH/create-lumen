@@ -28,7 +28,7 @@ function fakeMain(architecture, ext) {
   return `import React from "react";\nimport "${stylesImport}";\n\nexport default function App() { return null; }\n`;
 }
 
-async function scaffoldArk({ architecture, language, cssFramework }) {
+async function scaffoldArk({ architecture, language, cssFramework, framework }) {
   // A minimal fake Vite project: main entry + leftover CSS that must be removed.
   const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "lumen-css-"));
   const stylesRel =
@@ -53,6 +53,7 @@ async function scaffoldArk({ architecture, language, cssFramework }) {
       architecture,
       ext: mainExt,
       pkg: "npm",
+      framework,
     });
   } finally {
     process.chdir(prevCwd);
@@ -118,6 +119,13 @@ test("setupCssFramework: tailwind swaps in the tailwind vite config", async () =
   const { dir } = await scaffoldArk({ architecture: "feature-based", language: "ts", cssFramework: "tailwind" });
   const vite = await fsp.readFile(path.join(dir, "vite.config.ts"), "utf8");
   assert.match(vite, /@tailwindcss\/vite/, "tailwind vite plugin missing");
+  await fsp.rm(dir, { recursive: true, force: true });
+});
+
+test("setupCssFramework: tailwind next.js writes postcss.config.mjs with @tailwindcss/postcss", async () => {
+  const { dir } = await scaffoldArk({ architecture: "feature-based", language: "ts", cssFramework: "tailwind", framework: "next" });
+  const postcss = await fsp.readFile(path.join(dir, "postcss.config.mjs"), "utf8");
+  assert.match(postcss, /@tailwindcss\/postcss/, "postcss plugin missing");
   await fsp.rm(dir, { recursive: true, force: true });
 });
 

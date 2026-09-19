@@ -41,6 +41,13 @@ test("tailwind: tailwindcss/@tailwindcss/vite as devDeps, clsx + tailwind-merge 
   has(deps, "clsx", "tailwind-merge");
 });
 
+test("tailwind next.js: tailwindcss/@tailwindcss/postcss as devDeps", () => {
+  const { deps, devDeps } = cellDeps({ cssFramework: "tailwind", framework: "next" });
+  has(devDeps, "tailwindcss", "@tailwindcss/postcss", "postcss");
+  lacks(devDeps, "@tailwindcss/vite");
+  has(deps, "clsx", "tailwind-merge");
+});
+
 test("bootstrap: bootstrap + react-bootstrap as deps, no tailwind tooling", () => {
   const { deps, devDeps } = cellDeps({ cssFramework: "bootstrap" });
   has(deps, "bootstrap", "react-bootstrap");
