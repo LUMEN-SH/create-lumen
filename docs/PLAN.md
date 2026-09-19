@@ -38,7 +38,7 @@ flowchart TD
         CreateLumen15["✅ create-lumen#15 · path mapping<br/>merged #40"]
         CreateLumen16["✅ create-lumen#16 · emit lumen.config.json<br/>merged #40"]
         CreateLumen4["✅ create-lumen#4 · publish JSON Schema<br/>merged #39"]
-        CreateLumen9["✅ create-lumen#9 · shared contract<br/>done (PR #44)"]
+        CreateLumen9["✅ create-lumen#9 · shared contract<br/>done (PR #44) · documented in docs/contracts"]
         CreateLumen6["✅ create-lumen#6 · Tailwind v4<br/>merged #41"]
         CreateLumen25["✅ create-lumen#25 · capability model<br/>done (feat/manifest-core)"]
         CreateLumen10["create-lumen#10 · capabilities epic<br/>needs #25"]
@@ -59,7 +59,7 @@ flowchart TD
         CreateLumen37["create-lumen#37 · per-overlay contract tests"]
         CreateLumen28["✅ create-lumen#28 · schema fixtures<br/>done (PR #44)"]
         CreateLumen5["create-lumen#5 · headless e2e"]
-        CreateLumen17["create-lumen#17 · migration guide<br/>needs #16 ✅"]
+        CreateLumen17["✅ create-lumen#17 · migration guide<br/>documented in docs/migration"]
         CreateLumen32["create-lumen#32 · backlog v2.0.0<br/>(umbrella)"]
 
         CreateLumen13 --> CreateLumen14 --> CreateLumen16
@@ -93,9 +93,9 @@ flowchart TD
         style CreateLumen23 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen31 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen9 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen17 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen25 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen28 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
-        style CreateLumen17 stroke:#0e8a16,stroke-width:2px
         style CreateLumen29 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
     end
 
@@ -142,7 +142,7 @@ Everything in a wave can run at the same time.
 flowchart TB
     subgraph W0["🌊 Wave 0 — start now (fully parallel)"]
         direction LR
-        LaneA["Lane A<br/>create-lumen manifest core<br/>#13 #14 #4 ✅ merged #39<br/>#15 #16 ✅ merged #40<br/>#9 #25 ✅ done<br/>#17 #29 ✅ done (#16)<br/>#23 ⏳ partial (#16 ✅ + #6 #24)"]
+        LaneA["Lane A<br/>create-lumen manifest core<br/>#13 #14 #4 ✅ merged #39<br/>#15 #16 ✅ merged #40<br/>#9 #25 ✅ done<br/>#17 #29 ✅ done<br/>#23 ✅ validated"]
         LaneB["Lane B<br/>create-lumen templates / tooling<br/>#6 ✅ merged #41<br/>#24 ✅ tooling parity<br/>#23 ✅ validated"]
         LaneC["Lane C<br/>lumen-cli skeleton<br/>lumen-cli#1 #2"]
         LaneD["Lane D<br/>lumen-cli docs-engine port<br/>lumen-cli#24 #16"]
@@ -164,7 +164,7 @@ flowchart TB
     end
 
     subgraph W3["🌊 Wave 3 — release"]
-        LaneL["Lane L<br/>release &amp; docs<br/>create-lumen#17 #30 · lumen-cli#22"]
+        LaneL["Lane L<br/>release &amp; docs<br/>create-lumen#17 ✅ #30 ✅ · lumen-cli#22"]
     end
 
     LaneA --> LaneE --> LaneF

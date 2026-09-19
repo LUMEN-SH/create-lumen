@@ -1,4 +1,4 @@
-﻿# Manifest v2 - nested schema (create-lumen#13, #14, #4)
+# Manifest v2 - nested schema (create-lumen#13, #14, #4)
 
 ## Rationale
 

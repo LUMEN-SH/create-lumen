@@ -1,4 +1,4 @@
-﻿# Migration Guide: create-lumen v1.x â†’ v2.0.0
+# Migration Guide: create-lumen v1.x → v2.0.0
 
 > **Target Audience**: Developers with projects scaffolded using `create-lumen` 1.x or maintaining custom `lumen.config.json` files.  
 > **Applicable Versions**: `create-lumen` >= 2.0.0, `lumen-cli` >= 1.0.0  
@@ -60,6 +60,13 @@ If your project was generated using standard options (React + Vite + TypeScript 
    ```
 2. Run `npx create-lumen --version` or `lumen doctor` to verify configuration integrity.
 
+> [!TIP]
+> Alternatively, if you want a completely fresh scaffold, you can run:
+> ```bash
+> npx create-lumen@alpha my-new-app
+> ```
+> and copy over your custom feature code into `src/features/`.
+
 ---
 
 ## 3. What Happens with a v1 Config?
@@ -73,6 +80,11 @@ Raw keys: framework, css, architecture, language, router, stateManagement...
 ```
 
 This fail-fast behavior protects your codebase from accidental file generation in invalid directories.
+
+### How to Fix
+1. Open your `lumen.config.json`.
+2. Delete the legacy keys or replace the entire file following the [Field-by-Field Mapping](#4-field-by-field-mapping-reference) below.
+3. Validate your manifest against the JSON schema (`https://lumen.dev/schema/lumen.config.v2.json`).
 
 ---
 
@@ -103,7 +115,7 @@ This fail-fast behavior protects your codebase from accidental file generation i
 
 In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly instructs `lumen-cli` where code belongs:
 
-### React + Vite Feature-Based:
+### 1. React + Vite (Feature-Based):
 ```json
 "paths": {
   "features": "src/features",
@@ -115,7 +127,7 @@ In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly ins
 }
 ```
 
-### React + Vite type-based:
+### 2. React + Vite (Type-Based):
 ```json
 "paths": {
   "features": "src/features",
@@ -124,6 +136,18 @@ In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly ins
   "hooks": "src/hooks",
   "pages": "src/pages",
   "ui": "src/ui"
+}
+```
+
+### 3. Next.js (App Router, Feature-Based or Hybrid):
+```json
+"paths": {
+  "features": "src/features",
+  "components": "src/shared/components",
+  "services": "src/shared/services",
+  "hooks": "src/shared/hooks",
+  "pages": "app",
+  "ui": "src/shared/components/ui"
 }
 ```
 
@@ -184,3 +208,24 @@ In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly ins
   }
 }
 ```
+
+---
+
+## 7. Tailwind CSS v4 Notes
+
+If you migrate a project using Tailwind CSS:
+- `create-lumen` 2.0 dropped support for Tailwind v3.
+- In v2, Tailwind configuration is CSS-first:
+  - Global stylesheet: `src/shared/styles/globals.css` (or `src/styles/globals.css`) uses `@import "tailwindcss";`.
+  - Color tokens and dark mode styling live in `themes.css` using `@theme` and `@custom-variant dark`.
+  - There is no longer a `tailwind.config.js` or `tailwind.config.ts`.
+  - The Vite build plugin is `@tailwindcss/vite`.
+
+---
+
+## References
+
+- [Manifest v2 Overview](../manifest-v2.md)
+- [Manifest & Template Shared Contract](../manifest-template-contract.md)
+- [JSON Schema Specification](../../schema/lumen.config.v2.json)
+- [ADR 0001: Scaffolder Base Strategy](../adr/0001-scaffolder-base-strategy.md)

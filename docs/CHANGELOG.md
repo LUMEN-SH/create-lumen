@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - **CI: publish create-lumen v2 pre-releases to npm** (#31) — configured `.github/workflows/publish.yml` to publish pre-releases (`alpha`, `beta`, `rc`, `next`) to npm under dist-tags and create GitHub pre-releases.
 - **Manifest/template contract documentation** (#9) — formalized and documented the shared manifest v2 and path mapping contract in `docs/manifest-v2.md` consumed by `lumen-cli`.
 
+### Removed
+
+- **Tailwind CSS v3 support dropped** (#6) — dropped `tailwind.config.js` and `tailwind.config.ts` in favor of CSS-first `@theme` syntax.
+
+### Breaking Changes
+
+- **Strict v1 manifest rejection** (#14, #17) — `create-lumen` and `lumen-cli` strictly reject v1 flat configurations or manifests missing `manifestVersion: 2`, exiting with instructions pointing to `docs/migration/v1-to-v2.md`.
+
 ## [1.2.0] — 2026-09-17
 
 > Promoted to stable from `v1.2.0-beta.1` (2026-09-07) after passing the full
