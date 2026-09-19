@@ -1,4 +1,4 @@
-﻿import { isCancel, log, spinner, text } from "@clack/prompts";
+import { isCancel, log, spinner, text } from "@clack/prompts";
 import chalk from "chalk";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -18,22 +18,22 @@ import { generateReadme } from "@/readme.js";
 import { runProjectFormat } from "@/format.js";
 import { emitManifest } from "@/manifest/emit.js";
 
-import { parseArgs } from "@/cli-flags.js";
+import { parseCliArgs, loadManifestSource, manifestToResponses, PRESETS } from "@/cli-args.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const TEMPLATES_DIR = path.join(__dirname, "../templates");
 const CURRENT_DIR = process.cwd();
 
-export function resolveProjectName({ quickSetup = false, projectName: nameArg, cwd = CURRENT_DIR, rawArgs } = {}) {
-  const parsed = parseArgs(rawArgs || process.argv.slice(2));
-  const cliArg = nameArg || parsed.projectName || null;
+export function resolveProjectName({ quickSetup = false, projectName: nameArg, cwd = CURRENT_DIR } = {}) {
+  const cli = parseCliArgs(process.argv.slice(2));
+  const cliArg = nameArg || cli.projectName || null;
 
   if (cliArg && cliArg.trim()) {
     return cliArg.trim();
   }
 
-  if (quickSetup || parsed.quickSetup || parsed.manifest || parsed.template) {
+  if (quickSetup || cli.quickSetup) {
     const defaultName = path.basename(cwd).trim() || "my-app";
     return defaultName === "." ? "my-app" : defaultName;
   }
@@ -42,12 +42,19 @@ export function resolveProjectName({ quickSetup = false, projectName: nameArg, c
 }
 
 export async function main(options = {}) {
-  const { quickSetup = false, projectName: nameArg, manifest = null, template = null } = options;
+  const {
+    quickSetup = false,
+    projectName: nameArg,
+    manifest: manifestSource,
+    template: templateName,
+  } = options;
   const pkg = getPkgManager();
+
+  const isNonInteractive = Boolean(quickSetup || manifestSource || templateName);
 
   // 1. Project name
   let projectName = resolveProjectName({
-    quickSetup: quickSetup || !!manifest || !!template,
+    quickSetup: isNonInteractive,
     projectName: nameArg,
     cwd: CURRENT_DIR,
   });
@@ -68,8 +75,25 @@ export async function main(options = {}) {
   // 2. Handle existing folder
   await confirmEmptyFolder(projectName);
 
-  // 3. Collect user preferences
-  const responses = await getUserInputs(projectName, { quickSetup, manifest, template });
+  // 3. Collect user preferences (interactive or non-interactive)
+  let responses;
+  if (manifestSource) {
+    const manifestObj = loadManifestSource(manifestSource, CURRENT_DIR);
+    responses = manifestToResponses(manifestObj, projectName);
+  } else if (templateName) {
+    const preset = PRESETS[templateName];
+    if (!preset) {
+      throw new Error(
+        `Unknown template preset "${templateName}". Available presets: ${Object.keys(PRESETS).join(", ")}`
+      );
+    }
+    responses = {
+      projectName,
+      ...preset,
+    };
+  } else {
+    responses = await getUserInputs(projectName, { quickSetup });
+  }
 
   const projectPath = path.resolve(CURRENT_DIR, projectName);
 
@@ -111,7 +135,7 @@ export async function main(options = {}) {
   // 7. Inject architecture templates
   const archSpin = spinner();
   archSpin.start(
-    `Setting up ${responses.architecture === "feature-based" ? "feature-based" : "type-based"} architecture...`
+    `Setting up ${responses.architecture === "feature-based" ? "feature-based" : "component-based"} architecture...`
   );
   try {
     await injectArchitecture(
@@ -212,7 +236,7 @@ export async function main(options = {}) {
   // 12.5 Copy .env.example into the project
   await copyEnvExample(projectPath, TEMPLATES_DIR);
 
-  // 12.6 Emit lumen.config.json (manifest v2) â€” byte-deterministic, Zod-validated
+  // 12.6 Emit lumen.config.json (manifest v2) — byte-deterministic, Zod-validated
   const manifestSpin = spinner();
   manifestSpin.start("Writing lumen.config.json...");
   try {
@@ -252,7 +276,7 @@ export async function main(options = {}) {
   log.step(chalk.green("\nProject setup complete!"));
   log.message(
     chalk.gray(
-      `  Architecture: ${responses.architecture === "feature-based" ? "Feature-based" : "type-based"}`
+      `  Architecture: ${responses.architecture === "feature-based" ? "Feature-based" : "Component-based"}`
     )
   );
 

@@ -3,20 +3,20 @@
 import { readFile } from "node:fs/promises";
 import chalk from "chalk";
 import "../register.js";
-import { parseArgs, getHelpText } from "../src/cli-flags.js";
+import { parseCliArgs, printHelp } from "../src/cli-args.js";
 
 const { version } = JSON.parse(
   await readFile(new URL("../package.json", import.meta.url), "utf8")
 );
 
-const parsed = parseArgs(process.argv.slice(2));
+const cliArgs = parseCliArgs(process.argv.slice(2));
 
-if (parsed.help) {
-  console.log("\n" + getHelpText(version) + "\n");
+if (cliArgs.help) {
+  printHelp();
   process.exit(0);
 }
 
-if (parsed.version) {
+if (cliArgs.version) {
   console.log(version);
   process.exit(0);
 }
@@ -32,10 +32,10 @@ console.log(
 const { main } = await import("@/main.js");
 
 main({
-  quickSetup: parsed.quickSetup,
-  projectName: parsed.projectName,
-  manifest: parsed.manifest,
-  template: parsed.template,
+  quickSetup: cliArgs.quickSetup,
+  projectName: cliArgs.projectName,
+  manifest: cliArgs.manifest,
+  template: cliArgs.template,
 }).catch((e) => {
   console.error(chalk.red("\nError:"), e.message || e);
   process.exit(1);

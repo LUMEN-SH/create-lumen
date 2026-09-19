@@ -111,7 +111,7 @@ export function buildManifest(responses, opts = {}) {
  * @returns {Promise<string>} absolute path to written file
  */
 export async function emitManifest(projectPath, responses, opts = {}) {
-  const manifest = buildManifest(responses, opts);
+  const manifest = responses._manifestSource || buildManifest(responses, opts);
   const outPath = path.join(projectPath, "lumen.config.json");
   const content = JSON.stringify(manifest, null, 2) + "\n";
   await fsp.writeFile(outPath, content, "utf8");
