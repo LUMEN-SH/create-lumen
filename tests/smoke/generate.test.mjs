@@ -32,7 +32,7 @@ async function exists(p) {
   }
 }
 
-// Build a real Vite base once per language (cached offline) â€” no installs.
+// Build a real Vite base once per language (cached offline) — no installs.
 async function ensureBase(language) {
   const baseApp = path.join(CACHE, `base-${language}`, "app");
   if (await exists(baseApp)) return baseApp;

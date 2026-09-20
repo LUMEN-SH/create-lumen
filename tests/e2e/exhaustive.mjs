@@ -1,4 +1,4 @@
-﻿import { runViteCreate } from "../../src/scaffold.js";
+import { runViteCreate } from "../../src/scaffold.js";
 import { injectArchitecture, injectConditionals, injectFormatter } from "../../src/injector.js";
 import { copyEnvExample } from "../../src/env.js";
 import { setupCssFramework } from "../../src/css.js";
@@ -187,7 +187,7 @@ async function check(responses, projectPath) {
     assert.strictEqual(scripts.lint, "oxlint .", "oxlint: lint script");
   } else {
     // linter "none": the Vite base template may already ship an eslint config
-    // and a `lint` script, which the generator leaves in place â€” so we don't
+    // and a `lint` script, which the generator leaves in place — so we don't
     // assert their absence here.
   }
 

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 import { injectArchitecture, injectConditionals, injectFormatter } from "../../src/injector.js";
 import { copyEnvExample } from "../../src/env.js";
 import { setupCssFramework } from "../../src/css.js";
@@ -177,7 +177,7 @@ async function gateCrossProbe(projectPath, toolBin) {
     rcName = ".oxfmtrc.json";
     rcSource = path.join(TEMPLATES_DIR, "conditional/formatter/oxfmt/.oxfmtrc.json");
   }
-  // Stage the other toolchain's rc under its canonical name â€” snowflake
+  // Stage the other toolchain's rc under its canonical name — snowflake
   // suffixes break both tools' config loaders.
   const rcPath = path.join(projectPath, rcName);
   const hadRc = await exists(rcPath);
@@ -303,7 +303,7 @@ async function audit(responses, projectPath) {
     );
     ok(!(await exists(path.join(projectPath, "src/lib/axios"))), `stray lib/axios (${apiClient})`);
     // feature-based ships `shared/lib` only when axios is chosen, so an empty
-    // placeholder never leaks alone â€” check real client files for leaks.
+    // placeholder never leaks alone — check real client files for leaks.
     if (architecture === "type-based") {
       ok(!(await exists(path.join(projectPath, "src/shared/lib/axios"))), `stray shared/lib/axios (${apiClient})`);
     } else {

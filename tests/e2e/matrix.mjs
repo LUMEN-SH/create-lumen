@@ -1,4 +1,4 @@
-﻿export const axes = {
+export const axes = {
   architecture: ["feature-based", "type-based"],
   language: ["ts", "js"],
   cssFramework: ["tailwind", "bootstrap", "none"],
@@ -49,7 +49,7 @@ export const DEFAULT_CELLS = [
   { architecture: "type-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "redux", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "none" },
 ];
 
-// A dedicated subgroup: the "feature parity" cells â€” same cell under both
+// A dedicated subgroup: the "feature parity" cells — same cell under both
 // formatter toolchains, which is what the cross-tool probe validates.
 export const PARITY_CELLS = (base) =>
   ["prettier", "oxfmt"].map((formatter) => ({ ...base, formatter }));
