@@ -8,7 +8,7 @@ In v1, projects had no manifest file; scaffolder choices were flat (`{ framework
 
 ```json
 {
-  "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+  "$schema": "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json",
   "manifestVersion": 2,
   "framework": {
     "name": "react|next",

@@ -25,13 +25,13 @@ flowchart LR
 
 ## 2. Manifest v2 Specification
 
-Every emitted manifest MUST conform to the [JSON Schema Draft 2020-12](https://lumen.dev/schema/lumen.config.v2.json) and Zod schema in `src/manifest/schema.js`.
+Every emitted manifest MUST conform to the [JSON Schema Draft 2020-12](https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json) and Zod schema in `src/manifest/schema.js`.
 
 ### Top-Level Schema
 
 ```typescript
 interface ManifestV2 {
-  $schema?: string;                 // Default: "https://lumen.dev/schema/lumen.config.v2.json"
+  $schema?: string;                 // Default: "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json"
   manifestVersion: 2;               // Literal 2 (required)
   framework: FrameworkConfig;       // Required
   styling: StylingConfig;           // Required

@@ -1,11 +1,11 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
 // ---------------------------------------------------------------------------
 // Constants - keep in sync with docs/manifest-v2.md and ROADMAP
 // ---------------------------------------------------------------------------
 export const MANIFEST_VERSION = 2;
-export const SCHEMA_URL = "https://lumen.dev/schema/lumen.config.v2.json";
+export const SCHEMA_URL = "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json";
 
 export const FRAMEWORK_NAMES = ["react", "next"];
 export const FRAMEWORK_VARIANTS = ["vite", "app-router", "pages-router"];
