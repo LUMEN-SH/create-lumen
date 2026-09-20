@@ -2,7 +2,7 @@
 
 ## Rationale
 
-v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "feature" }` that could not express Next.js concepts (App Router vs Pages Router, filesystem routing, adapters) nor framework-scoped options. v2 moves to a **nested, strict** model emitted as `lumen.config.json` with `manifestVersion: 2` and `$schema`.
+In v1, projects had no manifest file; scaffolder choices were flat (`{ framework: "react", css: "tailwind", architecture: "feature" }`) and could not express Next.js concepts (App Router vs Pages Router, filesystem routing, adapters) nor framework-scoped options. `lumen.config.json` is a new improvement introduced in v2 as a **nested, strict** model with `manifestVersion: 2` and `$schema`.
 
 ## Shape
 
@@ -64,13 +64,13 @@ v1 used a flat config `{ framework: "react", css: "tailwind", architecture: "fea
 
 ## Contract & Shared Fixtures
 
-* The formal specification between `create-lumen` and `lumen-cli` is documented in [`docs/manifest-template-contract.md`](./manifest-template-contract.md) (`#9`).
+* The formal specification between `create-lumen` and `lumen-cli` is documented in [`docs/contracts/manifest-v2-contract.md`](./contracts/manifest-v2-contract.md) (`#9`).
 * Versioned contract fixtures reside in `schema/fixtures/v2/` (`#28`) and are validated via `tests/unit/manifest.test.mjs`. Both valid and invalid fixture matrices are published in the npm package for consumption by `lumen-cli#3`.
 
 ## References
 
 * Issues: #13 #14 #15 #16 #4 #9 #17 #28 #34 #33 #8
-* Contract: `docs/manifest-template-contract.md`
+* Contract: `docs/contracts/manifest-v2-contract.md`
 * Migration Guide: `docs/migration/v1-to-v2.md`
 * ADR 0001: `docs/adr/0001-scaffolder-base-strategy.md`
 * Schema: `schema/lumen.config.v2.json`

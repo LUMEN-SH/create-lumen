@@ -1,6 +1,6 @@
 # Migration Guide: create-lumen v1.x → v2.0.0
 
-> **Target Audience**: Developers with projects scaffolded using `create-lumen` 1.x or maintaining custom `lumen.config.json` files.  
+> **Target Audience**: Developers with projects scaffolded using `create-lumen` 1.x migrating to v2, or adopting `lumen.config.json` in existing workspaces.  
 > **Applicable Versions**: `create-lumen` >= 2.0.0, `lumen-cli` >= 1.0.0  
 > **Related Issues**: `#17`, `#13`, `#14`, `#15`, `#16`, `#9`, `#28`
 
@@ -22,7 +22,7 @@ v2 introduces a strict, nested manifest (`manifestVersion: 2`) validated by Zod 
 
 If your project was generated using standard options (React + Vite + TypeScript + Tailwind + feature-based architecture), you can migrate in 30 seconds:
 
-1. Replace your `<projectRoot>/lumen.config.json` with this file:
+1. Add `<projectRoot>/lumen.config.json` to your project root (v1 did not have a config file; `lumen.config.json` is a new improvement for v2):
    ```json
    {
      "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
@@ -71,7 +71,7 @@ If your project was generated using standard options (React + Vite + TypeScript 
 
 ## 3. What Happens with a v1 Config?
 
-Both `create-lumen` and `lumen-cli` strictly fail on v1 manifests with exit code `1`:
+Projects generated in v1 did not have a configuration file; `lumen.config.json` is a new improvement in v2. Both `create-lumen` (when reading a manifest via `--manifest` / `-m`) and `lumen-cli` strictly reject legacy flat configuration structures (missing `manifestVersion: 2` or using top-level flat keys) with exit code `1`:
 
 ```
 Manifest v1 detected (flat config). create-lumen v2 uses a nested manifest (manifestVersion: 2).
@@ -82,8 +82,8 @@ Raw keys: framework, css, architecture, language, router, stateManagement...
 This fail-fast behavior protects your codebase from accidental file generation in invalid directories.
 
 ### How to Fix
-1. Open your `lumen.config.json`.
-2. Delete the legacy keys or replace the entire file following the [Field-by-Field Mapping](#4-field-by-field-mapping-reference) below.
+1. Add `<projectRoot>/lumen.config.json` using the new v2 nested format following the [Field-by-Field Mapping](#4-field-by-field-mapping-reference) below.
+2. If you have an existing flat configuration object, convert it to the nested v2 shape.
 3. Validate your manifest against the JSON schema (`https://lumen.dev/schema/lumen.config.v2.json`).
 
 ---
@@ -161,7 +161,11 @@ In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly ins
 
 ## 6. Example Before & After
 
-### v1 (Old `lumen.config.json`)
+### v1 Concept (Legacy Flat Options)
+
+> [!NOTE]
+> In v1, there was no project configuration file — `lumen.config.json` is a new improvement for v2. The flat options below represent the prompt choices and parameters used in v1:
+
 ```json
 {
   "framework": "react",
@@ -178,7 +182,10 @@ In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly ins
 }
 ```
 
-### v2 (New `lumen.config.json`)
+### v2 (New `lumen.config.json` Improvement)
+
+`lumen.config.json` is the new project manifest introduced in v2 (`manifestVersion: 2`), enabling companion developer tools like `lumen-cli` to understand your project architecture and path mappings:
+
 ```json
 {
   "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
@@ -229,9 +236,15 @@ If you migrate a project using Tailwind CSS:
 
 ---
 
+## 8. History & Ecosystem Timeline
+
+`lumen.config.json` is a new improvement introduced in v2 alongside `lumen-cli` 1.x to establish a shared contract between the scaffolder and companion developer tools. Projects created with `create-lumen` 1.x did not have any project configuration file; adopting v2 brings structured configuration, explicit path mappings, and multi-framework support.
+
+---
+
 ## References
 
 - [Manifest v2 Overview](../manifest-v2.md)
-- [Manifest & Template Shared Contract](../manifest-template-contract.md)
+- [Manifest & Template Shared Contract](../contracts/manifest-v2-contract.md)
 - [JSON Schema Specification](../../schema/lumen.config.v2.json)
 - [ADR 0001: Scaffolder Base Strategy](../adr/0001-scaffolder-base-strategy.md)
