@@ -185,7 +185,7 @@ export function formatZodError(error) {
 /**
  * Parse and validate a manifest v2 object.
  * - Throws with migration-oriented message for v1 manifests (#14 AC)
- * - Throws with human-friendly field path + expected shape for malformed v2
+ * - Throws with user-friendly field path + expected shape for malformed v2
  * @param {unknown} raw
  * @returns {import("zod").infer<typeof manifestSchemaV2>}
  */

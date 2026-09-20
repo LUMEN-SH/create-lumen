@@ -201,7 +201,7 @@ src/
 - **Changelog:** Notable changes are documented in [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) (Keep a Changelog format).
 - **Roadmap:** Milestones (M1 through M5) are tracked in [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 - **Visual Plan:** Dependency graphs and parallel wave execution plans live in [`docs/PLAN.md`](./docs/PLAN.md).
-- **Branching Workflow:** Human guide for branch conventions and PR checklist in [`docs/BRANCHING.md`](./docs/BRANCHING.md).
+- **Branching Workflow:** Guide for branch conventions and PR checklist in [`docs/BRANCHING.md`](./docs/BRANCHING.md).
 
 ## Requirements
 

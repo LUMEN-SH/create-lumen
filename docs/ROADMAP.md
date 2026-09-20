@@ -115,7 +115,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 > with Tailwind v4 and tooling parity; published as a pre-release.
 
 - [x] #13 Manifest v2: nested config schema — **merged #39** `b423dc9` (`src/manifest/schema.js` + `docs/manifest-v2.md`, Zod v4 `4.6.5` pinned) ✅
-- [x] #14 Manifest v2: Zod validator + strict v1 rejection — **merged #39** `parseManifest`/`isV1Manifest` + human-friendly `zod-validation-error` ✅
+- [x] #14 Manifest v2: Zod validator + strict v1 rejection — **merged #39** `parseManifest`/`isV1Manifest` + user-friendly `zod-validation-error` ✅
 - [x] #15 Manifest v2: explicit path mapping — **merged #40** `src/manifest/paths.js` (`resolvePaths`, framework-aware) ✅
 - [x] #16 Manifest v2: emit `lumen.config.json` — **merged #40** `src/manifest/emit.js` + `src/main.js` wiring, byte-deterministic ✅
 - [x] #4 Manifest v2: publish JSON Schema — **merged #39** `schema/lumen.config.v2.json` via `z.toJSONSchema` + drift gate ✅
