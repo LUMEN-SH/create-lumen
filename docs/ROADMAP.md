@@ -110,7 +110,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 
 ### 🧱 M1 · `v2.0.0-alpha` — Core: React/Vite + manifest v2
 
-> **DoD:** `npm create lumen@alpha my-app` scaffolds a functional
+> **DoD:** `npx create-lumen@alpha my-app` scaffolds a functional
 > React/Vite project and emits a Zod-validated `lumen.config.json` v2,
 > with Tailwind v4 and tooling parity; published as a pre-release.
 
@@ -131,7 +131,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 
 > **DoD:** prompts are gated by declared capabilities and templates are
 > **composed** (no cross-product); shadcn/ui and `none`/`hybrid`
-> architectures land on top.
+> architectures land on top; Bootstrap removed in favor of Tailwind-first focus.
 
 - [ ] #10 Capabilities-based composition (epic)
 - [x] #25 Engine: capability declaration model
@@ -139,6 +139,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [ ] #26 Engine: gate prompts by declared capabilities
 - [ ] #27 Engine: template composition
 - [ ] #33 UI: shadcn/ui support (Tailwind v4)
+- [ ] #51 Templates: drop Bootstrap CSS framework (Tailwind CSS v4-first focus)
 - [ ] #34 Architecture: `none` + `hybrid`
 - [ ] #11 Scaffolder: back navigation in the v2 prompt flow
 - [ ] #48 Docs (M2): Engine capabilities model, template composition & shadcn/ui guides
