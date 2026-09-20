@@ -125,6 +125,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [x] #23 React + Vite: validate bundle under manifest v2 — **merged #45** all cells verified with manifest v2 ✅
 - [x] #29 create-lumen v2: non-interactive flags — ✅ implemented via `src/cli-args.js` (manifests + presets)
 - [x] #31 CI: publish v2 pre-releases — implemented in `.github/workflows/publish.yml` (dist-tags alpha/beta/rc/next) ✅
+- [x] #47 Docs (M1): Manifest v2 specification & React/Vite alpha docs — **documented** (`docs/contracts/manifest-v2-contract.md`, `docs/manifest-v2.md`, GitHub Pages schema) ✅
 
 ### ⚙️ M2 · `v2.0.0-alpha.2` — Engine: capabilities + options
 
@@ -140,6 +141,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [ ] #33 UI: shadcn/ui support (Tailwind v4)
 - [ ] #34 Architecture: `none` + `hybrid`
 - [ ] #11 Scaffolder: back navigation in the v2 prompt flow
+- [ ] #48 Docs (M2): Engine capabilities model, template composition & shadcn/ui guides
 
 ### ▲ M3 · `v2.0.0-beta` — Next.js support
 
@@ -153,6 +155,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [ ] #20 filesystem routing + route handlers
 - [ ] #21 server/client boundaries + `next/font` + `next/image`
 - [ ] #22 adapter configuration
+- [ ] #49 Docs (M3): Next.js architecture (App Router, Pages Router) & deployment adapters guide
 
 > **Base strategy:** Next.js bases are repository-owned snapshots refreshed
 > from a pinned `create-next-app` (dev-time only) — see
@@ -171,6 +174,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [ ] #37 per-overlay contract tests
 - [x] #28 Manifest v2 contract tests (schema fixtures)
 - [ ] #5 True headless e2e
+- [ ] #50 Docs (M4): Headless e2e & contract testing strategy documentation
 - [ ] #7 *close as superseded by #35*
 
 ### 📦 M5 · `v2.0.0` — Docs & release
@@ -178,8 +182,9 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 > **DoD:** migration guide + README/ROADMAP/CHANGELOG updated;
 > `v2.0.0` stable published.
 
-- [x] #17 Docs: v1.x → v2 migration guide — **documented** (`docs/migration/v1-to-v2.md`) ✅
-- [x] #30 Docs: README + ROADMAP/CHANGELOG for v2 — **documented** (ecosystem architecture + Keep a Changelog) ✅
+- [ ] #46 Docs: Ecosystem documentation & developer guides across v2 milestones (epic)
+- [ ] #17 Docs (M5): Complete v1.x → v2.0.0 migration guide for stable release
+- [ ] #30 Docs (M5): Finalize README, CHANGELOG & release notes for v2.0.0 stable
 
 ---
 
@@ -217,8 +222,13 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#37 | create-lumen#35, #9 ✅ | (leaf) | ⏳ Blocked (needs #35, #9 ✅) |
 | create-lumen#28 | create-lumen#14 ✅ | (leaf) | ✅ Completed — schema fixtures + contract tests (PR #44) |
 | create-lumen#5  | create-lumen#29, #16 ✅ | (leaf) | ⏳ Ready — #16 + #29 done |
-| create-lumen#17 | create-lumen#16 ✅ | (leaf) | ✅ Done — migration guide in docs/migration/v1-to-v2.md |
-| create-lumen#30 | M1–M4 | `v2.0.0` | ✅ Done — README + ROADMAP/CHANGELOG updated |
+| create-lumen#46 | — | create-lumen#47–#50, #17, #30 | ⏳ Active — ecosystem docs epic |
+| create-lumen#47 | create-lumen#9 ✅, #13 ✅, #4 ✅ | (leaf) | ✅ Done — M1 alpha docs completed |
+| create-lumen#48 | create-lumen#27, #33, #34 | (leaf) | ⏳ Blocked (needs #27, #33, #34) |
+| create-lumen#49 | create-lumen#8, #18–#22 | (leaf) | ⏳ Blocked (needs #8, #18–#22) |
+| create-lumen#50 | create-lumen#35 | (leaf) | ⏳ Blocked (needs #35) |
+| create-lumen#17 | create-lumen#48, #49 | `v2.0.0` | ⏳ Blocked — final v1→v2 migration guide for stable release |
+| create-lumen#30 | M1–M4 | `v2.0.0` | ⏳ Blocked — final README/CHANGELOG/release notes for stable |
 | lumen-cli#3  | create-lumen#9 ✅, #13 ✅ | lumen-cli#4, #5, #7, #20 | ⏳ Unblocked (needs #9 ✅, #13 ✅) |
 | lumen-cli#5  | lumen-cli#2, #3, create-lumen M1 | lumen-cli#6 | ⏳ Blocked |
 | lumen-cli#6  | lumen-cli#5 | (leaf) | ⏳ Blocked |
