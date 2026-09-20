@@ -119,10 +119,10 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [x] #15 Manifest v2: explicit path mapping — **merged #40** `src/manifest/paths.js` (`resolvePaths`, framework-aware) ✅
 - [x] #16 Manifest v2: emit `lumen.config.json` — **merged #40** `src/manifest/emit.js` + `src/main.js` wiring, byte-deterministic ✅
 - [x] #4 Manifest v2: publish JSON Schema — **merged #39** `schema/lumen.config.v2.json` via `z.toJSONSchema` + drift gate ✅
-- [x] #9 Manifest/template contract shared with lumen-cli — contract documented in `docs/manifest-v2.md` ✅
-- [x] #6 Templates: migrate to Tailwind v4 — **merged #41** `60f10b2` ✅
-- [x] #24 Tooling: eslint/prettier/oxlint/oxfmt parity — matrix parity, Next.js seam, format idempotence ✅
-- [x] #23 React + Vite: validate bundle under manifest v2 — all cells pass `verify:offline` with manifest v2 ✅
+- [x] #9 Manifest/template contract shared with lumen-cli — **documented** (`docs/contracts/manifest-v2-contract.md`, PR #44) ✅
+- [x] #6 Templates: migrate to Tailwind v4 — **merged #41** `60f10b2` (v3 dropped, `@theme` tokens, `@tailwindcss/vite`) ✅
+- [x] #24 Tooling: eslint/prettier/oxlint/oxfmt parity — **merged #45** `18e4c71` ✅
+- [x] #23 React + Vite: validate bundle under manifest v2 — **merged #45** all cells verified with manifest v2 ✅
 - [x] #29 create-lumen v2: non-interactive flags — ✅ implemented via `src/cli-args.js` (manifests + presets)
 - [x] #31 CI: publish v2 pre-releases — implemented in `.github/workflows/publish.yml` (dist-tags alpha/beta/rc/next) ✅
 
@@ -178,8 +178,8 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 > **DoD:** migration guide + README/ROADMAP/CHANGELOG updated;
 > `v2.0.0` stable published.
 
-- [ ] #17 Docs: v1.x → v2 migration guide
-- [ ] #30 Docs: README + ROADMAP/CHANGELOG for v2
+- [x] #17 Docs: v1.x → v2 migration guide — **documented** (`docs/migration/v1-to-v2.md`) ✅
+- [x] #30 Docs: README + ROADMAP/CHANGELOG for v2 — **documented** (ecosystem architecture + Keep a Changelog) ✅
 
 ---
 
@@ -195,11 +195,10 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#15 | create-lumen#13 ✅ | create-lumen#16 | ✅ Merged #40 — path mapping done |
 | create-lumen#16 | create-lumen#13 ✅, #14 ✅, #15 ✅ | create-lumen#23, #29, #31, #5, #17 | ✅ Merged #40 — emit done; unblocks #23, #29, #31, #5, #17 |
 | create-lumen#4  | create-lumen#13 ✅ | (leaf) | ✅ Merged #39 — JSON Schema published |
-| create-lumen#6  | — | create-lumen#23, #33 | ✅ Merged #41 — Tailwind v4 done |
-| create-lumen#24 | — | create-lumen#23 | ✅ Completed — tooling parity done |
-| create-lumen#23 | create-lumen#16 ✅, #6 ✅, #24 ✅ | create-lumen#31 | ✅ Completed — all cells verified under manifest v2 |
-| create-lumen#9  | create-lumen#13 ✅ | lumen-cli#3 | ✅ Documented in docs/manifest-v2.md |
-| create-lumen#9  | create-lumen#13 ✅ | lumen-cli#3 | ✅ Documented in docs/manifest-v2.md |
+| create-lumen#6  | — | create-lumen#23, #33 | ✅ Merged #41 — Tailwind v4 migrated |
+| create-lumen#24 | — | create-lumen#23 | ✅ Merged #45 — tooling parity done |
+| create-lumen#23 | create-lumen#16 ✅, #6 ✅, #24 ✅ | create-lumen#31 | ✅ Merged #45 — all cells verified under manifest v2 |
+| create-lumen#9  | create-lumen#13 ✅ | lumen-cli#3 | ✅ Done — shared contract documented in docs/contracts/manifest-v2-contract.md (PR #44) |
 | create-lumen#29 | create-lumen#16 ✅ | create-lumen#5 | ✅ Completed — non-interactive flags (#29) |
 | create-lumen#31 | create-lumen#16 ✅, #23 ✅ | `v2.0.0-alpha` | ✅ Completed in .github/workflows/publish.yml |
 | create-lumen#25 | create-lumen#13 ✅ | create-lumen#26, #27 | ✅ Completed — capability model + BaseProvider seam |
@@ -209,18 +208,18 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#32 | M1–M4 | `v2.0.0` | ⏳ Blocked (umbrella) |
 | create-lumen#26 | create-lumen#25 | create-lumen#27 | ⏳ Blocked (needs #25) |
 | create-lumen#27 | create-lumen#25, #26 | create-lumen#33, #34, #8 | ⏳ Blocked (needs #25, #26) |
-| create-lumen#33 | create-lumen#6, #27 | lumen-cli#9 | ⏳ Blocked (needs #6, #27) |
+| create-lumen#33 | create-lumen#6 ✅, #27 | lumen-cli#9 | ⏳ Blocked (needs #27) |
 | create-lumen#34 | create-lumen#27 | (leaf) | ⏳ Blocked (needs #27) |
 | create-lumen#8  | create-lumen#27 | create-lumen#18–#22 | ⏳ Blocked (needs #27) |
 | create-lumen#18–#22 | create-lumen#8, #27 | (leaves) | ⏳ Blocked (needs #8, #27) |
 | create-lumen#35 | — | create-lumen#36, #37 | ⏳ Not started |
 | create-lumen#36 | create-lumen#35 | (leaf) | ⏳ Blocked (needs #35) |
-| create-lumen#37 | create-lumen#35, #9 | (leaf) | ⏳ Blocked (needs #35, #9) |
+| create-lumen#37 | create-lumen#35, #9 ✅ | (leaf) | ⏳ Blocked (needs #35, #9 ✅) |
 | create-lumen#28 | create-lumen#14 ✅ | (leaf) | ✅ Completed — schema fixtures + contract tests (PR #44) |
 | create-lumen#5  | create-lumen#29, #16 ✅ | (leaf) | ⏳ Ready — #16 + #29 done |
-| create-lumen#17 | create-lumen#16 ✅ | (leaf) | ⏳ Ready — #16 done |
-| create-lumen#30 | M1–M4 | `v2.0.0` | ⏳ Blocked |
-| lumen-cli#3  | create-lumen#9, #13 ✅ | lumen-cli#4, #5, #7, #20 | ⏳ Partially unblocked (needs #9) |
+| create-lumen#17 | create-lumen#16 ✅ | (leaf) | ✅ Done — migration guide in docs/migration/v1-to-v2.md |
+| create-lumen#30 | M1–M4 | `v2.0.0` | ✅ Done — README + ROADMAP/CHANGELOG updated |
+| lumen-cli#3  | create-lumen#9 ✅, #13 ✅ | lumen-cli#4, #5, #7, #20 | ⏳ Unblocked (needs #9 ✅, #13 ✅) |
 | lumen-cli#5  | lumen-cli#2, #3, create-lumen M1 | lumen-cli#6 | ⏳ Blocked |
 | lumen-cli#6  | lumen-cli#5 | (leaf) | ⏳ Blocked |
 | lumen-cli#7  | lumen-cli#3 | lumen-cli#8, #11–#14, #17, #20, #21 | ⏳ Blocked (needs #3) |

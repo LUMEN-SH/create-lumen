@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - **Manifest v2 contract tests & schema fixtures** (#28) — complete fixture suite under `schema/fixtures/v2/` covering 10 valid permutations (React+Vite, Next.js App Router, Next.js Pages Router across feature-based, component-based, hybrid, and none architectures) and 10 invalid permutations (architecture scoping violations, cross-field constraint mismatches, malformed paths, and legacy v1 configs). Comprehensive test suite `tests/unit/manifest.test.mjs` pins schema compliance and exports `schema/fixtures/index.js` for shared consumption by `lumen-cli`.
-- **Shared contract between create-lumen and lumen-cli** (#9) — published `docs/manifest-template-contract.md` defining the formal specification for manifest v2 structure, the 6-directory path mapping contract, template conventions, and version negotiation.
+- **Shared contract between create-lumen and lumen-cli** (#9) — published `docs/contracts/manifest-v2-contract.md` defining the formal specification for manifest v2 structure, the 6-directory path mapping contract, template conventions, and version negotiation.
 - **Migration guide v1.x → v2.0.0** (#17) — published `docs/migration/v1-to-v2.md` documenting field-by-field translation from legacy flat configs to nested v2 manifests, fail-fast migration errors, and fast-track instructions for default projects.
 - **React + Vite bundle validation under manifest v2** (#23) — verified existing React/Vite templates emit compliant `lumen.config.json` v2 files; wired manifest emission and assertions into offline smoke tests (`tests/smoke/generate.test.mjs`) and verification suites (`tests/verify/verify-offline.mjs`).
 - **Non-interactive CLI flags** (#29) — added `--yes` / `-y` (defaults), `--manifest` / `-m` (scaffold from file or inline JSON), `--template` / `-t` (preset shortcuts), `--help` / `-h`, and `--version` / `-v` with robust positional argument filtering in `bin/cli.js` and `src/main.js`.
@@ -18,7 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - **Tooling: eslint / prettier / oxlint / oxfmt parity in v2 templates** (#24) — full linter × formatter matrix (`eslint`/`oxlint` × `prettier`/`oxfmt`), prompt option to select Oxfmt with ESLint, Next.js seam with `eslint-config-next` and `eslint.config.mjs`, automatic conditional `eslint-config-prettier` wiring, consistent package scripts (`lint`, `lint:fix`, `format`, `format:check`), and format idempotence across multiple passes.
 - **React + Vite: validate bundle under manifest v2** (#23) — wired `emitManifest` in verification harnesses and smoke tests, verified byte-deterministic emission and Zod schema compliance of `lumen.config.json` v2 across all matrix cells.
 - **CI: publish create-lumen v2 pre-releases to npm** (#31) — configured `.github/workflows/publish.yml` to publish pre-releases (`alpha`, `beta`, `rc`, `next`) to npm under dist-tags and create GitHub pre-releases.
-- **Manifest/template contract documentation** (#9) — formalized and documented the shared manifest v2 and path mapping contract in `docs/manifest-v2.md` consumed by `lumen-cli`.
+- **Manifest/template contract documentation** (#9) — formalized and documented the shared manifest v2 and path mapping contract in `docs/contracts/manifest-v2-contract.md` consumed by `lumen-cli`.
+- **Architecture naming aligned to `type-based`** — renamed the traditional React layout from `component-based` to `type-based` across manifest v2 schema (`ARCHITECTURE_TYPES`), paths resolution (`resolvePaths`), JSON Schema, contract, and documentation. Next.js is explicitly scoped to `hybrid` (and `feature-based` / `none`) instead of `type-based`.
+
+### Removed
+
+- **Tailwind CSS v3 support dropped** (#6) — dropped `tailwind.config.js` and `tailwind.config.ts` in favor of CSS-first `@theme` syntax.
+
+### Breaking Changes
+
+- **Strict v1 manifest rejection** (#14, #17) — `create-lumen` and `lumen-cli` strictly reject v1 flat configurations or manifests missing `manifestVersion: 2`, exiting with instructions pointing to `docs/migration/v1-to-v2.md`.
 
 ## [1.2.0] — 2026-09-17
 

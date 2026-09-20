@@ -64,14 +64,16 @@ create-lumen my-app      # after npm link
 
 ## Features
 
-- Architecture choice: feature-based or type-based
+- Architecture choice: feature-based or type-based (with Next.js hybrid/none in v2)
 - TypeScript or JavaScript output
-- CSS frameworks: Tailwind, Bootstrap, or none
+- CSS frameworks: Tailwind CSS v4 (CSS-first `@theme`, v3 dropped), Bootstrap 5.3+, or none
 - Optional state management: Zustand or Redux Toolkit
 - Optional router (React Router)
 - Optional testing: Vitest or Jest
-- Linting: ESLint (default) or Oxlint
+- Linting: ESLint (default), Oxlint, or Biome
 - Code formatter: Prettier or Oxfmt (chosen after the linter; `eslint-config-prettier` is auto-wired for the ESLint + Prettier combo)
+- Manifest v2: Emits a deterministic `lumen.config.json` validated against JSON Schema Draft 2020-12
+- Explicit path mapping: Target directories declared for `lumen-cli` code generation
 - Optional Axios setup and icon libraries
 - Auto `git init`, generated `README` (with a project description reflecting the chosen tooling) and `LICENSE`
 - `.env.example` scaffolded, and the generated `.gitignore` excludes env files (`.env`, `.env.*`) while keeping `.env.example`
@@ -152,7 +154,7 @@ src/
     └── utils
 ```
 
-Component-based (example):
+Type-based (example):
 
 ```
 src/
@@ -181,9 +183,25 @@ src/
 └── utils
 ```
 
-## Roadmap
+## Manifest v2 & Ecosystem Architecture
 
-Released versions live in [`docs/CHANGELOG.md`](./docs/CHANGELOG.md); planned work is tracked in [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+`create-lumen` is part of the Lumen ecosystem alongside **`lumen-cli`**:
+
+- **`create-lumen` (this repo):** The bootstrap scaffolder that initializes project repositories and writes an explicit, strictly validated `lumen.config.json` manifest (`manifestVersion: 2`) into the project root.
+- **`lumen-cli`:** The companion developer CLI that reads `lumen.config.json` to generate components, features, hooks, and services at the paths declared in `manifest.paths`.
+
+### Ecosystem Documentation & Contracts
+
+- **[Manifest v2 Overview](./docs/manifest-v2.md):** Specification of the nested schema and validation behavior.
+- **[Shared Contract: `create-lumen` ↔ `lumen-cli`](./docs/contracts/manifest-v2-contract.md):** The agreed contract for path mapping, barrel conventions, and version negotiation.
+- **[v1 to v2 Migration Guide](./docs/migration/v1-to-v2.md):** Complete guide for migrating generated projects and legacy flat configs to v2.
+
+## Roadmap & Planning
+
+- **Changelog:** Notable changes are documented in [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) (Keep a Changelog format).
+- **Roadmap:** Milestones (M1 through M5) are tracked in [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+- **Visual Plan:** Dependency graphs and parallel wave execution plans live in [`docs/PLAN.md`](./docs/PLAN.md).
+- **Branching Workflow:** Human guide for branch conventions and PR checklist in [`docs/BRANCHING.md`](./docs/BRANCHING.md).
 
 ## Requirements
 

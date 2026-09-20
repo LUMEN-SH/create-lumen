@@ -193,7 +193,7 @@ export function parseManifest(raw) {
   if (isV1Manifest(raw)) {
     throw new Error(
       `Manifest v1 detected (flat config). create-lumen v2 uses a nested manifest (manifestVersion: 2).\n` +
-        `Please migrate: delete the old config and re-run create-lumen, or see the migration guide (docs/manifest-v2.md / issue #17).\n` +
+        `Please migrate: delete the old config and re-run create-lumen, or see the migration guide (docs/migration/v1-to-v2.md).\n` +
         `Raw keys: ${Object.keys(raw || {}).join(", ")}`
     );
   }
