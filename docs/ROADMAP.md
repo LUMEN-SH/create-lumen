@@ -127,6 +127,15 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [x] #31 CI: publish v2 pre-releases — implemented in `.github/workflows/publish.yml` (dist-tags alpha/beta/rc/next) ✅
 - [x] #47 Docs (M1): Manifest v2 specification & React/Vite alpha docs — **documented** (`docs/contracts/manifest-v2-contract.md`, `docs/manifest-v2.md`, GitHub Pages schema) ✅
 
+### ⚙️ M1.1 · `v2.0.0-alpha.1` — Schema & Agent Contracts
+
+> **DoD:** Extended manifest v2 with harness command matrix and architecture validation modes (`strict`/`relaxed`/`none`). Adds agent-focused skill `skills/create-lumen/` and optional `.lumen/` context directory generation (`project.json`, `architecture.json`, `conventions.md`) for agent workflows.
+
+- [ ] Manifest v2.1: Add harness command matrix & architecture validation modes to schema
+- [ ] Agent Skills: Create `skills/create-lumen` package guidance
+- [ ] Scaffolder: Emit `.lumen/` agent context directory on creation
+- [ ] Contract Tests: Fixtures & drift gate for harness and validation schema
+
 ### ⚙️ M2 · `v2.0.0-alpha.2` — Engine: capabilities + options
 
 > **DoD:** prompts are gated by declared capabilities and templates are
