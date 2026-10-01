@@ -98,7 +98,7 @@ export function buildManifest(responses, opts = {}) {
     if (!(k in ordered)) ordered[k] = manifest[k];
   }
 
-  // Validate via Zod before returning (throws with human-friendly message on invalid)
+  // Validate via Zod before returning (throws with user-friendly message on invalid)
   // Use parse to apply defaults ($schema) and ensure strictness
   return parseManifest(ordered);
 }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0-alpha.0] — 2026-09-19
+
 ### Added
 
 - **Manifest v2 contract tests & schema fixtures** (#28) — complete fixture suite under `schema/fixtures/v2/` covering 10 valid permutations (React+Vite, Next.js App Router, Next.js Pages Router across feature-based, component-based, hybrid, and none architectures) and 10 invalid permutations (architecture scoping violations, cross-field constraint mismatches, malformed paths, and legacy v1 configs). Comprehensive test suite `tests/unit/manifest.test.mjs` pins schema compliance and exports `schema/fixtures/index.js` for shared consumption by `lumen-cli`.

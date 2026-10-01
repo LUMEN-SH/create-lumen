@@ -25,7 +25,7 @@ If your project was generated using standard options (React + Vite + TypeScript 
 1. Add `<projectRoot>/lumen.config.json` to your project root (v1 did not have a config file; `lumen.config.json` is a new improvement for v2):
    ```json
    {
-     "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+     "$schema": "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json",
      "manifestVersion": 2,
      "framework": {
        "name": "react",
@@ -84,7 +84,7 @@ This fail-fast behavior protects your codebase from accidental file generation i
 ### How to Fix
 1. Add `<projectRoot>/lumen.config.json` using the new v2 nested format following the [Field-by-Field Mapping](#4-field-by-field-mapping-reference) below.
 2. If you have an existing flat configuration object, convert it to the nested v2 shape.
-3. Validate your manifest against the JSON schema (`https://lumen.dev/schema/lumen.config.v2.json`).
+3. Validate your manifest against the JSON schema (`https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json`).
 
 ---
 
@@ -95,7 +95,7 @@ Every key from v1 has a designated equivalent, is scoped into a nested namespace
 | v1 Field (Flat) | v1 Type / Values | v2 Location & Shape | Description & Migration Notes |
 | :--- | :--- | :--- | :--- |
 | *(none)* | *(absent)* | `"manifestVersion": 2` | **Required integer.** Explicit schema version gate. Must be `2`. |
-| *(none)* | *(absent)* | `"$schema": "https://lumen.dev/schema/lumen.config.v2.json"` | **Optional / Defaulted.** Provides IDE autocompletion and hover documentation. |
+| *(none)* | *(absent)* | `"$schema": "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json"` | **Optional / Defaulted.** Provides IDE autocompletion and hover documentation. |
 | `framework` | `"react"` | `"framework": { "name": "react", "variant": "vite" }` | Framework is now an object. In v2, `react` requires `variant: "vite"`. Next.js targets use `name: "next"` with `variant: "app-router"` or `"pages-router"`. |
 | *(none)* | *(absent)* | `"framework.bundler": "turbopack" \| "webpack"` | Optional Next.js bundler selector. Invalid on React+Vite. |
 | *(none)* | *(absent)* | `"framework.adapter": "node" \| "vercel" \| "cloudflare" \| "static"` | Optional Next.js deployment adapter. Invalid on React+Vite. |
@@ -188,7 +188,7 @@ In v1, paths were hardcoded in generator routines. In v2, `paths` explicitly ins
 
 ```json
 {
-  "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+  "$schema": "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json",
   "manifestVersion": 2,
   "framework": {
     "name": "react",

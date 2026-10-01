@@ -12,18 +12,19 @@ Each milestone closes with an observable result; no waiting for the
 ```mermaid
 flowchart LR
     M1["🧱 M1 · v2.0.0-alpha<br/>Core: React/Vite + manifest v2"]
+    M1_1["⚙️ M1.1 · v2.0.0-alpha.1<br/>Schema & Agent Contracts"]
     M2["⚙️ M2 · v2.0.0-alpha.2<br/>Engine: capabilities + options"]
     M3["▲ M3 · v2.0.0-beta<br/>Next.js support"]
-    M4["🧪 M4 · v2.0.0-rc<br/>Testing &amp; quality"]
-    M5["📦 M5 · v2.0.0<br/>Docs &amp; release"]
+    M4["🧪 M4 · v2.0.0-rc<br/>Testing & quality"]
+    M5["📦 M5 · v2.0.0<br/>Docs & release"]
 
-    M1 -->|"npm create lumen@alpha my-app works"| M2
+    M1 -->|"npm create lumen@alpha my-app works"| M1_1
+    M1_1 -->|"extended schema + agent skills/context"| M2
     M2 -->|"composed templates + shadcn/none/hybrid"| M3
     M3 -->|"Next.js scaffolds and runs"| M4
     M4 -->|"scalable tests + headless e2e"| M5
     M5 -->|"v2.0.0 stable"| DONE(((✅)))
 ```
-
 ## 2. Dependency graph (cross-project)
 
 Solid arrows = hard dependency. Dotted arrows = cross-repo dependency
@@ -207,9 +208,10 @@ flowchart LR
 
 ```mermaid
 graph LR
-    A["create-lumen<br/>v2.0.0-alpha (M1)"] --> B["create-lumen<br/>v2.0.0-alpha.2 (M2)"]
-    B --> C["create-lumen<br/>v2.0.0-beta (M3)"]
-    C --> D["create-lumen<br/>v2.0.0-rc (M4)"]
-    D --> E["create-lumen<br/>v2.0.0 (M5)"]
-    E -.-> F["lumen-cli<br/>v1.0.0"]
+    A["create-lumen<br/>v2.0.0-alpha (M1)"] --> B["create-lumen<br/>v2.0.0-alpha.1 (M1.1)"]
+    B --> C["create-lumen<br/>v2.0.0-alpha.2 (M2)"]
+    C --> D["create-lumen<br/>v2.0.0-beta (M3)"]
+    D --> E["create-lumen<br/>v2.0.0-rc (M4)"]
+    E --> F["create-lumen<br/>v2.0.0 (M5)"]
+    F -.-> G["lumen-cli<br/>v1.0.0"]
 ```

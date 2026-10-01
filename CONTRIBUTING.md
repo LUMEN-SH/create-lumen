@@ -2,7 +2,7 @@
 
 ## Branch workflow (summary)
 
-Full human guide: [`docs/BRANCHING.md`](./docs/BRANCHING.md) · Formal decision: [`docs/adr/0002-branching-strategy.md`](./docs/adr/0002-branching-strategy.md)
+Branch workflow guide: [`docs/BRANCHING.md`](./docs/BRANCHING.md) · Formal decision: [`docs/adr/0002-branching-strategy.md`](./docs/adr/0002-branching-strategy.md)
 
 ```
 feat/*  --PR-->  develop  --checkout-->  release/2.0.0-*  --PR-->  develop  --PR-->  main

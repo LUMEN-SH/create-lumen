@@ -92,7 +92,7 @@ test("parseManifest rejects biome as linter via enum catch? actually allows biom
   assert.doesNotThrow(() => parseManifest(m));
 });
 
-test("parseManifest fails on malformed paths (human-friendly error)", () => {
+test("parseManifest fails on malformed paths (user-friendly error)", () => {
   const m = { ...baseValid, paths: { ...baseValid.paths, features: "" } };
   assert.throws(() => parseManifest(m), /Manifest validation failed/);
 });

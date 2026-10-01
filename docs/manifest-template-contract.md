@@ -1,9 +1,9 @@
-﻿# Manifest and Template Contract: create-lumen â†” lumen-cli
+# Manifest and Template Contract: create-lumen ↔ lumen-cli
 
 > **Contract Version**: 2.0  
 > **Participating Packages**: `create-lumen` (scaffolder/producer), `lumen-cli` (developer CLI/consumer)  
 > **Tracking Issues**: `create-lumen#9`, `create-lumen#28`, `lumen-cli#3`, `lumen-cli#7`  
-> **Schema URI**: `https://lumen.dev/schema/lumen.config.v2.json`
+> **Schema URI**: `https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json`
 
 ---
 
@@ -23,7 +23,7 @@ The manifest is emitted at `<projectRoot>/lumen.config.json` as a UTF-8 JSON fil
 
 ```json
 {
-  "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+  "$schema": "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json",
   "manifestVersion": 2,
   "framework": {
     "name": "react | next",

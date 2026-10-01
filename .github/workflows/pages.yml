@@ -1,0 +1,70 @@
+name: Deploy Schema to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - "release/*"
+    paths:
+      - "schema/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare site directory
+        run: |
+          mkdir -p _site/schema
+          cp schema/lumen.config.v2.json _site/schema/
+          cat << 'EOF' > _site/index.html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Lumen Schemas</title>
+            <style>
+              body { font-family: system-ui, -apple-system, sans-serif; max-width: 650px; margin: 40px auto; padding: 0 16px; color: #1f2937; }
+              code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+              a { color: #2563eb; text-decoration: none; }
+              a:hover { text-decoration: underline; }
+            </style>
+          </head>
+          <body>
+            <h1>Lumen Configuration Schemas</h1>
+            <p>Official JSON Schemas for <code>create-lumen</code> and <code>lumen-cli</code>.</p>
+            <ul>
+              <li><a href="schema/lumen.config.v2.json"><code>schema/lumen.config.v2.json</code></a> (v2 Manifest Schema)</li>
+            </ul>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

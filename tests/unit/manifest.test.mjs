@@ -1,4 +1,4 @@
-﻿import test from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { parseManifest, isV1Manifest } from "../../src/manifest/schema.js";
 import { loadValidFixtures, loadInvalidFixtures, getFixture } from "../../schema/fixtures/index.js";

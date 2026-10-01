@@ -25,17 +25,18 @@ flowchart LR
 
 ## 2. Manifest v2 Specification
 
-Every emitted manifest MUST conform to the [JSON Schema Draft 2020-12](https://lumen.dev/schema/lumen.config.v2.json) and Zod schema in `src/manifest/schema.js`.
+Every emitted manifest MUST conform to the [JSON Schema Draft 2020-12](https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json) and Zod schema in `src/manifest/schema.js`.
 
 ### Top-Level Schema
 
 ```typescript
 interface ManifestV2 {
-  $schema?: string;                 // Default: "https://lumen.dev/schema/lumen.config.v2.json"
+  $schema?: string;                 // Default: "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json"
   manifestVersion: 2;               // Literal 2 (required)
   framework: FrameworkConfig;       // Required
   styling: StylingConfig;           // Required
   architecture: ArchitectureConfig; // Required
+  harness: HarnessConfig;           // Required
   ui: UIConfig;                     // Required
   docs: DocsConfig;                 // Required
   paths: PathsConfig;               // Required
@@ -43,6 +44,8 @@ interface ManifestV2 {
   reactCompiler?: boolean;          // Optional
   agentDocs?: boolean;              // Optional
 }
+```
+
 ```
 
 ### Sub-Schema Definitions
@@ -70,23 +73,79 @@ interface StylingConfig {
 *Notes:* In v2, `engine: "tailwind"` implies **Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.js`).
 
 #### Architecture (`architecture`)
+
 ```typescript
 interface ArchitectureConfig {
-  type: "feature-based" | "type-based" | "hybrid" | "none";
+  preset: "feature-based" | "type-based" | "hybrid" | "none";
+  validation: "strict" | "relaxed" | "none";
 }
 ```
-*Constraints:*
-- For `framework.name === "react"`, allowed types are: `"feature-based"`, `"type-based"`, `"none"`.
-- For `framework.name === "next"`, allowed types are: `"feature-based"`, `"hybrid"`, `"none"` (Next.js supports `hybrid` instead of `type-based`).
 
-#### UI Kit (`ui`)
-```typescript
-interface UIConfig {
-  kit: "shadcn" | "none";
-}
-```
 *Constraints:*
 - `kit: "shadcn"` REQUIRES `styling.engine === "tailwind"`.
+
+#### Harness (`harness`)
+
+
+
+*Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
+
+#### Harness (`harness`)
+
+  
+
+  *Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
+
+#### Harness (\`harness\`)
+
+  ```typescript
+  interface HarnessConfig {
+    commands: Array<{
+      name: string;        // e.g. "lint" | "format" | "test" | "build" | custom
+      command: string;     // e.g. "oxlint .", "tsc -b", "vitest run"
+      required?: boolean;  // default true
+      description?: string;
+    }>;
+  }
+  ```
+
+  *Notes:* The \`harness\` defines the commands that \`lumen-cli\` will run when executing \`lumen harness\`.
+
+#### Harness (`harness`)
+
+  
+
+  *Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
+
+#### Harness (\`harness\`)
+
+  ```typescript
+  interface HarnessConfig {
+    commands: Array<{
+      name: string;        // e.g. "lint" | "format" | "test" | "build" | custom
+      command: string;     // e.g. "oxlint .", "tsc -b", "vitest run"
+      required?: boolean;  // default true
+      description?: string;
+    }>;
+  }
+  ```
+
+  *Notes:* The \`harness\` defines the commands that \`lumen-cli\` will run when executing \`lumen harness\`.
+
+#### Harness (`harness`)
+
+```typescript
+interface HarnessConfig {
+  commands: Array<{
+    name: string;        // e.g. "lint" | "format" | "test" | "build" | custom
+    command: string;     // e.g. "oxlint .", "tsc -b", "vitest run"
+    required?: boolean;  // default true
+    description?: string;
+  }>;
+}
+```
+
+*Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
 
 #### Documentation (`docs`)
 ```typescript

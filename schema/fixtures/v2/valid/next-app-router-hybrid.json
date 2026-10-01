@@ -1,5 +1,5 @@
 {
-  "$schema": "https://lumen.dev/schema/lumen.config.v2.json",
+  "$schema": "https://lumen-sh.github.io/create-lumen/schema/lumen.config.v2.json",
   "manifestVersion": 2,
   "framework": {
     "name": "next",

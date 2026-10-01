@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 // Real-install verification: scaffolds a sampled project, runs a genuine
 // `npm install`, then gates lint (zero-warnings), format idempotence, tests,
 // and the production build. Requires network + a package manager.

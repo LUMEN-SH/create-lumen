@@ -1,4 +1,4 @@
-# Branch Workflow — Human Guide
+# Branch Workflow Guide
 
 > For 4 devs, `1.x` frozen (`v1.2.0`), `v2.0.0` train `alpha -> beta -> rc -> stable`. See ADR 0002 for the formal decision and ROADMAP.md for the SemVer philosophy.
 
