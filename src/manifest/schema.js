@@ -12,7 +12,7 @@ export const FRAMEWORK_VARIANTS = ["vite", "app-router", "pages-router"];
 export const FRAMEWORK_BUNDLERS = ["turbopack", "webpack"];
 export const FRAMEWORK_ADAPTERS = ["node", "vercel", "cloudflare", "static"];
 
-export const STYLING_ENGINES = ["tailwind", "bootstrap", "none"];
+export const STYLING_ENGINES = ["tailwind", "none"];
 export const ARCHITECTURE_PRESETS = ["feature-based", "type-based", "hybrid", "none"];
 // Legacy alias: docs used architecture.type, canonical is architecture.preset.
 // Keep both in sync; parseManifest normalizes to expose both keys.

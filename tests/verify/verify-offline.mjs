@@ -404,7 +404,7 @@ async function audit(responses, projectPath) {
   // CSS framework parity (regression gate for the v1.2.0 globals path fix):
   // the main stylesheet the architecture actually imports must carry the
   // selected framework's content (main.css for vanilla, globals.css for
-  // tailwind/bootstrap), themes.css must live next to it, and src/index.css
+  // tailwind), themes.css must live next to it, and src/index.css
   // (Vite leftover) must be absent.
   const mainFileName = cssFramework === "none" ? "main.css" : "globals.css";
   const mainRel =
@@ -442,8 +442,6 @@ async function audit(responses, projectPath) {
     const hasBootstrap = /text-muted|d-flex|fw-bold|btn-primary/.test(home);
     if (cssFramework === "tailwind") {
       ok(hasTailwind && !hasBootstrap, `home: tailwind markup expected under tailwind`);
-    } else if (cssFramework === "bootstrap") {
-      ok(hasBootstrap && !hasTailwind, `home: bootstrap markup expected under bootstrap`);
     } else {
       ok(!hasTailwind && !hasBootstrap, `home: inline markup expected under none`);
     }

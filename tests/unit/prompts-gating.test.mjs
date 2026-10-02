@@ -109,25 +109,25 @@ test("filterCompatibleChoices: architecture type-based compatible with React/Vit
   assert.deepEqual(nextPrimitives, ["feature-based", "hybrid", "none"]);
 });
 
-test("filterCompatibleChoices: styling bootstrap compatible with React/Vite & Next Pages Router, excluded with Next App Router", () => {
+test("filterCompatibleChoices: styling bootstrap excluded everywhere post-#51 (Tailwind-first)", () => {
   const stylingChoices = [
     { label: "Tailwind CSS", value: "tailwind" },
     { label: "Bootstrap", value: "bootstrap" },
     { label: "None", value: "none" },
   ];
 
-  // React/Vite: includes bootstrap
+  // React/Vite: excludes bootstrap
   const reactStyling = filterCompatibleChoices("react:vite", "styling", stylingChoices);
   assert.deepEqual(
     reactStyling.map((c) => c.value),
-    ["tailwind", "bootstrap", "none"]
+    ["tailwind", "none"]
   );
 
-  // Next Pages Router: includes bootstrap
+  // Next Pages Router: excludes bootstrap
   const pagesStyling = filterCompatibleChoices("next:pages-router", "styling", stylingChoices);
   assert.deepEqual(
     pagesStyling.map((c) => c.value),
-    ["tailwind", "bootstrap", "none"]
+    ["tailwind", "none"]
   );
 
   // Next App Router: excludes bootstrap
@@ -301,7 +301,7 @@ test("sanitizeResponsesForFramework: preserves valid compatible choices for Reac
 
   assert.equal(sanitized.router, true);
   assert.equal(sanitized.architecture, "type-based");
-  assert.equal(sanitized.cssFramework, "bootstrap");
+  assert.equal(sanitized.cssFramework, "tailwind"); // post-#51: bootstrap reset even for React/Vite
   assert.equal(sanitized.linter, "oxlint");
   assert.equal(sanitized.formatter, "oxfmt");
 });

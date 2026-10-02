@@ -195,7 +195,7 @@ flowchart LR
     Prompts["prompts"] --> Capabilities["capabilities"]
     Capabilities --> Composition["template composition<br/>(fragments)"]
     Composition --> Injector["injector"]
-    Injector --> CssOverlay["CSS overlay<br/>Tailwind / Bootstrap / none"]
+    Injector --> CssOverlay["CSS overlay<br/>Tailwind / none"]
     CssOverlay --> Config["tsconfig / vite + @/ alias"]
     Config --> Format["format pass"]
     Format --> Output[("generated project")]

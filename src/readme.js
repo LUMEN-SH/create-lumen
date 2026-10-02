@@ -10,8 +10,6 @@ function buildBuiltWith(responses) {
 
   if (responses.cssFramework === "tailwind") {
     items.push("[Tailwind CSS](https://tailwindcss.com/)");
-  } else if (responses.cssFramework === "bootstrap") {
-    items.push("[Bootstrap](https://getbootstrap.com/)");
   }
 
   if (responses.router) {

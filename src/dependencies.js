@@ -50,8 +50,6 @@ export function computeDeps(responses) {
       devDeps.push("tailwindcss", "@tailwindcss/vite");
     }
     deps.push("clsx", "tailwind-merge");
-  } else if (responses.cssFramework === "bootstrap") {
-    deps.push("bootstrap", "react-bootstrap");
   }
 
   // State management

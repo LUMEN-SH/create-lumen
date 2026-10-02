@@ -46,7 +46,7 @@ wiring. See
   architectures and languages.
 - `css.test.mjs` — CSS framework naming (`main.css`/`globals.css` +
   `themes.css`), the `main.*` CSS-import rewrite, tailwind vite-config swap,
-  bootstrap import prepend, and removal of Vite's leftover `index.css`/`App.css`.
+  and removal of Vite's leftover `index.css`/`App.css`.
 - `dependencies.test.mjs` — the **pure** conditional dependency matrix
   (`computeDeps`, no network): `jiti` for eslint+TS, `jest-environment-jsdom` +
   Babel presets for jest, `eslint-config-prettier` only for eslint+prettier,

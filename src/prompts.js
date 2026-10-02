@@ -26,12 +26,7 @@ function formatConfig(responses) {
       : responses.architecture === "none"
       ? "None"
       : responses.architecture;
-  const css =
-    responses.cssFramework === "none"
-      ? "None"
-      : responses.cssFramework === "tailwind"
-      ? "Tailwind CSS"
-      : "Bootstrap";
+  const css = responses.cssFramework === "tailwind" ? "Tailwind CSS" : "None";
   const testing =
     responses.testing === "none"
       ? "None"
@@ -192,7 +187,6 @@ export async function getUserInputs(
 
   const rawCssOptions = [
     { label: "Tailwind CSS", value: "tailwind" },
-    { label: "Bootstrap", value: "bootstrap" },
     { label: "None", value: "none" },
   ];
   const cssOptions = filterCompatibleChoices(framework, "styling", rawCssOptions);
