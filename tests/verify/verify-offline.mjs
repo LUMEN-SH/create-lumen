@@ -237,7 +237,7 @@ async function audit(responses, projectPath) {
 
   ok(await exists(path.join(projectPath, `src/main.${language === "ts" ? "tsx" : "jsx"}`)), "main entry missing");
   const typesRel =
-    architecture === "type-based"
+    architecture === "type-based" || architecture === "none"
       ? `src/types/index.${language === "ts" ? "ts" : "js"}`
       : `src/shared/types/index.${language === "ts" ? "ts" : "js"}`;
   ok(await exists(path.join(projectPath, typesRel)), `${typesRel} missing`);
