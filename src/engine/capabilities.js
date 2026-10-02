@@ -132,8 +132,12 @@ export function isOptionCompatible(framework, optionKey, optionValue) {
   if (!desc) return false;
 
   switch (optionKey) {
-    case "architecture":
-      return desc.allowedArchitectures.includes(optionValue);
+    case "architecture": {
+      let val = optionValue;
+      if (val === "component" || val === "component-based") val = "type-based";
+      if (val === "feature") val = "feature-based";
+      return desc.allowedArchitectures.includes(val);
+    }
     case "styling":
     case "cssFramework":
       return desc.allowedStyling.includes(optionValue);

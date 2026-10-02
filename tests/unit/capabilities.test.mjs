@@ -45,15 +45,25 @@ test("capabilities: architecture compatibility per framework", () => {
 
   // React/Vite
   assert.equal(isOptionCompatible(react, "architecture", "feature-based"), true);
+  assert.equal(isOptionCompatible(react, "architecture", "feature"), true);
   assert.equal(isOptionCompatible(react, "architecture", "type-based"), true);
+  assert.equal(isOptionCompatible(react, "architecture", "component-based"), true);
+  assert.equal(isOptionCompatible(react, "architecture", "component"), true);
   assert.equal(isOptionCompatible(react, "architecture", "none"), true);
   assert.equal(isOptionCompatible(react, "architecture", "hybrid"), false);
 
-  // Next.js
+  // Next.js App Router
   assert.equal(isOptionCompatible(next, "architecture", "feature-based"), true);
   assert.equal(isOptionCompatible(next, "architecture", "hybrid"), true);
   assert.equal(isOptionCompatible(next, "architecture", "none"), true);
   assert.equal(isOptionCompatible(next, "architecture", "type-based"), false);
+
+  // Next.js Pages Router
+  const nextPages = { name: "next", variant: "pages-router" };
+  assert.equal(isOptionCompatible(nextPages, "architecture", "feature-based"), true);
+  assert.equal(isOptionCompatible(nextPages, "architecture", "hybrid"), true);
+  assert.equal(isOptionCompatible(nextPages, "architecture", "none"), true);
+  assert.equal(isOptionCompatible(nextPages, "architecture", "type-based"), false);
 });
 
 test("capabilities: router option gating (filesystem routing suppresses external router)", () => {

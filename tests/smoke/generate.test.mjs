@@ -162,4 +162,32 @@ for (const language of ["ts", "js"]) {
     await check(quickSetup(language), out);
     await fsp.rm(projectPath, { recursive: true, force: true });
   });
+
+  test(`offline smoke: None architecture scaffold (${language}) is coherent`, async () => {
+    const noneConfig = {
+      projectName: "app",
+      architecture: "none",
+      language,
+      cssFramework: "tailwind",
+      testing: "vitest",
+      router: false,
+      stateManagement: "none",
+      iconLibrary: "none",
+      apiClient: "none",
+      linter: "eslint",
+      formatter: "prettier",
+      gitInit: false,
+      readme: true,
+    };
+    const baseApp = await ensureBase(language);
+    const projectPath = path.join(os.tmpdir(), `lumen-smoke-none-${language}`);
+    const out = await generate(noneConfig, baseApp, projectPath);
+    const ext = language === "ts" ? "tsx" : "jsx";
+    assert.ok(await exists(path.join(out, "src", `App.${ext}`)), `src/App.${ext} missing`);
+    assert.ok(await exists(path.join(out, "src", `main.${ext}`)), `src/main.${ext} missing`);
+    const manifest = parseManifest(JSON.parse(await fsp.readFile(path.join(out, "lumen.config.json"), "utf8")));
+    assert.equal(manifest.architecture.type, "none");
+    assert.equal(manifest.paths.features, "src");
+    await fsp.rm(projectPath, { recursive: true, force: true });
+  });
 }
