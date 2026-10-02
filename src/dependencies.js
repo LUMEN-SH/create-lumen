@@ -25,13 +25,13 @@ export async function installDeps(pkgManager, dev, packages, cwd) {
 }
 
 export async function installAllDeps(responses, pkg, cwd) {
-  const { deps, devDeps } = computeDeps(responses);
+  const { deps, devDepBatches } = computeDeps(responses);
 
   if (deps.length > 0) {
     await installDeps(pkg, false, deps, cwd);
   }
-  if (devDeps.length > 0) {
-    await installDeps(pkg, true, devDeps, cwd);
+  for (const batch of devDepBatches) {
+    await installDeps(pkg, true, batch, cwd);
   }
 }
 
@@ -40,14 +40,17 @@ export async function installAllDeps(responses, pkg, cwd) {
 // the conditional wiring stays verifiable without a network install.
 export function computeDeps(responses) {
   const deps = [];
-  const devDeps = [];
+  const cssDevDeps = [];
+  const testingDevDeps = [];
+  const linterDevDeps = [];
+  const formatterDevDeps = [];
 
   // CSS framework
   if (responses.cssFramework === "tailwind") {
     if (responses.framework === "next") {
-      devDeps.push("tailwindcss", "@tailwindcss/postcss", "postcss");
+      cssDevDeps.push("tailwindcss", "@tailwindcss/postcss", "postcss");
     } else {
-      devDeps.push("tailwindcss", "@tailwindcss/vite");
+      cssDevDeps.push("tailwindcss", "@tailwindcss/vite");
     }
     deps.push("clsx", "tailwind-merge");
   }
@@ -78,14 +81,14 @@ export function computeDeps(responses) {
 
   // Testing
   if (responses.testing === "vitest") {
-    devDeps.push(
+    testingDevDeps.push(
       "vitest",
       "@testing-library/react",
       "@testing-library/jest-dom",
       "jsdom"
     );
   } else if (responses.testing === "jest") {
-    devDeps.push(
+    testingDevDeps.push(
       "jest",
       "jest-environment-jsdom",
       "@testing-library/react",
@@ -101,29 +104,38 @@ export function computeDeps(responses) {
   // Linter
   if (responses.linter === "eslint") {
     if (responses.framework === "next") {
-      devDeps.push("eslint", "eslint-config-next");
+      linterDevDeps.push("eslint", "eslint-config-next");
     } else {
-      devDeps.push("eslint", "@eslint/js", "eslint-plugin-react-hooks", "eslint-plugin-react-refresh", "globals");
+      linterDevDeps.push("eslint", "@eslint/js", "eslint-plugin-react-hooks", "eslint-plugin-react-refresh", "globals");
       if (responses.language === "ts") {
-        devDeps.push("typescript-eslint", "jiti");
+        linterDevDeps.push("typescript-eslint", "jiti");
       }
     }
   } else if (responses.linter === "oxlint") {
-    devDeps.push("oxlint");
+    linterDevDeps.push("oxlint");
   }
 
   // Formatter
   if (responses.formatter === "prettier") {
-    devDeps.push("prettier");
+    formatterDevDeps.push("prettier");
     if (responses.linter === "eslint") {
-      devDeps.push("eslint-config-prettier");
+      formatterDevDeps.push("eslint-config-prettier");
     }
   } else if (responses.formatter === "oxfmt") {
-    devDeps.push("oxfmt");
+    formatterDevDeps.push("oxfmt");
   }
 
   // Always re-install react + react-dom for consistency
   deps.push("react", "react-dom");
 
-  return { deps, devDeps };
+  const devDepBatches = [
+    cssDevDeps,
+    testingDevDeps,
+    linterDevDeps,
+    formatterDevDeps,
+  ].filter((batch) => batch.length > 0);
+
+  const devDeps = devDepBatches.flat();
+
+  return { deps, devDeps, devDepBatches };
 }

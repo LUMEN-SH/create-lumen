@@ -199,6 +199,8 @@ The manifest now includes:
 
 ### Ecosystem Documentation & Contracts
 
+- **[Documentation Index](./docs/README.md):** Complete overview of specifications, ADRs, and developer guides.
+- **[Generator Engine & Capabilities Guide (M2)](./docs/engine-capabilities.md):** Capability model, template composition, shadcn/ui on Tailwind v4, architecture presets, and Bootstrap removal.
 - **[Manifest v2 Overview](./docs/manifest-v2.md):** Specification of the nested schema, validation behavior, and the new harness and architecture validation fields.
 - **[Shared Contract: `create-lumen` ↔ `lumen-cli`](./docs/contracts/manifest-v2-contract.md):** The agreed contract for path mapping, barrel conventions, version negotiation, and the harness/configuration interface.
 - **[v1 to v2 Migration Guide](./docs/migration/v1-to-v2.md):** Complete guide for migrating generated projects and legacy flat configs to v2.
