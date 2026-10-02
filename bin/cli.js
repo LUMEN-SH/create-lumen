@@ -36,6 +36,7 @@ main({
   projectName: cliArgs.projectName,
   manifest: cliArgs.manifest,
   template: cliArgs.template,
+  arch: cliArgs.arch,
 }).catch((e) => {
   console.error(chalk.red("\nError:"), e.message || e);
   process.exit(1);

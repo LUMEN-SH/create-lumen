@@ -1,5 +1,5 @@
 export const axes = {
-  architecture: ["feature-based", "type-based"],
+  architecture: ["feature-based", "type-based", "none"],
   language: ["ts", "js"],
   cssFramework: ["tailwind", "none"],
   testing: ["vitest", "jest", "none"],
@@ -47,6 +47,7 @@ export const DEFAULT_CELLS = [
   { architecture: "type-based", language: "js", cssFramework: "none", testing: "none", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "oxfmt" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "jest", router: true, stateManagement: "none", iconLibrary: "huge", apiClient: "fetch", linter: "oxlint", formatter: "none" },
   { architecture: "type-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "redux", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "none" },
+  { architecture: "none", language: "ts", cssFramework: "none", testing: "vitest", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "prettier" },
 ];
 
 // A dedicated subgroup: the "feature parity" cells — same cell under both

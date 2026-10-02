@@ -26,6 +26,11 @@ test("cli-args: flags and short aliases parse correctly", () => {
 
   assert.equal(parseCliArgs(["-t", "react-ts"]).template, "react-ts");
   assert.equal(parseCliArgs(["--template", "react-js"]).template, "react-js");
+
+  assert.equal(parseCliArgs(["-a", "none"]).arch, "none");
+  assert.equal(parseCliArgs(["--arch", "hybrid"]).arch, "hybrid");
+  assert.equal(parseCliArgs(["--architecture", "feature"]).arch, "feature-based");
+  assert.equal(parseCliArgs(["-a", "component"]).arch, "type-based");
 });
 
 test("cli-args: positional projectName resolves independently of flag ordering", () => {
@@ -176,4 +181,10 @@ test("cli-args: presets catalog contains valid presets", () => {
   assert.equal(PRESETS["react-type-js"].architecture, "type-based");
   assert.equal(PRESETS["react-component-js"].language, "js");
   assert.equal(PRESETS["react-component-js"].architecture, "type-based");
+  assert.ok(PRESETS["react-none-ts"]);
+  assert.ok(PRESETS["react-none-js"]);
+  assert.equal(PRESETS["react-none-ts"].architecture, "none");
+  assert.equal(PRESETS["react-none-ts"].language, "ts");
+  assert.equal(PRESETS["react-none-js"].architecture, "none");
+  assert.equal(PRESETS["react-none-js"].language, "js");
 });

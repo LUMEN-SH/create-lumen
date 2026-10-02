@@ -26,7 +26,7 @@ export async function setupCssFramework({
   // main.css). The chosen framework's styles land in the file the architecture
   // actually imports.
   const stylesDir =
-    architecture === "feature-based"
+    architecture === "feature-based" || architecture === "hybrid"
       ? path.join(projectPath, "src", "shared", "styles")
       : path.join(projectPath, "src", "styles");
 
@@ -100,11 +100,11 @@ async function syncMainCssImport(projectPath, ext, architecture, mainFileName) {
   try {
     let content = await fsp.readFile(mainPath, "utf8");
     const expected =
-      architecture === "feature-based"
+      architecture === "feature-based" || architecture === "hybrid"
         ? `./shared/styles/${mainFileName}`
         : `./styles/${mainFileName}`;
     const wrong =
-      architecture === "feature-based"
+      architecture === "feature-based" || architecture === "hybrid"
         ? /import ['"]\.\/shared\/styles\/(globals|main)\.css['"]/
         : /import ['"]\.\/styles\/(globals|main)\.css['"]/;
     content = content.replace(wrong, `import '${expected}'`);
