@@ -88,6 +88,10 @@ async function configureTsconfig(projectPath) {
   const rootTsconfig = {
     files: [],
     references,
+    compilerOptions: {
+      baseUrl: ".",
+      paths,
+    },
   };
   await fsp.writeFile(
     rootTsconfigPath,
