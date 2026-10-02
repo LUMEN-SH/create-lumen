@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0-alpha.2] — 2026-10-02
+
+### Added
+
+- **Engine: gate prompts by declared capabilities** (#26) — `src/prompts.js` reads `src/engine/capabilities.js` instead of hardcoded framework branches; invalid combinations are unselectable, Next.js hides the router prompt, React/Vite flow unchanged.
+- **Engine: template fragment composition** (#27) — `src/engine/composition.js` composes capability-scoped fragments with documented 5-layer precedence (base → framework → arch → styling → tooling, `docs/template-fragment-composition.md`); `src/injector.js` works from the composed fragment list with byte-identical React/Vite output.
+- **UI: shadcn/ui support gated to Tailwind v4** (#33) — `templates/ui/shadcn/` fragments (`cn` helper, Button/Card primitives), generated `components.json` with aliases, `injectUiKit` in `src/injector.js`.
+- **Architecture: `none` + `hybrid`** (#34) — flat `src/` scaffold and `src/shared` + `src/features` trees under `templates/architectures/`, per-framework availability, `--arch`/`--architecture` flags.
+- **Scaffolder: back navigation in prompt flow** (#11) — step-based `runPromptFlow` with history stack, preselected values, deferred config-cache write until final confirm.
+- **Engine integration proof + M2 docs** (#10, #48) — epic acceptance tests (`tests/unit/composition-epic.test.mjs`) and `docs/engine-capabilities.md`.
+
+### Changed
+
+- **Templates: drop Bootstrap, Tailwind v4-first** (#51) — `allowedStyling` and `STYLING_ENGINES` reduced to `tailwind` + `none`; `templates/css/bootstrap/` deleted; schema rejects `"bootstrap"`.
+
+### Fixed
+
+- **Install crash on peer-heavy devDeps batches** (#57) — `installAllDeps` installs `devDepBatches` per category (testing vs lint/format); `verify:installed` 4/4 green.
+
 ## [2.0.0-alpha.1] — 2026-10-01
 
 ### Added
