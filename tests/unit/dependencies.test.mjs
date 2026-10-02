@@ -16,8 +16,8 @@ const BASE = {
 };
 
 function cellDeps(cell) {
-  const { deps, devDeps } = computeDeps({ ...BASE, ...cell });
-  return { deps, devDeps };
+  const { deps, devDeps, devDepBatches } = computeDeps({ ...BASE, ...cell });
+  return { deps, devDeps, devDepBatches };
 }
 
 function has(list, ...pkgs) {
@@ -149,3 +149,90 @@ test("no formatter = no format deps", () => {
   const { devDeps } = cellDeps({ linter: "eslint", formatter: "none" });
   lacks(devDeps, "prettier", "oxfmt", "eslint-config-prettier");
 });
+
+test("computeDeps returns properly grouped category batches (devDepBatches)", () => {
+  // All 4 categories active: css, testing, linter, formatter
+  const full = cellDeps({
+    cssFramework: "tailwind",
+    testing: "vitest",
+    linter: "oxlint",
+    formatter: "oxfmt",
+  });
+  assert.equal(full.devDepBatches.length, 4);
+  assert.deepEqual(full.devDepBatches[0], ["tailwindcss", "@tailwindcss/vite"]);
+  assert.deepEqual(full.devDepBatches[1], ["vitest", "@testing-library/react", "@testing-library/jest-dom", "jsdom"]);
+  assert.deepEqual(full.devDepBatches[2], ["oxlint"]);
+  assert.deepEqual(full.devDepBatches[3], ["oxfmt"]);
+
+  // Subset of categories: next.js tailwind + eslint + prettier (css, linter, formatter)
+  const nextStack = cellDeps({
+    cssFramework: "tailwind",
+    framework: "next",
+    linter: "eslint",
+    formatter: "prettier",
+  });
+  assert.equal(nextStack.devDepBatches.length, 3);
+  assert.deepEqual(nextStack.devDepBatches[0], ["tailwindcss", "@tailwindcss/postcss", "postcss"]);
+  assert.deepEqual(nextStack.devDepBatches[1], ["eslint", "eslint-config-next"]);
+  assert.deepEqual(nextStack.devDepBatches[2], ["prettier", "eslint-config-prettier"]);
+
+  // Bug #57 reproduction cell: peer-heavy devDeps without css (testing, linter, formatter)
+  const bug57 = cellDeps({
+    testing: "vitest",
+    linter: "oxlint",
+    formatter: "oxfmt",
+  });
+  assert.equal(bug57.devDepBatches.length, 3);
+  assert.deepEqual(bug57.devDepBatches[0], ["vitest", "@testing-library/react", "@testing-library/jest-dom", "jsdom"]);
+  assert.deepEqual(bug57.devDepBatches[1], ["oxlint"]);
+  assert.deepEqual(bug57.devDepBatches[2], ["oxfmt"]);
+
+  // Baseline has no dev dependencies, so devDepBatches is empty
+  const empty = cellDeps({});
+  assert.equal(empty.devDepBatches.length, 0);
+  assert.deepEqual(empty.devDepBatches, []);
+
+  // Bootstrap has only runtime deps, so devDepBatches is empty
+  const bootstrap = cellDeps({ cssFramework: "bootstrap" });
+  assert.equal(bootstrap.devDepBatches.length, 0);
+  assert.deepEqual(bootstrap.devDepBatches, []);
+});
+
+test("snapshot comparison before/after batching: flattened devDepBatches exactly matches devDeps", () => {
+  const matrixSample = [
+    {},
+    { cssFramework: "tailwind" },
+    { cssFramework: "tailwind", framework: "next" },
+    { cssFramework: "bootstrap" },
+    { testing: "vitest" },
+    { testing: "jest" },
+    { linter: "eslint", language: "ts" },
+    { linter: "eslint", language: "js" },
+    { linter: "oxlint" },
+    { linter: "eslint", formatter: "prettier" },
+    { linter: "oxlint", formatter: "prettier" },
+    { linter: "oxlint", formatter: "oxfmt" },
+    { linter: "eslint", formatter: "oxfmt" },
+    { linter: "eslint", framework: "next", language: "ts" },
+    { linter: "eslint", formatter: "prettier", framework: "next" },
+    { cssFramework: "tailwind", testing: "vitest", linter: "oxlint", formatter: "oxfmt" },
+    { cssFramework: "tailwind", testing: "jest", linter: "eslint", language: "ts", formatter: "prettier" },
+    { cssFramework: "bootstrap", testing: "jest", linter: "eslint", language: "ts", formatter: "prettier" },
+    { cssFramework: "none", testing: "vitest", linter: "oxlint", formatter: "oxfmt" },
+  ];
+
+  for (const cell of matrixSample) {
+    const { devDeps, devDepBatches } = cellDeps(cell);
+    // Flattened batches must exactly match backward-compatible devDeps
+    assert.deepEqual(
+      devDepBatches.flat(),
+      devDeps,
+      `devDepBatches.flat() did not match devDeps for cell: ${JSON.stringify(cell)}`
+    );
+    // Every batch in devDepBatches must be a non-empty array
+    for (const batch of devDepBatches) {
+      assert.ok(Array.isArray(batch), "each batch must be an array");
+      assert.ok(batch.length > 0, "batches must not contain empty category arrays");
+    }
+  }
+});

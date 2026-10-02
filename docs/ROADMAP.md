@@ -142,7 +142,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 > **composed** (no cross-product); shadcn/ui and `none`/`hybrid`
 > architectures land on top; Bootstrap removed in favor of Tailwind-first focus.
 
-- [ ] #10 Capabilities-based composition (epic)
+- [x] #10 Capabilities-based composition (epic) ✅
 - [x] #25 Engine: capability declaration model
 - [x] #38 Base: vendor framework bases + `BaseProvider` seam (BaseProvider + ViteReact/NextAppRouter/NextPagesRouter providers)
 - [ ] #26 Engine: gate prompts by declared capabilities
@@ -151,7 +151,7 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [ ] #51 Templates: drop Bootstrap CSS framework (Tailwind CSS v4-first focus)
 - [ ] #34 Architecture: `none` + `hybrid`
 - [ ] #11 Scaffolder: back navigation in the v2 prompt flow
-- [ ] #48 Docs (M2): Engine capabilities model, template composition & shadcn/ui guides
+- [x] #48 Docs (M2): Engine capabilities model, template composition & shadcn/ui guides (`docs/engine-capabilities.md`) ✅
 
 ### ▲ M3 · `v2.0.0-beta` — Next.js support
 
@@ -218,7 +218,7 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#31 | create-lumen#16 ✅, #23 ✅ | `v2.0.0-alpha` | ✅ Completed in .github/workflows/publish.yml |
 | create-lumen#25 | create-lumen#13 ✅ | create-lumen#26, #27 | ✅ Completed — capability model + BaseProvider seam |
 | create-lumen#38 | create-lumen#13 ✅, #25 ✅ | create-lumen#18–#22 | ✅ Unblocked — #25 done; BaseProvider seam implemented |
-| create-lumen#10 | create-lumen#25 | create-lumen#27 | ⏳ Blocked (needs #25) |
+| create-lumen#10 | create-lumen#25 ✅ | create-lumen#27 | ✅ Completed — capabilities epic landed in M2 |
 | create-lumen#11 | create-lumen#25, #27 | (leaf) | ⏳ Blocked (needs #25, #27) |
 | create-lumen#32 | M1–M4 | `v2.0.0` | ⏳ Blocked (umbrella) |
 | create-lumen#26 | create-lumen#25 | create-lumen#27 | ⏳ Blocked (needs #25) |
@@ -234,7 +234,7 @@ A bare `#N` means the same repo as the row. "Depends on" = hard prerequisites (m
 | create-lumen#5  | create-lumen#29, #16 ✅ | (leaf) | ⏳ Ready — #16 + #29 done |
 | create-lumen#46 | — | create-lumen#47–#50, #17, #30 | ⏳ Active — ecosystem docs epic |
 | create-lumen#47 | create-lumen#9 ✅, #13 ✅, #4 ✅ | (leaf) | ✅ Done — M1 alpha docs completed |
-| create-lumen#48 | create-lumen#27, #33, #34 | (leaf) | ⏳ Blocked (needs #27, #33, #34) |
+| create-lumen#48 | create-lumen#27, #33, #34 | (leaf) | ✅ Done — documented in docs/engine-capabilities.md |
 | create-lumen#49 | create-lumen#8, #18–#22 | (leaf) | ⏳ Blocked (needs #8, #18–#22) |
 | create-lumen#50 | create-lumen#35 | (leaf) | ⏳ Blocked (needs #35) |
 | create-lumen#17 | create-lumen#48, #49 | `v2.0.0` | ⏳ Blocked — final v1→v2 migration guide for stable release |
