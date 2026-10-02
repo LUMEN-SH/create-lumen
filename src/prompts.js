@@ -1,6 +1,13 @@
 import { confirm, isCancel, note, select } from "@clack/prompts";
 import chalk from "chalk";
 import { configExists, loadConfig, saveConfig } from "@/config-cache.js";
+import {
+  isPromptVisible,
+  filterCompatibleChoices,
+  getDefaultResponses,
+  sanitizeResponsesForFramework,
+  normalizeFramework,
+} from "./engine/capabilities.js";
 
 export function onCancel() {
   console.log(chalk.gray("\n\nOperation cancelled.\n"));
@@ -14,6 +21,10 @@ function formatConfig(responses) {
       ? "Feature-based"
       : responses.architecture === "type-based" || responses.architecture === "component-based"
       ? "Type-based"
+      : responses.architecture === "hybrid"
+      ? "Hybrid"
+      : responses.architecture === "none"
+      ? "None"
       : responses.architecture;
   const css =
     responses.cssFramework === "none"
@@ -35,45 +46,46 @@ function formatConfig(responses) {
       : "Zustand";
 
   const docsLang = responses.docsLanguage === "es" ? "ES" : responses.docsLanguage === "en" ? "EN" : "—";
-  return [
+  const lines = [
     `• ${chalk.bold("Architecture:")} ${chalk.green(arch)}`,
     `• ${chalk.bold("Language:")} ${chalk.green(lang)}`,
     `• ${chalk.bold("CSS:")} ${chalk.yellow(css)}`,
     `• ${chalk.bold("Testing:")} ${chalk.magenta(testing)}`,
-    `• ${chalk.bold("Router:")} ${responses.router ? chalk.green("Yes") : chalk.red("No")}`,
+  ];
+
+  if (responses.router !== undefined) {
+    lines.push(`• ${chalk.bold("Router:")} ${responses.router ? chalk.green("Yes") : chalk.red("No")}`);
+  }
+  if (responses.bundler) {
+    lines.push(`• ${chalk.bold("Bundler:")} ${chalk.cyan(responses.bundler)}`);
+  }
+  if (responses.adapter && responses.adapter !== "none") {
+    lines.push(`• ${chalk.bold("Adapter:")} ${chalk.cyan(responses.adapter)}`);
+  }
+  lines.push(
     `• ${chalk.bold("State:")} ${chalk.blue(state)}`,
     `• ${chalk.bold("Icons:")} ${chalk.blue(responses.iconLibrary === "none" ? "None" : responses.iconLibrary === "lucide" ? "Lucide" : "Huge")}`,
     `• ${chalk.bold("API Client:")} ${responses.apiClient === "axios" ? chalk.green("Axios") : responses.apiClient === "fetch" ? chalk.yellow("Fetch") : chalk.red("None")}`,
-    `• ${chalk.bold("Linter:")} ${responses.linter === "oxlint" ? chalk.green("Oxlint") : responses.linter === "eslint" ? chalk.yellow("ESLint") : chalk.red("None")}`,
+    `• ${chalk.bold("Linter:")} ${responses.linter === "oxlint" ? chalk.green("Oxlint") : responses.linter === "biome" ? chalk.cyan("Biome") : responses.linter === "eslint" ? chalk.yellow("ESLint") : chalk.red("None")}`,
     `• ${chalk.bold("Formatter:")} ${responses.formatter === "oxfmt" ? chalk.green("Oxfmt") : responses.formatter === "prettier" ? chalk.yellow("Prettier") : chalk.red("None")}`,
     `• ${chalk.bold("Docs:")} ${chalk.cyan(docsLang)}`,
     `• ${chalk.bold("Git:")} ${responses.gitInit ? chalk.green("Yes") : chalk.red("No")}`,
-    `• ${chalk.bold("README:")} ${responses.readme ? chalk.green("Yes") : chalk.red("No")}`,
-  ].join("\n");
+    `• ${chalk.bold("README:")} ${responses.readme ? chalk.green("Yes") : chalk.red("No")}`
+  );
+  return lines.join("\n");
 }
 
-export async function getUserInputs(projectName, { quickSetup = false } = {}) {
+export async function getUserInputs(
+  projectName,
+  { quickSetup = false, framework: rawFramework } = {}
+) {
+  const framework = normalizeFramework(rawFramework);
   let oldConfig;
   let useOldConfig;
 
   // Non-interactive quick setup: apply defaults without prompting.
   if (quickSetup) {
-    const responses = {
-      projectName,
-      architecture: "feature-based",
-      language: "ts",
-      cssFramework: "tailwind",
-      testing: "vitest",
-      router: true,
-      stateManagement: "none",
-      iconLibrary: "none",
-      apiClient: "none",
-      linter: "eslint",
-      formatter: "prettier",
-      docsLanguage: "en",
-      gitInit: true,
-      readme: true,
-    };
+    const responses = getDefaultResponses(framework, { projectName });
     await saveConfig(responses);
     return responses;
   }
@@ -81,6 +93,8 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
   if (await configExists()) {
     oldConfig = await loadConfig();
     oldConfig.projectName = projectName;
+    // Sanitize cached setup against current framework capabilities
+    oldConfig = sanitizeResponsesForFramework(framework, oldConfig);
 
     note(
       `Previous setup found:\n\n${formatConfig(oldConfig)}\n`,
@@ -114,71 +128,79 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
   }
 
   // Quick Setup
+  const isRouterSupported = isPromptVisible(framework, "router");
+  const quickSetupMessage = isRouterSupported
+    ? "Quick Setup? (TypeScript + Tailwind + Feature-based + Router + ESLint + Vitest)"
+    : "Quick Setup? (TypeScript + Tailwind + Feature-based + ESLint + Vitest)";
+
   const quickSetupChoice = await confirm({
-    message:
-      "Quick Setup? (TypeScript + Tailwind + Feature-based + Router + ESLint + Vitest)",
+    message: quickSetupMessage,
     initialValue: true,
   });
   if (isCancel(quickSetupChoice)) onCancel();
 
   if (quickSetupChoice) {
-    const responses = {
-      projectName,
-      architecture: "feature-based",
-      language: "ts",
-      cssFramework: "tailwind",
-      testing: "vitest",
-      router: true,
-      stateManagement: "none",
-      iconLibrary: "none",
-      apiClient: "none",
-      linter: "eslint",
-      formatter: "prettier",
-      docsLanguage: "en",
-      gitInit: true,
-      readme: true,
-    };
+    const responses = getDefaultResponses(framework, { projectName });
     await saveConfig(responses);
     return responses;
   }
 
   // Custom setup
+  const rawArchOptions = [
+    {
+      label: "Feature-based",
+      value: "feature-based",
+      hint: "Scales to large apps — code grouped by business domain",
+    },
+    {
+      label: "Type-based",
+      value: "type-based",
+      hint: "Small apps / component libraries — code grouped by UI type",
+    },
+    {
+      label: "Hybrid",
+      value: "hybrid",
+      hint: "Feature slices with centralized shared UI",
+    },
+    {
+      label: "None",
+      value: "none",
+      hint: "Flat structure without architectural layers",
+    },
+  ];
+  const architectureOptions = filterCompatibleChoices(framework, "architecture", rawArchOptions);
+
   const architecture = await select({
     message: "Which project architecture do you want?",
-    options: [
-      {
-        label: "Feature-based",
-        value: "feature-based",
-        hint: "Scales to large apps — code grouped by business domain",
-      },
-      {
-        label: "Type-based",
-        value: "type-based",
-        hint: "Small apps / component libraries — code grouped by UI type",
-      },
-    ],
-    initialValue: "feature-based",
+    options: architectureOptions,
+    initialValue: architectureOptions[0]?.value || "feature-based",
   });
   if (isCancel(architecture)) onCancel();
 
+  const rawLangOptions = [
+    { label: "TypeScript", value: "ts" },
+    { label: "JavaScript", value: "js" },
+  ];
+  const languageOptions = filterCompatibleChoices(framework, "language", rawLangOptions);
+
   const language = await select({
     message: "Which language do you want to use?",
-    options: [
-      { label: "TypeScript", value: "ts" },
-      { label: "JavaScript", value: "js" },
-    ],
+    options: languageOptions,
     initialValue: "ts",
   });
   if (isCancel(language)) onCancel();
 
+  const rawCssOptions = [
+    { label: "Tailwind CSS", value: "tailwind" },
+    { label: "Bootstrap", value: "bootstrap" },
+    { label: "None", value: "none" },
+  ];
+  const cssOptions = filterCompatibleChoices(framework, "styling", rawCssOptions);
+
   const cssFramework = await select({
     message: "Which CSS framework do you want to use?",
-    options: [
-      { label: "Tailwind CSS", value: "tailwind" },
-      { label: "Bootstrap", value: "bootstrap" },
-      { label: "None", value: "none" },
-    ],
-    initialValue: "tailwind",
+    options: cssOptions,
+    initialValue: cssOptions[0]?.value || "tailwind",
   });
   if (isCancel(cssFramework)) onCancel();
 
@@ -193,11 +215,51 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
   });
   if (isCancel(testing)) onCancel();
 
-  const router = await confirm({
-    message: "Would you like to install React Router?",
-    initialValue: true,
-  });
-  if (isCancel(router)) onCancel();
+  // Router: gated by CLIENT_ROUTING capability
+  let router = false;
+  if (isPromptVisible(framework, "router")) {
+    const routerChoice = await confirm({
+      message: "Would you like to install React Router?",
+      initialValue: true,
+    });
+    if (isCancel(routerChoice)) onCancel();
+    router = routerChoice;
+  }
+
+  // Bundler: gated by BUNDLER_SELECTION capability
+  let bundler;
+  if (isPromptVisible(framework, "bundler")) {
+    const rawBundlerOptions = [
+      { label: "Turbopack", value: "turbopack" },
+      { label: "Webpack", value: "webpack" },
+    ];
+    const bundlerOptions = filterCompatibleChoices(framework, "bundler", rawBundlerOptions);
+    bundler = await select({
+      message: "Which bundler do you want to use?",
+      options: bundlerOptions,
+      initialValue: bundlerOptions[0]?.value || "turbopack",
+    });
+    if (isCancel(bundler)) onCancel();
+  }
+
+  // Adapter: gated by ADAPTERS capability
+  let adapter;
+  if (isPromptVisible(framework, "adapter")) {
+    const rawAdapterOptions = [
+      { label: "None (default)", value: "none" },
+      { label: "Node", value: "node" },
+      { label: "Vercel", value: "vercel" },
+      { label: "Cloudflare", value: "cloudflare" },
+      { label: "Static", value: "static" },
+    ];
+    const adapterOptions = filterCompatibleChoices(framework, "adapter", rawAdapterOptions);
+    adapter = await select({
+      message: "Which deployment adapter do you want to use?",
+      options: adapterOptions,
+      initialValue: "none",
+    });
+    if (isCancel(adapter)) onCancel();
+  }
 
   const stateManagement = await select({
     message: "Which state management library do you want to use?",
@@ -238,20 +300,24 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
   });
   if (isCancel(gitInit)) onCancel();
 
+  const rawLinterChoices = [
+    { label: "ESLint", value: "eslint", hint: "Industry standard JavaScript linter (Recommended)" },
+    { label: "Oxlint", value: "oxlint", hint: "Fast Rust-based linter" },
+    { label: "Biome", value: "biome", hint: "Toolchain for web projects" },
+    { label: "None", value: "none" },
+  ];
+  const linterChoices = filterCompatibleChoices(framework, "linter", rawLinterChoices);
+
   const linter = await select({
     message: "Which linter do you want to use?",
-    options: [
-      { label: "ESLint", value: "eslint", hint: "Industry standard JavaScript linter (Recommended)" },
-      { label: "Oxlint", value: "oxlint", hint: "Fast Rust-based linter" },
-      { label: "None", value: "none" },
-    ],
-    initialValue: "eslint",
+    options: linterChoices,
+    initialValue: linterChoices[0]?.value || "eslint",
   });
   if (isCancel(linter)) onCancel();
 
   let formatter = "none";
   if (linter !== "none") {
-    const formatterOptions =
+    const rawFormatterOptions =
       linter === "eslint"
         ? [
             { label: "None", value: "none" },
@@ -262,10 +328,19 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
             { label: "Oxfmt (Recommended)", value: "oxfmt" },
             { label: "Prettier", value: "prettier" },
           ];
+    const formatterOptions = filterCompatibleChoices(framework, "formatter", rawFormatterOptions);
+    const initialVal = formatterOptions.some(
+      (o) => o.value === (linter === "eslint" ? "prettier" : "oxfmt")
+    )
+      ? linter === "eslint"
+        ? "prettier"
+        : "oxfmt"
+      : formatterOptions[0]?.value || "none";
+
     formatter = await select({
       message: "Which formatter do you want to use?",
       options: formatterOptions,
-      initialValue: linter === "eslint" ? "prettier" : "oxfmt",
+      initialValue: initialVal,
     });
     if (isCancel(formatter)) onCancel();
   }
@@ -288,6 +363,8 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
 
   const responses = {
     projectName,
+    frameworkName: framework.name,
+    frameworkVariant: framework.variant,
     architecture,
     language,
     cssFramework,
@@ -302,6 +379,13 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
     gitInit,
     readme,
   };
+
+  if (bundler !== undefined) {
+    responses.bundler = bundler;
+  }
+  if (adapter !== undefined && adapter !== "none") {
+    responses.adapter = adapter;
+  }
 
   await saveConfig(responses);
   return responses;

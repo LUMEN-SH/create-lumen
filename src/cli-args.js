@@ -3,6 +3,11 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
 import { parseManifest } from "./manifest/schema.js";
+import {
+  normalizeFramework,
+  isPromptVisible,
+  getDefaultResponses,
+} from "./engine/capabilities.js";
 
 export const PRESETS = {
   "react-ts": {
@@ -151,6 +156,7 @@ export const PRESETS = {
  *   quickSetup: boolean,
  *   manifest: string | null,
  *   template: string | null,
+ *   framework: string | null,
  *   help: boolean,
  *   version: boolean,
  *   positionals: string[]
@@ -163,6 +169,7 @@ export function parseCliArgs(argv = process.argv.slice(2)) {
       yes: { type: "boolean", short: "y", default: false },
       manifest: { type: "string", short: "m" },
       template: { type: "string", short: "t" },
+      framework: { type: "string", short: "f" },
       help: { type: "boolean", short: "h", default: false },
       version: { type: "boolean", short: "v", default: false },
     },
@@ -177,6 +184,7 @@ export function parseCliArgs(argv = process.argv.slice(2)) {
     quickSetup: Boolean(values.yes),
     manifest: values.manifest || null,
     template: values.template || null,
+    framework: values.framework ? values.framework.trim() : null,
     help: Boolean(values.help),
     version: Boolean(values.version),
     positionals,
@@ -222,13 +230,18 @@ export function loadManifestSource(source, cwd = process.cwd()) {
 export function manifestToResponses(manifest, projectName) {
   const frameworkName = manifest.framework?.name || "react";
   const frameworkVariant = manifest.framework?.variant || "vite";
-  const isNext = frameworkName === "next";
+  const framework = normalizeFramework({ name: frameworkName, variant: frameworkVariant });
+  const canClientRoute = isPromptVisible(framework, "router");
+  const supportsBundler = isPromptVisible(framework, "bundler");
 
   return {
     projectName,
     frameworkName,
     frameworkVariant,
-    bundler: manifest.framework?.bundler,
+    bundler:
+      supportsBundler && manifest.framework?.bundler
+        ? manifest.framework.bundler
+        : undefined,
     adapter: manifest.framework?.adapter,
     architecture: manifest.architecture?.type || "feature-based",
     language: manifest.tooling?.language || "ts",
@@ -241,7 +254,7 @@ export function manifestToResponses(manifest, projectName) {
     agentDocs: manifest.agentDocs,
     // Sensible defaults for scaffolder conditional passes
     testing: "vitest",
-    router: isNext ? false : true,
+    router: canClientRoute,
     stateManagement: "none",
     iconLibrary: "none",
     apiClient: "none",
@@ -265,6 +278,7 @@ ${chalk.bold("OPTIONS")}
   ${chalk.yellow("-y, --yes")}              Quick setup with recommended defaults (TS + Tailwind + Router + ESLint + Prettier)
   ${chalk.yellow("-m, --manifest")} <path>  Drive scaffolding from a lumen.config.json or inline JSON
   ${chalk.yellow("-t, --template")} <name>  Scaffold using a preset (${Object.keys(PRESETS).join(", ")})
+  ${chalk.yellow("-f, --framework")} <name> Target framework (react, next, react:vite, next:app-router, etc.)
   ${chalk.yellow("-h, --help")}             Show this help message
   ${chalk.yellow("-v, --version")}          Show version number
 
