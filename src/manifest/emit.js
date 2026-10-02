@@ -1,7 +1,42 @@
 import { promises as fsp } from "fs";
 import path from "path";
-import { parseManifest, SCHEMA_URL, MANIFEST_VERSION } from "./schema.js";
+import { parseManifest, SCHEMA_URL, MANIFEST_VERSION, HARNESS_DEFAULT_COMMANDS } from "./schema.js";
 import { resolvePaths } from "./paths.js";
+
+const LINT_COMMANDS = {
+  eslint: "eslint .",
+  oxlint: "oxlint .",
+  biome: "biome check .",
+};
+
+const FORMAT_COMMANDS = {
+  prettier: "prettier --check .",
+  oxfmt: "oxfmt --check .",
+};
+
+/**
+ * Build default harness commands from tooling choices.
+ * Skips lint/format when tooling is "none"; skips types when language is not "ts".
+ * Test + build are always included so commands.length >= 1.
+ * @param {{ linter?: string, formatter?: string, language?: string }} tooling
+ * @returns {Array<{ name: string, command: string, required: boolean }>}
+ */
+export function defaultHarnessCommands(tooling = {}) {
+  const { linter = "none", formatter = "none", language = "ts" } = tooling;
+  const commands = [];
+  if (linter && linter !== "none" && LINT_COMMANDS[linter]) {
+    commands.push({ name: "lint", command: LINT_COMMANDS[linter], required: true });
+  }
+  if (formatter && formatter !== "none" && FORMAT_COMMANDS[formatter]) {
+    commands.push({ name: "format", command: FORMAT_COMMANDS[formatter], required: true });
+  }
+  if (language === "ts") {
+    commands.push({ name: "types", command: "tsc -b", required: true });
+  }
+  commands.push({ name: "test", command: "vitest run", required: true });
+  commands.push({ name: "build", command: "npm run build", required: true });
+  return commands.length > 0 ? commands : [...HARNESS_DEFAULT_COMMANDS];
+}
 
 /**
  * Build an ordered manifest v2 object from scaffolder responses.
@@ -35,9 +70,14 @@ export function buildManifest(responses, opts = {}) {
     engine: responses.cssFramework || "tailwind",
   };
 
-  const rawArch = responses.architecture || "feature-based";
+  const rawArch =
+    responses.architecturePreset || responses.architecture || "feature-based";
+  const normalizedArch = rawArch === "component-based" ? "type-based" : rawArch;
   const architecture = {
-    type: rawArch === "component-based" ? "type-based" : rawArch,
+    preset: normalizedArch,
+    type: normalizedArch,
+    validation:
+      responses.architectureValidation || responses.validation || "strict",
   };
 
   const ui = {
@@ -59,12 +99,17 @@ export function buildManifest(responses, opts = {}) {
     formatter: responses.formatter || "none",
   };
 
+  const harness = responses.harness ?? {
+    commands: defaultHarnessCommands(tooling),
+  };
+
   const manifest = {
     $schema: SCHEMA_URL,
     manifestVersion: MANIFEST_VERSION,
     framework,
     styling,
     architecture,
+    harness,
     ui,
     docs,
     paths,
@@ -83,6 +128,7 @@ export function buildManifest(responses, opts = {}) {
     "framework",
     "styling",
     "architecture",
+    "harness",
     "ui",
     "docs",
     "paths",

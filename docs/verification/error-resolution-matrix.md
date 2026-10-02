@@ -31,6 +31,7 @@ signature.
 | `ReferenceError: TextEncoder is not defined` booting `react-router` inside jest | jest's jsdom runner lacks Node's `TextEncoder`/`TextDecoder` globals for module-scope use in modern libraries | Polyfill globals in `jest.setup.{js,ts}` from `node:util` |
 | `[UNRESOLVED_IMPORT]` for `@tailwindcss/vite` / missing tool bins after `npm install` | Harness scaffolded without running `installAllDeps` (the thing that writes conditional deps into `package.json`) | `verify:installed` calls `installAllDeps` exactly where `src/main.js` does |
 | A declared devDependency has no `.bin/<n>` (e.g. `typescript`) | Test asserted the package name as the bin name | Bin-name map: `typescript → tsc`, others match package names |
+| `Cannot read properties of null (reading 'edgesOut')` from `npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom oxlint oxfmt` (stack: arborist `build-ideal-tree.js #loadPeerSet`) | npm 10.9.4 arborist bug with a peer-heavy **single-batch** install layered on the existing Vite-base tree (same set resolves fine in an empty dir; M1.1 touched no install-path files). User-facing via `installAllDeps` — scaffold aborts with no deps installed. Tracked in #57, ships as `2.0.0-alpha.2` (alpha.1 is immutable) | **Workaround now:** `npm install --legacy-peer-deps`, `npm i -g npm@latest`, or install the dev stack in smaller parts. **Canonical fix:** split `devDeps` into category batches in `installAllDeps` (`computeDeps` is pure/grouped, unit-testable), then full `verify:installed` green |
 
 ## Template content drift
 

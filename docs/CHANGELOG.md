@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0-alpha.1] — 2026-10-01
+
+### Added
+
+- **Manifest v2.1: harness command matrix & architecture validation modes** — `architecture` gains canonical `preset` + legacy `type` alias (must-match) and `validation: strict|relaxed|none` (default `strict`); `harness: { commands: [{ name, command, required?, description? }] }` optional with per-tooling defaults via `defaultHarnessCommands()` (`src/manifest/schema.js`, `src/manifest/emit.js`).
+- **Agent Skills: `skills/create-lumen/`** — `SKILL.md` guidance for agents (read `lumen.config.json`, resolve via `manifest.paths`, barrels, `@/*` alias, `harness.commands`, validation modes). Shipped in npm `files`.
+- **Scaffolder: `.lumen/` agent context directory** — `src/agent-context.js` `buildAgentContext`/`emitAgentContext` writes byte-deterministic `.lumen/project.json`, `.lumen/architecture.json`, `.lumen/conventions.md` when `agentDocs: true` (wired in `src/main.js`).
+- **Contract tests: harness + validation fixtures & drift gate** — 3 valid + 4 invalid fixtures under `schema/fixtures/v2/`, expectations in `tests/unit/manifest.test.mjs`; repaired duplicated Harness section in `docs/contracts/manifest-v2-contract.md` and aligned `docs/manifest-v2.md`.
+
 ## [2.0.0-alpha.0] — 2026-09-19
 
 ### Added
