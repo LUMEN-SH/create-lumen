@@ -65,7 +65,7 @@ test("buildManifest: es docsLanguage + bootstrap + none linter", () => {
 test("buildManifest: stable key ordering", () => {
   const m = buildManifest(baseResponses);
   const keys = Object.keys(m);
-  const expected = ["$schema", "manifestVersion", "framework", "styling", "architecture", "ui", "docs", "paths", "tooling"];
+  const expected = ["$schema", "manifestVersion", "framework", "styling", "architecture", "harness", "ui", "docs", "paths", "tooling"];
   assert.deepEqual(keys, expected);
 });
 

@@ -40,6 +40,10 @@ test("manifest v2 contract tests: invalid fixtures fail with expected errors (#2
     "missing-required-fields": /Manifest validation failed/i,
     "malformed-paths": /Manifest validation failed/i,
     "invalid-manifest-version": /Manifest validation failed/i,
+    "harness-empty-commands": /harness\.commands/i,
+    "harness-missing-command": /harness\.commands\[0\]\.command/i,
+    "invalid-validation-mode": /architecture\.validation/i,
+    "architecture-preset-type-mismatch": /architecture\.preset.*must match architecture\.type/i,
   };
 
   for (const { name, manifest } of invalidFixtures) {
@@ -61,4 +65,43 @@ test("manifest v2 contract tests: v1 manifest detection and rejection (#28, #14)
     () => parseManifest(v1),
     /Manifest v1 detected \(flat config\)\. create-lumen v2 uses a nested manifest \(manifestVersion: 2\)\./
   );
+});
+
+test("manifest v2 M1.1: valid fixtures with harness expose harness.commands", async (t) => {
+  const harnessFull = await getFixture("valid", "harness-full");
+  await t.test("harness-full parses with 5 commands", () => {
+    const parsed = parseManifest(harnessFull);
+    assert.ok(Array.isArray(parsed.harness.commands));
+    assert.equal(parsed.harness.commands.length, 5);
+    for (const cmd of parsed.harness.commands) {
+      assert.ok(cmd.name);
+      assert.ok(cmd.command);
+    }
+  });
+
+  for (const name of ["validation-relaxed", "validation-none"]) {
+    await t.test(`validation mode preserved: ${name}`, async () => {
+      const manifest = await getFixture("valid", name);
+      const parsed = parseManifest(manifest);
+      const expected = name === "validation-relaxed" ? "relaxed" : "none";
+      assert.equal(parsed.architecture.validation, expected);
+      assert.equal(parsed.architecture.preset, "feature-based");
+      assert.equal(parsed.architecture.type, "feature-based");
+    });
+  }
+});
+
+test("manifest v2 M1.1: new invalid fixtures fail with expected patterns", async (t) => {
+  const cases = {
+    "harness-empty-commands": /harness\.commands/i,
+    "harness-missing-command": /harness\.commands\[0\]\.command/i,
+    "invalid-validation-mode": /architecture\.validation/i,
+    "architecture-preset-type-mismatch": /architecture\.preset.*must match architecture\.type/i,
+  };
+  for (const [name, pattern] of Object.entries(cases)) {
+    await t.test(`invalid fixture fails as expected: ${name}`, async () => {
+      const manifest = await getFixture("invalid", name);
+      assert.throws(() => parseManifest(manifest), pattern);
+    });
+  }
 });

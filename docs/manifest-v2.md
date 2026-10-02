@@ -17,11 +17,12 @@ In v1, projects had no manifest file; scaffolder choices were flat (`{ framework
     "adapter?": "node|vercel|cloudflare|static"
   },
   "styling": { "engine": "tailwind|bootstrap|none" },
-  "architecture": { 
-    "preset": "feature-based|type-based|hybrid|none",
-    "validation": "strict|relaxed|none"
+  "architecture": {
+    "preset?": "feature-based|type-based|hybrid|none",
+    "type?": "feature-based|type-based|hybrid|none (legacy alias, must match preset)",
+    "validation?": "strict|relaxed|none (default strict)"
   },
-  "harness": {
+  "harness?": {
     "commands": [
       { "name": "lint", "command": "oxlint .", "required": true },
       { "name": "format", "command": "oxfmt --check .", "required": true },
@@ -57,12 +58,12 @@ In v1, projects had no manifest file; scaffolder choices were flat (`{ framework
 | Version | no `manifestVersion` | `manifestVersion: 2` required, `literal(2)` |
 | Framework | `framework: "react"` string | `framework: { name, variant, bundler?, adapter? }` |
 | CSS | `css: "tailwind"` | `styling: { engine }` -- Tailwind is always **v4** (no version field, see #6) |
-| Architecture | `architecture: "feature-based"` | `architecture: { preset, validation }` scoped per framework: React+Vite `feature/type/none`, Next `feature/hybrid/none` (#34) |
+| Architecture | `architecture: "feature-based"` | `architecture: { preset?, type? (alias), validation?="strict" }` scoped per framework: React+Vite `feature/type/none`, Next `feature/hybrid/none` (#34). `parseManifest` normalizes to `{ preset, type, validation }` |
 | UI kit | not modeled | `ui: { kit: "shadcn" or "none" }` -- shadcn requires `tailwind` (#33) |
 | Docs | not modeled | `docs: { language: "en" or "es" }` single language, prompted at init, consumed by lumen-cli (#13) |
 | Paths | hardcoded in generator | `paths: { features, components, services, hooks, pages, ui }` explicit, framework-aware (#15) |
 | Tooling | `language`, `linter` (eslint/oxlint) | `tooling: { language, linter: +biome, formatter }` (#24), `reactCompiler` boolean, `agentDocs` boolean (ADR 0001) |
-| Harness | not modeled | `harness: { commands: [ { name, command, required?, description? } ] }` defines the validation and linting commands for lumen-cli |
+| Harness | not modeled | `harness?: { commands: [ { name, command, required?, description? } ] }` optional, `commands` min 1; defines the validation and linting commands for lumen-cli. Omitted = valid (defaults via `defaultHarnessCommands`) |
 | Validation | no schema | Zod source of truth + JSON Schema 2020-12 derived via `z.toJSONSchema` (#14, #4)
 
 

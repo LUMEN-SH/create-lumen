@@ -17,6 +17,7 @@ import { installAllDeps } from "@/dependencies.js";
 import { generateReadme } from "@/readme.js";
 import { runProjectFormat } from "@/format.js";
 import { emitManifest } from "@/manifest/emit.js";
+import { emitAgentContext } from "@/agent-context.js";
 
 import { parseCliArgs, loadManifestSource, manifestToResponses, PRESETS } from "@/cli-args.js";
 
@@ -245,6 +246,19 @@ export async function main(options = {}) {
   } catch (err) {
     manifestSpin.stop(chalk.red("Failed to write lumen.config.json."));
     throw err;
+  }
+
+  // 12.7 Emit .lumen agent context dir (only when agentDocs is enabled)
+  if (responses.agentDocs === true || responses._manifestSource?.agentDocs === true) {
+    const agentSpin = spinner();
+    agentSpin.start("Writing .lumen agent context...");
+    try {
+      await emitAgentContext(projectPath, responses._manifestSource ?? responses);
+      agentSpin.stop(chalk.green(".lumen agent context written."));
+    } catch (err) {
+      agentSpin.stop(chalk.red("Failed to write .lumen agent context."));
+      throw err;
+    }
   }
 
   // 13. Generate README.md + LICENSE (if requested)

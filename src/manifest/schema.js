@@ -13,7 +13,11 @@ export const FRAMEWORK_BUNDLERS = ["turbopack", "webpack"];
 export const FRAMEWORK_ADAPTERS = ["node", "vercel", "cloudflare", "static"];
 
 export const STYLING_ENGINES = ["tailwind", "bootstrap", "none"];
-export const ARCHITECTURE_TYPES = ["feature-based", "type-based", "hybrid", "none"];
+export const ARCHITECTURE_PRESETS = ["feature-based", "type-based", "hybrid", "none"];
+// Legacy alias: docs used architecture.type, canonical is architecture.preset.
+// Keep both in sync; parseManifest normalizes to expose both keys.
+export const ARCHITECTURE_TYPES = ARCHITECTURE_PRESETS;
+export const ARCHITECTURE_VALIDATIONS = ["strict", "relaxed", "none"];
 export const UI_KITS = ["shadcn", "none"];
 export const DOCS_LANGUAGES = ["en", "es"];
 export const TOOLING_LANGUAGES = ["ts", "js"];
@@ -40,7 +44,49 @@ const stylingSchema = z
 
 const architectureSchema = z
   .object({
-    type: z.enum(ARCHITECTURE_TYPES),
+    // Canonical key per docs/manifest-v2.md; legacy `type` kept as alias.
+    preset: z.enum(ARCHITECTURE_PRESETS).optional(),
+    type: z.enum(ARCHITECTURE_TYPES).optional(),
+    validation: z.enum(ARCHITECTURE_VALIDATIONS).optional().default("strict"),
+  })
+  .strict()
+  .superRefine((val, ctx) => {
+    if (!val.preset && !val.type) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["preset"],
+        message: 'architecture must define "preset" or legacy "type"',
+      });
+    }
+    if (val.preset && val.type && val.preset !== val.type) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["preset"],
+        message: `architecture.preset "${val.preset}" must match architecture.type "${val.type}"`,
+      });
+    }
+  });
+
+export const HARNESS_DEFAULT_COMMANDS = [
+  { name: "lint", command: "oxlint .", required: true },
+  { name: "format", command: "oxfmt --check .", required: true },
+  { name: "types", command: "tsc -b", required: true },
+  { name: "test", command: "vitest run", required: true },
+  { name: "build", command: "npm run build", required: true },
+];
+
+const harnessCommandSchema = z
+  .object({
+    name: z.string().min(1),
+    command: z.string().min(1),
+    required: z.boolean().optional().default(true),
+    description: z.string().optional(),
+  })
+  .strict();
+
+const harnessSchema = z
+  .object({
+    commands: z.array(harnessCommandSchema).min(1),
   })
   .strict();
 
@@ -85,6 +131,7 @@ export const manifestSchemaV2 = z
     framework: frameworkSchema,
     styling: stylingSchema,
     architecture: architectureSchema,
+    harness: harnessSchema.optional(),
     ui: uiSchema,
     docs: docsSchema,
     paths: pathsSchema,
@@ -130,16 +177,17 @@ export const manifestSchemaV2 = z
       });
     }
 
-    // architecture scoping per framework (#34)
+    // architecture scoping per framework (#34) — canonical `preset`, legacy `type` fallback
+    const archValue = architecture.preset ?? architecture.type;
     const allowedByFramework =
       framework.name === "react"
         ? ["feature-based", "type-based", "none"]
         : ["feature-based", "hybrid", "none"];
-    if (!allowedByFramework.includes(architecture.type)) {
+    if (!allowedByFramework.includes(archValue)) {
       ctx.addIssue({
         code: "custom",
         path: ["architecture", "type"],
-        message: `architecture.type "${architecture.type}" is not valid for framework "${framework.name}" (allowed: ${allowedByFramework.join(", ")})`,
+        message: `architecture.type "${archValue}" is not valid for framework "${framework.name}" (allowed: ${allowedByFramework.join(", ")})`,
       });
     }
 
@@ -205,7 +253,17 @@ export function parseManifest(raw) {
     err.cause = result.error;
     throw err;
   }
-  return result.data;
+  // Normalize: always expose architecture.preset + architecture.type (synced)
+  // + architecture.validation default, for backward/forward compat.
+  const data = result.data;
+  const preset = data.architecture.preset ?? data.architecture.type;
+  const type = data.architecture.type ?? data.architecture.preset;
+  data.architecture = {
+    preset,
+    type,
+    validation: data.architecture.validation ?? "strict",
+  };
+  return data;
 }
 
 // Re-export type helper for JSDoc (z.infer)

@@ -131,10 +131,10 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 
 > **DoD:** Extended manifest v2 with harness command matrix and architecture validation modes (`strict`/`relaxed`/`none`). Adds agent-focused skill `skills/create-lumen/` and optional `.lumen/` context directory generation (`project.json`, `architecture.json`, `conventions.md`) for agent workflows.
 
-- [ ] Manifest v2.1: Add harness command matrix & architecture validation modes to schema
-- [ ] Agent Skills: Create `skills/create-lumen` package guidance
-- [ ] Scaffolder: Emit `.lumen/` agent context directory on creation
-- [ ] Contract Tests: Fixtures & drift gate for harness and validation schema
+- [x] Manifest v2.1: Add harness command matrix & architecture validation modes to schema
+- [x] Agent Skills: Create `skills/create-lumen` package guidance
+- [x] Scaffolder: Emit `.lumen/` agent context directory on creation
+- [x] Contract Tests: Fixtures & drift gate for harness and validation schema
 
 ### ⚙️ M2 · `v2.0.0-alpha.2` — Engine: capabilities + options
 

@@ -36,7 +36,7 @@ interface ManifestV2 {
   framework: FrameworkConfig;       // Required
   styling: StylingConfig;           // Required
   architecture: ArchitectureConfig; // Required
-  harness: HarnessConfig;           // Required
+  harness?: HarnessConfig;          // Optional (omitted = no managed commands)
   ui: UIConfig;                     // Required
   docs: DocsConfig;                 // Required
   paths: PathsConfig;               // Required
@@ -44,8 +44,6 @@ interface ManifestV2 {
   reactCompiler?: boolean;          // Optional
   agentDocs?: boolean;              // Optional
 }
-```
-
 ```
 
 ### Sub-Schema Definitions
@@ -76,61 +74,27 @@ interface StylingConfig {
 
 ```typescript
 interface ArchitectureConfig {
-  preset: "feature-based" | "type-based" | "hybrid" | "none";
-  validation: "strict" | "relaxed" | "none";
+  preset?: "feature-based" | "type-based" | "hybrid" | "none"; // Canonical key
+  type?: "feature-based" | "type-based" | "hybrid" | "none";   // Legacy alias, kept in sync
+  validation?: "strict" | "relaxed" | "none";                 // Default: "strict"
+}
+```
+
+*Constraints:*
+- At least one of `preset` / `type` MUST be defined; when both are present they MUST match (`preset === type`).
+- `parseManifest()` normalizes the result to always expose `{ preset, type, validation }` with `validation` defaulting to `"strict"`.
+- Allowed values are scoped per framework: React+Vite `feature-based | type-based | none`; Next.js `feature-based | hybrid | none`.
+- `validation` controls how strictly `lumen-cli` enforces the architecture layout (`strict` = fail on drift, `relaxed` = warn, `none` = skip).
+
+#### UI (`ui`)
+```typescript
+interface UIConfig {
+  kit: "shadcn" | "none";
 }
 ```
 
 *Constraints:*
 - `kit: "shadcn"` REQUIRES `styling.engine === "tailwind"`.
-
-#### Harness (`harness`)
-
-
-
-*Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
-
-#### Harness (`harness`)
-
-  
-
-  *Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
-
-#### Harness (\`harness\`)
-
-  ```typescript
-  interface HarnessConfig {
-    commands: Array<{
-      name: string;        // e.g. "lint" | "format" | "test" | "build" | custom
-      command: string;     // e.g. "oxlint .", "tsc -b", "vitest run"
-      required?: boolean;  // default true
-      description?: string;
-    }>;
-  }
-  ```
-
-  *Notes:* The \`harness\` defines the commands that \`lumen-cli\` will run when executing \`lumen harness\`.
-
-#### Harness (`harness`)
-
-  
-
-  *Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
-
-#### Harness (\`harness\`)
-
-  ```typescript
-  interface HarnessConfig {
-    commands: Array<{
-      name: string;        // e.g. "lint" | "format" | "test" | "build" | custom
-      command: string;     // e.g. "oxlint .", "tsc -b", "vitest run"
-      required?: boolean;  // default true
-      description?: string;
-    }>;
-  }
-  ```
-
-  *Notes:* The \`harness\` defines the commands that \`lumen-cli\` will run when executing \`lumen harness\`.
 
 #### Harness (`harness`)
 
@@ -145,7 +109,7 @@ interface HarnessConfig {
 }
 ```
 
-*Notes:* The `harness` defines the commands that `lumen-cli` will run when executing `lumen harness`.
+*Notes:* `harness` is **optional**. When present, `commands` MUST contain at least one entry and every entry MUST define a non-empty `command`. The `harness` defines the commands that `lumen-cli` runs for `lumen harness`. When omitted, `create-lumen` emits defaults via `defaultHarnessCommands(tooling)` (see `src/manifest/emit.js`); existing fixtures without `harness` remain valid.
 
 #### Documentation (`docs`)
 ```typescript

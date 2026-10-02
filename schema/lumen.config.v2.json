@@ -75,6 +75,15 @@
     "architecture": {
       "type": "object",
       "properties": {
+        "preset": {
+          "type": "string",
+          "enum": [
+            "feature-based",
+            "type-based",
+            "hybrid",
+            "none"
+          ]
+        },
         "type": {
           "type": "string",
           "enum": [
@@ -83,10 +92,54 @@
             "hybrid",
             "none"
           ]
+        },
+        "validation": {
+          "default": "strict",
+          "type": "string",
+          "enum": [
+            "strict",
+            "relaxed",
+            "none"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "harness": {
+      "type": "object",
+      "properties": {
+        "commands": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "command": {
+                "type": "string",
+                "minLength": 1
+              },
+              "required": {
+                "default": true,
+                "type": "boolean"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "command"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [
-        "type"
+        "commands"
       ],
       "additionalProperties": false
     },
