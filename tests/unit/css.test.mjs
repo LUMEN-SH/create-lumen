@@ -64,7 +64,7 @@ async function scaffoldArk({ architecture, language, cssFramework, framework }) 
 const CELLS = [];
 for (const architecture of ["feature-based", "type-based"]) {
   for (const language of ["ts", "js"]) {
-    for (const cssFramework of ["tailwind", "bootstrap", "none"]) {
+    for (const cssFramework of ["tailwind", "none"]) {
       CELLS.push({ architecture, language, cssFramework });
     }
   }
@@ -87,8 +87,6 @@ for (const { architecture, language, cssFramework } of CELLS) {
     const themesCss = await fsp.readFile(path.join(dir, stylesRel, "themes.css"), "utf8");
     if (cssFramework === "tailwind") {
       assert.match(mainCss, /@import[^;]*tailwindcss/, "tailwind import missing");
-    } else if (cssFramework === "bootstrap") {
-      assert.match(themesCss, /data-bs-theme/, "bootstrap theme tokens missing");
     } else {
       assert.match(mainCss, /box-sizing/, "vanilla reset missing");
       assert.match(mainCss, /var\(--color-/, "vanilla stylesheet should consume CSS variables");
@@ -126,12 +124,5 @@ test("setupCssFramework: tailwind next.js writes postcss.config.mjs with @tailwi
   const { dir } = await scaffoldArk({ architecture: "feature-based", language: "ts", cssFramework: "tailwind", framework: "next" });
   const postcss = await fsp.readFile(path.join(dir, "postcss.config.mjs"), "utf8");
   assert.match(postcss, /@tailwindcss\/postcss/, "postcss plugin missing");
-  await fsp.rm(dir, { recursive: true, force: true });
-});
-
-test("setupCssFramework: bootstrap prepends the bootstrap css import into main", async () => {
-  const { dir, mainExt } = await scaffoldArk({ architecture: "type-based", language: "js", cssFramework: "bootstrap" });
-  const main = await fsp.readFile(path.join(dir, "src", `main.${mainExt}`), "utf8");
-  assert.match(main, /bootstrap\.min\.css/, "bootstrap css import missing in main");
   await fsp.rm(dir, { recursive: true, force: true });
 });

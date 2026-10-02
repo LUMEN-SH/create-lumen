@@ -6,7 +6,7 @@
     "variant": "vite"
   },
   "styling": {
-    "engine": "bootstrap"
+    "engine": "none"
   },
   "architecture": {
     "type": "type-based"

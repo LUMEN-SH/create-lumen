@@ -23,8 +23,8 @@ export async function setupCssFramework({
       ? path.join(projectPath, "src", "shared", "styles")
       : path.join(projectPath, "src", "styles");
 
-  // Vanilla CSS gets a stylesheet named main.css; tailwind/bootstrap keep
-  // globals.css (their idiomatic name — they inject framework directives).
+  // Vanilla CSS gets a stylesheet named main.css; tailwind keeps
+  // globals.css (its idiomatic name — it injects framework directives).
   const mainFileName = cssFramework === "none" ? "main.css" : "globals.css";
 
   async function writeCss(content, fileName) {
@@ -60,29 +60,6 @@ export async function setupCssFramework({
     );
     await writeCss(globalsContent, "globals.css");
     await writeCss(themesContent, "themes.css");
-  } else if (cssFramework === "bootstrap") {
-    const mainFile = path.join(projectPath, "src", `main.${ext}`);
-    try {
-      let mainContent = await fsp.readFile(mainFile, "utf8");
-      if (
-        !mainContent.includes("bootstrap/dist/css/bootstrap.min.css")
-      ) {
-        mainContent =
-          "import 'bootstrap/dist/css/bootstrap.min.css';\n" + mainContent;
-        await fsp.writeFile(mainFile, mainContent, "utf8");
-      }
-    } catch {}
-
-    const globalsContent = await fsp.readFile(
-      path.join(cssDir, "bootstrap", "src", "globals.css"),
-      "utf8"
-    );
-    const themesContent = await fsp.readFile(
-      path.join(cssDir, "bootstrap", "src", "themes.css"),
-      "utf8"
-    );
-    await writeCss(globalsContent, "globals.css");
-    await writeCss(themesContent, "themes.css");
   } else {
     const mainContent = await fsp.readFile(
       path.join(cssDir, "none", "src", "main.css"),
@@ -110,7 +87,7 @@ export async function setupCssFramework({
 }
 
 // Rewrite the CSS import in main.{ext} so it matches the file the framework
-// actually wrote (main.css for "none", globals.css for tailwind/bootstrap).
+// actually wrote (main.css for "none", globals.css for tailwind).
 async function syncMainCssImport(projectPath, ext, architecture, mainFileName) {
   const mainPath = path.join(projectPath, "src", `main.${ext}`);
   try {

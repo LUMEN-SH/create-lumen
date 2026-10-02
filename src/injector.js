@@ -60,7 +60,7 @@ export async function injectArchitecture(projectPath, templatesDir, architecture
   // (only where the base ships framework-agnostic inline markup). Runs here,
   // before conditional overlays, so icons/router can still override the files
   // they own.
-  if (cssFramework === "tailwind" || cssFramework === "bootstrap") {
+  if (cssFramework === "tailwind") {
     const variantSrc = path.join(
       templatesDir,
       "css",
@@ -285,7 +285,7 @@ async function pruneRedundantGitkeeps(projectPath) {
 }
 
 // Overlays that ship presentational components (router, icons) carry optional
-// tailwind/bootstrap subfolders. Copy the root version first — it holds the
+// tailwind subfolders. Copy the root version first — it holds the
 // framework-agnostic skeleton (routed App, route tables) plus the inline
 // markup defaults used for cssFramework "none" — then overlay the framework's
 // subfolder so its markup-specific files (transitive layouts, home pages)
@@ -293,10 +293,7 @@ async function pruneRedundantGitkeeps(projectPath) {
 async function injectOverlayVariant(projectPath, templatesDir, rel, cssFramework, language) {
   const base = `conditional/${rel}`;
   await injectOverlay(projectPath, templatesDir, base, language);
-  const variant =
-    cssFramework === "tailwind" || cssFramework === "bootstrap"
-      ? cssFramework
-      : "";
+  const variant = cssFramework === "tailwind" ? cssFramework : "";
   if (variant) {
     await injectOverlay(
       projectPath,

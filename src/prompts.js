@@ -15,12 +15,7 @@ function formatConfig(responses) {
       : responses.architecture === "type-based" || responses.architecture === "component-based"
       ? "Type-based"
       : responses.architecture;
-  const css =
-    responses.cssFramework === "none"
-      ? "None"
-      : responses.cssFramework === "tailwind"
-      ? "Tailwind CSS"
-      : "Bootstrap";
+  const css = responses.cssFramework === "tailwind" ? "Tailwind CSS" : "None";
   const testing =
     responses.testing === "none"
       ? "None"
@@ -175,7 +170,6 @@ export async function getUserInputs(projectName, { quickSetup = false } = {}) {
     message: "Which CSS framework do you want to use?",
     options: [
       { label: "Tailwind CSS", value: "tailwind" },
-      { label: "Bootstrap", value: "bootstrap" },
       { label: "None", value: "none" },
     ],
     initialValue: "tailwind",

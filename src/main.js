@@ -194,11 +194,9 @@ export async function main(options = {}) {
   // 10. CSS framework setup
   const cssSpin = spinner();
   const cssLabel =
-    responses.cssFramework === "none"
-      ? "CSS reset"
-      : responses.cssFramework === "tailwind"
+    responses.cssFramework === "tailwind"
       ? "Tailwind CSS"
-      : "Bootstrap";
+      : "CSS reset";
   if (responses.cssFramework !== "none") {
     cssSpin.start(`Setting up ${cssLabel}...`);
   }

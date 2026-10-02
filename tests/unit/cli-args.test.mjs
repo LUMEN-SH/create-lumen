@@ -99,7 +99,7 @@ test("cli-args: loadManifestSource reads manifest file and validates schema", as
   const content = {
     manifestVersion: 2,
     framework: { name: "react", variant: "vite" },
-    styling: { engine: "bootstrap" },
+    styling: { engine: "none" },
     architecture: { type: "type-based" },
     ui: { kit: "none" },
     docs: { language: "es" },
@@ -117,7 +117,7 @@ test("cli-args: loadManifestSource reads manifest file and validates schema", as
 
   const parsed = loadManifestSource(manifestPath);
   assert.equal(parsed.framework.name, "react");
-  assert.equal(parsed.styling.engine, "bootstrap");
+  assert.equal(parsed.styling.engine, "none");
   assert.equal(parsed.architecture.type, "type-based");
   assert.equal(parsed.docs.language, "es");
 });

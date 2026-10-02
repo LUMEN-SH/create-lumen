@@ -48,13 +48,6 @@ test("tailwind next.js: tailwindcss/@tailwindcss/postcss as devDeps", () => {
   has(deps, "clsx", "tailwind-merge");
 });
 
-test("bootstrap: bootstrap + react-bootstrap as deps, no tailwind tooling", () => {
-  const { deps, devDeps } = cellDeps({ cssFramework: "bootstrap" });
-  has(deps, "bootstrap", "react-bootstrap");
-  lacks(deps, "tailwindcss", "@tailwindcss/vite");
-  lacks(devDeps, "tailwindcss");
-});
-
 test("redux vs zustand vs none are mutually exclusive", () => {
   const redux = cellDeps({ stateManagement: "redux" });
   has(redux.deps, "@reduxjs/toolkit", "react-redux");

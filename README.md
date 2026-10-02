@@ -66,7 +66,7 @@ create-lumen my-app      # after npm link
 
 - Architecture choice: feature-based or type-based (with Next.js hybrid/none in v2)
 - TypeScript or JavaScript output
-- CSS frameworks: Tailwind CSS v4 (CSS-first `@theme`, v3 dropped), Bootstrap 5.3+, or none
+- CSS frameworks: Tailwind CSS v4 (CSS-first `@theme`, v3 dropped) or none
 - Optional state management: Zustand or Redux Toolkit
 - Optional router (React Router)
 - Optional testing: Vitest or Jest
@@ -148,8 +148,8 @@ src/
     ├── layouts
     ├── stores
     ├── styles
-    │   ├── globals.css      # Tailwind/Bootstrap directives (or main.css for vanilla)
-    │   └── themes.css       # Theme tokens (Tailwind @theme / Bootstrap data-bs-theme / CSS vars)
+    │   ├── globals.css      # Tailwind directives (or main.css for vanilla)
+    │   └── themes.css       # Theme tokens (Tailwind @theme / CSS vars)
     ├── types
     └── utils
 ```
@@ -177,8 +177,8 @@ src/
 ├── services
 ├── store
 ├── styles
-│   ├── globals.css      # Tailwind/Bootstrap directives (or main.css for vanilla)
-│   └── themes.css       # Theme tokens (Tailwind @theme / Bootstrap data-bs-theme / CSS vars)
+│   ├── globals.css      # Tailwind directives (or main.css for vanilla)
+│   └── themes.css       # Theme tokens (Tailwind @theme / CSS vars)
 ├── test
 └── utils
 ```

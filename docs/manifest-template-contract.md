@@ -32,7 +32,7 @@ The manifest is emitted at `<projectRoot>/lumen.config.json` as a UTF-8 JSON fil
     "adapter": "node | vercel | cloudflare | static (Next.js only, optional)"
   },
   "styling": {
-    "engine": "tailwind | bootstrap | none"
+    "engine": "tailwind | none"
   },
   "architecture": {
     "type": "feature-based | type-based | hybrid | none"
