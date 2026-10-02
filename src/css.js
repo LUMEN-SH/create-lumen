@@ -1,6 +1,11 @@
 import { promises as fsp } from "fs";
 import path from "path";
 import { deleteIfExists } from "@/utils/fs.js";
+import {
+  normalizeFramework,
+  hasCapability,
+  CAPABILITIES,
+} from "@/engine/capabilities.js";
 
 export async function setupCssFramework({
   projectPath,
@@ -13,6 +18,8 @@ export async function setupCssFramework({
   framework = "vite",
 }) {
   process.chdir(projectPath);
+  const fw = normalizeFramework(framework);
+  const isFilesystemRouted = hasCapability(fw, CAPABILITIES.FILESYSTEM_ROUTING);
   const cssDir = path.join(templatesDir, "css");
   // Feature-based main.* imports ./shared/styles/globals.css (or main.css when
   // framework is "none"); type-based imports ./styles/globals.css (or
@@ -32,7 +39,7 @@ export async function setupCssFramework({
   }
 
   if (cssFramework === "tailwind") {
-    if (framework === "next") {
+    if (isFilesystemRouted || fw.name === "next") {
       const postcssConfigFile = "postcss.config.mjs";
       const postcssConfigTarget = path.join(projectPath, postcssConfigFile);
       const postcssConfigContent = await fsp.readFile(

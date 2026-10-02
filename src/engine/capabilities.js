@@ -216,3 +216,169 @@ export function validateCompatibility(framework, options = {}) {
     errors,
   };
 }
+
+/**
+ * Normalize framework input into a standard { name, variant } descriptor.
+ * @param {string | { name?: string, variant?: string } | null | undefined} framework
+ * @returns {{ name: string, variant: string }}
+ */
+export function normalizeFramework(framework) {
+  if (!framework) {
+    return { name: "react", variant: "vite" };
+  }
+
+  if (typeof framework === "string") {
+    const trimmed = framework.trim();
+    if (!trimmed) {
+      return { name: "react", variant: "vite" };
+    }
+    if (trimmed.includes(":")) {
+      const [name, ...rest] = trimmed.split(":");
+      return { name, variant: rest.join(":") };
+    }
+    if (trimmed === "next") {
+      return { name: "next", variant: "app-router" };
+    }
+    if (trimmed === "react") {
+      return { name: "react", variant: "vite" };
+    }
+    return { name: trimmed, variant: "vite" };
+  }
+
+  if (typeof framework === "object") {
+    const name = framework.name || "react";
+    const variant =
+      framework.variant || (framework.name === "next" ? "app-router" : "vite");
+    return { name, variant };
+  }
+
+  return { name: "react", variant: "vite" };
+}
+
+/**
+ * Determine whether a prompt should be presented to the user based on framework capabilities.
+ * @param {string | object} framework
+ * @param {string} promptName
+ * @returns {boolean}
+ */
+export function isPromptVisible(framework, promptName) {
+  const fw = normalizeFramework(framework);
+  const desc = getFrameworkDescriptor(fw);
+
+  switch (promptName) {
+    case "router":
+      return (
+        hasCapability(fw, CAPABILITIES.CLIENT_ROUTING) &&
+        Boolean(desc?.supportsRouterPrompt)
+      );
+    case "bundler":
+      return hasCapability(fw, CAPABILITIES.BUNDLER_SELECTION);
+    case "adapter":
+      return hasCapability(fw, CAPABILITIES.ADAPTERS);
+    case "reactCompiler":
+      return hasCapability(fw, CAPABILITIES.REACT_COMPILER);
+    default:
+      return true;
+  }
+}
+
+/**
+ * Filter an array of choice objects or values based on framework compatibility.
+ * @param {string | object} framework
+ * @param {string} optionKey
+ * @param {Array<object | string>} choices
+ * @returns {Array<object | string>}
+ */
+export function filterCompatibleChoices(framework, optionKey, choices = []) {
+  const fw = normalizeFramework(framework);
+  if (!Array.isArray(choices)) return [];
+  return choices.filter((choice) =>
+    isOptionCompatible(fw, optionKey, choice?.value ?? choice)
+  );
+}
+
+/**
+ * Get canonical default prompt responses for a given framework.
+ * @param {string | object} framework
+ * @param {{ projectName?: string }} [options]
+ * @returns {object}
+ */
+export function getDefaultResponses(framework, { projectName = "my-app" } = {}) {
+  const fw = normalizeFramework(framework);
+
+  if (fw.name === "next") {
+    return {
+      projectName,
+      frameworkName: fw.name,
+      frameworkVariant: fw.variant,
+      architecture: "feature-based",
+      language: "ts",
+      cssFramework: "tailwind",
+      testing: "vitest",
+      router: false,
+      bundler: "turbopack",
+      adapter: "none",
+      stateManagement: "none",
+      iconLibrary: "none",
+      apiClient: "none",
+      linter: "eslint",
+      formatter: "prettier",
+      docsLanguage: "en",
+      gitInit: true,
+      readme: true,
+    };
+  }
+
+  return {
+    projectName,
+    frameworkName: "react",
+    frameworkVariant: "vite",
+    architecture: "feature-based",
+    language: "ts",
+    cssFramework: "tailwind",
+    testing: "vitest",
+    router: true,
+    stateManagement: "none",
+    iconLibrary: "none",
+    apiClient: "none",
+    linter: "eslint",
+    formatter: "prettier",
+    docsLanguage: "en",
+    gitInit: true,
+    readme: true,
+  };
+}
+
+/**
+ * Sanitize prompt responses for a framework by adjusting or resetting incompatible options.
+ * @param {string | object} framework
+ * @param {object} [responses]
+ * @returns {object}
+ */
+export function sanitizeResponsesForFramework(framework, responses = {}) {
+  const fw = normalizeFramework(framework);
+  const sanitized = { ...(responses || {}) };
+  const defaults = getDefaultResponses(fw, {
+    projectName: sanitized.projectName || "my-app",
+  });
+
+  if (!isPromptVisible(fw, "router")) {
+    sanitized.router = false;
+  }
+
+  for (const [key, val] of Object.entries(sanitized)) {
+    if (val === undefined || val === null) continue;
+    if (!isOptionCompatible(fw, key, val)) {
+      if (key in defaults) {
+        sanitized[key] = defaults[key];
+      } else if (key === "styling" && "cssFramework" in defaults) {
+        sanitized[key] = defaults.cssFramework;
+      } else {
+        sanitized[key] = defaults[key];
+      }
+    }
+  }
+
+  return sanitized;
+}
+
