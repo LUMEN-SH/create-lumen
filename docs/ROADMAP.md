@@ -145,12 +145,13 @@ start with [ADR 0001: scaffolder base strategy](./adr/0001-scaffolder-base-strat
 - [x] #10 Capabilities-based composition (epic) ✅
 - [x] #25 Engine: capability declaration model
 - [x] #38 Base: vendor framework bases + `BaseProvider` seam (BaseProvider + ViteReact/NextAppRouter/NextPagesRouter providers)
-- [ ] #26 Engine: gate prompts by declared capabilities
-- [ ] #27 Engine: template composition
-- [ ] #33 UI: shadcn/ui support (Tailwind v4)
+- [x] #26 Engine: gate prompts by declared capabilities ✅
+- [x] #27 Engine: template composition ✅
+- [x] #33 UI: shadcn/ui support (Tailwind v4) ✅
 - [x] #51 Templates: drop Bootstrap CSS framework (Tailwind CSS v4-first focus)
-- [ ] #34 Architecture: `none` + `hybrid`
-- [ ] #11 Scaffolder: back navigation in the v2 prompt flow
+- [x] #34 Architecture: `none` + `hybrid` ✅
+- [x] #11 Scaffolder: back navigation in the v2 prompt flow ✅
+- [x] #57 Fix: batch devDeps install for peer-heavy sets ✅
 - [x] #48 Docs (M2): Engine capabilities model, template composition & shadcn/ui guides (`docs/engine-capabilities.md`) ✅
 
 ### ▲ M3 · `v2.0.0-beta` — Next.js support

@@ -43,7 +43,7 @@ Fragments are evaluated in ascending order according to `FRAGMENT_PRECEDENCE`:
                            ▼
 ┌────────────────────────────────────────────────────────┐
 │  Layer 4: Styling (component styles & design tokens)   │
-│  - Tailwind v4, Bootstrap, CSS reset                   │
+│  - Tailwind v4, vanilla CSS                            │
 └──────────────────────────┬─────────────────────────────┘
                            ▼
 ┌────────────────────────────────────────────────────────┐

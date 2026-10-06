@@ -1,7 +1,7 @@
 {
   "name": "create-lumen",
   "version": "2.0.0-alpha.2",
-  "description": "Scaffold a React + Vite project with architecture choice: feature-based or type-based.",
+  "description": "Scaffold a React + Vite project with architecture choice: feature-based, type-based, hybrid, or none.",
   "type": "module",
   "bin": {
     "create-lumen": "bin/cli.js"

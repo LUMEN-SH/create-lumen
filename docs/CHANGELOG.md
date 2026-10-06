@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Fixed
 
 - **Install crash on peer-heavy devDeps batches** (#57) — `installAllDeps` installs `devDepBatches` per category (testing vs lint/format); `verify:installed` 4/4 green.
+- **Verify: ship `none` arch types + arch-aware audit** — flat `none` scaffold gains `src/types/`; offline audit resolves `typesRel` per architecture; `verify:offline` 11/11 green.
 
 ## [2.0.0-alpha.1] — 2026-10-01
 
