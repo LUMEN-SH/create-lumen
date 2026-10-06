@@ -48,6 +48,7 @@ export async function main(options = {}) {
     projectName: nameArg,
     manifest: manifestSource,
     template: templateName,
+    arch: archArg,
   } = options;
   const pkg = getPkgManager();
 
@@ -93,7 +94,7 @@ export async function main(options = {}) {
       ...preset,
     };
   } else {
-    responses = await getUserInputs(projectName, { quickSetup });
+    responses = await getUserInputs(projectName, { quickSetup, initialArch: archArg });
   }
 
   const projectPath = path.resolve(CURRENT_DIR, projectName);
@@ -136,7 +137,7 @@ export async function main(options = {}) {
   // 7. Inject architecture templates
   const archSpin = spinner();
   archSpin.start(
-    `Setting up ${responses.architecture === "feature-based" ? "feature-based" : "type-based"} architecture...`
+    `Setting up ${responses.architecture} architecture...`
   );
   try {
     await injectArchitecture(
@@ -194,11 +195,9 @@ export async function main(options = {}) {
   // 10. CSS framework setup
   const cssSpin = spinner();
   const cssLabel =
-    responses.cssFramework === "none"
-      ? "CSS reset"
-      : responses.cssFramework === "tailwind"
+    responses.cssFramework === "tailwind"
       ? "Tailwind CSS"
-      : "Bootstrap";
+      : "CSS reset";
   if (responses.cssFramework !== "none") {
     cssSpin.start(`Setting up ${cssLabel}...`);
   }
@@ -290,7 +289,7 @@ export async function main(options = {}) {
   log.step(chalk.green("\nProject setup complete!"));
   log.message(
     chalk.gray(
-      `  Architecture: ${responses.architecture === "feature-based" ? "Feature-based" : "Type-based"}`
+      `  Architecture: ${responses.architecture}`
     )
   );
 

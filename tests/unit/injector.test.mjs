@@ -4,7 +4,7 @@ import { promises as fsp } from "fs";
 import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
-import { injectFormatter, injectLinter } from "../../src/injector.js";
+import { injectFormatter, injectLinter, injectUiKit, getComponentsJson } from "../../src/injector.js";
 import { resolveProjectName } from "../../src/main.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -196,3 +196,76 @@ test("resolveProjectName ignores the quick-setup flag when it appears before the
     process.argv = originalArgv;
   }
 });
+
+test("injectUiKit: writes components.json, lib/utils cn helper, and Button/Card primitives (feature-based TS)", async () => {
+  const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "lumen-shadcn-"));
+  await fsp.mkdir(path.join(dir, "src"), { recursive: true });
+
+  await injectUiKit(dir, TEMPLATES_DIR, { uiKit: "shadcn", cssFramework: "tailwind" }, "feature-based", "ts");
+
+  // components.json
+  const compJsonRaw = await fsp.readFile(path.join(dir, "components.json"), "utf8");
+  const compJson = JSON.parse(compJsonRaw);
+  assert.equal(compJson.style, "new-york");
+  assert.equal(compJson.rsc, false);
+  assert.equal(compJson.tsx, true);
+  assert.equal(compJson.tailwind.css, "src/shared/styles/globals.css");
+  assert.equal(compJson.aliases.utils, "@/lib/utils");
+  assert.equal(compJson.aliases.ui, "@/shared/components/ui");
+
+  // cn helper
+  const utilsCode = await fsp.readFile(path.join(dir, "src", "lib", "utils.ts"), "utf8");
+  assert.match(utilsCode, /twMerge\(clsx\(inputs\)\)/);
+
+  // Primitives
+  assert.ok(await fsp.stat(path.join(dir, "src", "shared", "components", "ui", "Button.tsx")));
+  assert.ok(await fsp.stat(path.join(dir, "src", "shared", "components", "ui", "Card.tsx")));
+  assert.ok(await fsp.stat(path.join(dir, "src", "shared", "components", "ui", "index.ts")));
+
+  const buttonCode = await fsp.readFile(path.join(dir, "src", "shared", "components", "ui", "Button.tsx"), "utf8");
+  assert.match(buttonCode, /buttonVariants/);
+  assert.match(buttonCode, /@\/lib\/utils/);
+
+  const cardCode = await fsp.readFile(path.join(dir, "src", "shared", "components", "ui", "Card.tsx"), "utf8");
+  assert.match(cardCode, /CardHeader/);
+  assert.match(cardCode, /@\/lib\/utils/);
+
+  await fsp.rm(dir, { recursive: true, force: true });
+});
+
+test("injectUiKit: writes components.json and primitives for type-based JS", async () => {
+  const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "lumen-shadcn-js-"));
+  await fsp.mkdir(path.join(dir, "src"), { recursive: true });
+
+  await injectUiKit(dir, TEMPLATES_DIR, { uiKit: "shadcn", cssFramework: "tailwind" }, "type-based", "js");
+
+  const compJson = JSON.parse(await fsp.readFile(path.join(dir, "components.json"), "utf8"));
+  assert.equal(compJson.tsx, false);
+  assert.equal(compJson.tailwind.css, "src/styles/globals.css");
+  assert.equal(compJson.aliases.ui, "@/ui");
+
+  assert.ok(await fsp.stat(path.join(dir, "src", "lib", "utils.js")));
+  assert.ok(await fsp.stat(path.join(dir, "src", "ui", "Button.jsx")));
+  assert.ok(await fsp.stat(path.join(dir, "src", "ui", "Card.jsx")));
+  assert.ok(await fsp.stat(path.join(dir, "src", "ui", "index.js")));
+
+  await fsp.rm(dir, { recursive: true, force: true });
+});
+
+test("injectUiKit: rejects shadcn when cssFramework is not tailwind", async () => {
+  const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "lumen-shadcn-err-"));
+  await assert.rejects(
+    () => injectUiKit(dir, TEMPLATES_DIR, { uiKit: "shadcn", cssFramework: "bootstrap" }, "feature-based", "ts"),
+    /ui\.kit "shadcn" requires styling\.engine "tailwind"/
+  );
+  await fsp.rm(dir, { recursive: true, force: true });
+});
+
+test("getComponentsJson: returns Next App Router contract stub when framework is next", () => {
+  const stub = getComponentsJson({ framework: "next", architecture: "feature-based", language: "ts" });
+  assert.equal(stub.rsc, true);
+  assert.equal(stub.tailwind.css, "app/globals.css");
+  assert.equal(stub.aliases.components, "@/components");
+  assert.equal(stub.aliases.ui, "@/components/ui");
+});
+

@@ -1,6 +1,11 @@
 import { promises as fsp } from "fs";
 import path from "path";
 import { deleteIfExists } from "@/utils/fs.js";
+import {
+  normalizeFramework,
+  hasCapability,
+  CAPABILITIES,
+} from "@/engine/capabilities.js";
 
 export async function setupCssFramework({
   projectPath,
@@ -13,18 +18,20 @@ export async function setupCssFramework({
   framework = "vite",
 }) {
   process.chdir(projectPath);
+  const fw = normalizeFramework(framework);
+  const isFilesystemRouted = hasCapability(fw, CAPABILITIES.FILESYSTEM_ROUTING);
   const cssDir = path.join(templatesDir, "css");
   // Feature-based main.* imports ./shared/styles/globals.css (or main.css when
   // framework is "none"); type-based imports ./styles/globals.css (or
   // main.css). The chosen framework's styles land in the file the architecture
   // actually imports.
   const stylesDir =
-    architecture === "feature-based"
+    architecture === "feature-based" || architecture === "hybrid"
       ? path.join(projectPath, "src", "shared", "styles")
       : path.join(projectPath, "src", "styles");
 
-  // Vanilla CSS gets a stylesheet named main.css; tailwind/bootstrap keep
-  // globals.css (their idiomatic name — they inject framework directives).
+  // Vanilla CSS gets a stylesheet named main.css; tailwind keeps
+  // globals.css (its idiomatic name — it injects framework directives).
   const mainFileName = cssFramework === "none" ? "main.css" : "globals.css";
 
   async function writeCss(content, fileName) {
@@ -32,7 +39,7 @@ export async function setupCssFramework({
   }
 
   if (cssFramework === "tailwind") {
-    if (framework === "next") {
+    if (isFilesystemRouted || fw.name === "next") {
       const postcssConfigFile = "postcss.config.mjs";
       const postcssConfigTarget = path.join(projectPath, postcssConfigFile);
       const postcssConfigContent = await fsp.readFile(
@@ -56,29 +63,6 @@ export async function setupCssFramework({
     );
     const themesContent = await fsp.readFile(
       path.join(cssDir, "tailwind", "src", "themes.css"),
-      "utf8"
-    );
-    await writeCss(globalsContent, "globals.css");
-    await writeCss(themesContent, "themes.css");
-  } else if (cssFramework === "bootstrap") {
-    const mainFile = path.join(projectPath, "src", `main.${ext}`);
-    try {
-      let mainContent = await fsp.readFile(mainFile, "utf8");
-      if (
-        !mainContent.includes("bootstrap/dist/css/bootstrap.min.css")
-      ) {
-        mainContent =
-          "import 'bootstrap/dist/css/bootstrap.min.css';\n" + mainContent;
-        await fsp.writeFile(mainFile, mainContent, "utf8");
-      }
-    } catch {}
-
-    const globalsContent = await fsp.readFile(
-      path.join(cssDir, "bootstrap", "src", "globals.css"),
-      "utf8"
-    );
-    const themesContent = await fsp.readFile(
-      path.join(cssDir, "bootstrap", "src", "themes.css"),
       "utf8"
     );
     await writeCss(globalsContent, "globals.css");
@@ -110,17 +94,17 @@ export async function setupCssFramework({
 }
 
 // Rewrite the CSS import in main.{ext} so it matches the file the framework
-// actually wrote (main.css for "none", globals.css for tailwind/bootstrap).
+// actually wrote (main.css for "none", globals.css for tailwind).
 async function syncMainCssImport(projectPath, ext, architecture, mainFileName) {
   const mainPath = path.join(projectPath, "src", `main.${ext}`);
   try {
     let content = await fsp.readFile(mainPath, "utf8");
     const expected =
-      architecture === "feature-based"
+      architecture === "feature-based" || architecture === "hybrid"
         ? `./shared/styles/${mainFileName}`
         : `./styles/${mainFileName}`;
     const wrong =
-      architecture === "feature-based"
+      architecture === "feature-based" || architecture === "hybrid"
         ? /import ['"]\.\/shared\/styles\/(globals|main)\.css['"]/
         : /import ['"]\.\/styles\/(globals|main)\.css['"]/;
     content = content.replace(wrong, `import '${expected}'`);

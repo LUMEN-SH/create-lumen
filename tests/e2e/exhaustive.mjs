@@ -85,9 +85,6 @@ async function check(responses, projectPath) {
   if (cssFramework === "tailwind") {
     const vite = await fsp.readFile(path.join(projectPath, `vite.config.${extConfig}`), "utf8");
     assert.ok(vite.includes("@tailwindcss/vite"), "tailwind: vite plugin missing");
-  } else if (cssFramework === "bootstrap") {
-    const main = await fsp.readFile(path.join(projectPath, `src/main.${ext}`), "utf8");
-    assert.ok(main.includes("bootstrap/dist/css/bootstrap.min.css"), "bootstrap: import missing in main");
   }
 
   // Testing
@@ -333,10 +330,10 @@ async function check(responses, projectPath) {
   }
 
   // CSS framework markup parity: every architecture expresses the shared look
-  // in the chosen framework's idiom (tailwind classes / bootstrap utilities /
-  // CSS variables / inline styles), and the imported stylesheet carries that
-  // framework's content. Vanilla CSS uses main.css; tailwind/bootstrap keep
-  // globals.css. themes.css lives next to it in every case.
+  // in the chosen framework's idiom (tailwind classes / CSS variables /
+  // inline styles), and the imported stylesheet carries that framework's content.
+  // Vanilla CSS uses main.css; tailwind keeps globals.css. themes.css lives next
+  // to it in every case.
   const mainFileName = cssFramework === "none" ? "main.css" : "globals.css";
   const mainRel =
     architecture === "feature-based"
@@ -373,8 +370,6 @@ async function check(responses, projectPath) {
   const hasBootstrap = /text-muted|d-flex|fw-bold|btn-primary/.test(home);
   if (cssFramework === "tailwind") {
     assert.ok(hasTailwind && !hasBootstrap, "home: tailwind markup expected under tailwind");
-  } else if (cssFramework === "bootstrap") {
-    assert.ok(hasBootstrap && !hasTailwind, "home: bootstrap markup expected under bootstrap");
   } else {
     assert.ok(!hasTailwind && !hasBootstrap, "home: inline markup expected under none");
   }

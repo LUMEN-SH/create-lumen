@@ -3,6 +3,11 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
 import { parseManifest } from "./manifest/schema.js";
+import {
+  normalizeFramework,
+  isPromptVisible,
+  getDefaultResponses,
+} from "./engine/capabilities.js";
 
 export const PRESETS = {
   "react-ts": {
@@ -141,6 +146,40 @@ export const PRESETS = {
     gitInit: true,
     readme: true,
   },
+  "react-none-ts": {
+    frameworkName: "react",
+    frameworkVariant: "vite",
+    architecture: "none",
+    language: "ts",
+    cssFramework: "tailwind",
+    testing: "vitest",
+    router: false,
+    stateManagement: "none",
+    iconLibrary: "none",
+    apiClient: "none",
+    linter: "eslint",
+    formatter: "prettier",
+    docsLanguage: "en",
+    gitInit: true,
+    readme: true,
+  },
+  "react-none-js": {
+    frameworkName: "react",
+    frameworkVariant: "vite",
+    architecture: "none",
+    language: "js",
+    cssFramework: "tailwind",
+    testing: "vitest",
+    router: false,
+    stateManagement: "none",
+    iconLibrary: "none",
+    apiClient: "none",
+    linter: "eslint",
+    formatter: "prettier",
+    docsLanguage: "en",
+    gitInit: true,
+    readme: true,
+  },
 };
 
 /**
@@ -151,6 +190,8 @@ export const PRESETS = {
  *   quickSetup: boolean,
  *   manifest: string | null,
  *   template: string | null,
+ *   framework: string | null,
+ *   arch: string | null,
  *   help: boolean,
  *   version: boolean,
  *   positionals: string[]
@@ -163,6 +204,9 @@ export function parseCliArgs(argv = process.argv.slice(2)) {
       yes: { type: "boolean", short: "y", default: false },
       manifest: { type: "string", short: "m" },
       template: { type: "string", short: "t" },
+      framework: { type: "string", short: "f" },
+      arch: { type: "string", short: "a" },
+      architecture: { type: "string" },
       help: { type: "boolean", short: "h", default: false },
       version: { type: "boolean", short: "v", default: false },
     },
@@ -172,11 +216,20 @@ export function parseCliArgs(argv = process.argv.slice(2)) {
 
   const projectName = positionals[0] ? positionals[0].trim() : null;
 
+  let arch = values.arch || values.architecture || null;
+  if (arch) {
+    arch = arch.trim().toLowerCase();
+    if (arch === "feature") arch = "feature-based";
+    else if (arch === "component" || arch === "component-based" || arch === "type") arch = "type-based";
+  }
+
   return {
     projectName,
     quickSetup: Boolean(values.yes),
     manifest: values.manifest || null,
     template: values.template || null,
+    framework: values.framework ? values.framework.trim() : null,
+    arch,
     help: Boolean(values.help),
     version: Boolean(values.version),
     positionals,
@@ -222,13 +275,18 @@ export function loadManifestSource(source, cwd = process.cwd()) {
 export function manifestToResponses(manifest, projectName) {
   const frameworkName = manifest.framework?.name || "react";
   const frameworkVariant = manifest.framework?.variant || "vite";
-  const isNext = frameworkName === "next";
+  const framework = normalizeFramework({ name: frameworkName, variant: frameworkVariant });
+  const canClientRoute = isPromptVisible(framework, "router");
+  const supportsBundler = isPromptVisible(framework, "bundler");
 
   return {
     projectName,
     frameworkName,
     frameworkVariant,
-    bundler: manifest.framework?.bundler,
+    bundler:
+      supportsBundler && manifest.framework?.bundler
+        ? manifest.framework.bundler
+        : undefined,
     adapter: manifest.framework?.adapter,
     architecture: manifest.architecture?.type || "feature-based",
     language: manifest.tooling?.language || "ts",
@@ -241,7 +299,7 @@ export function manifestToResponses(manifest, projectName) {
     agentDocs: manifest.agentDocs,
     // Sensible defaults for scaffolder conditional passes
     testing: "vitest",
-    router: isNext ? false : true,
+    router: canClientRoute,
     stateManagement: "none",
     iconLibrary: "none",
     apiClient: "none",
@@ -263,8 +321,10 @@ ${chalk.bold("USAGE")}
 
 ${chalk.bold("OPTIONS")}
   ${chalk.yellow("-y, --yes")}              Quick setup with recommended defaults (TS + Tailwind + Router + ESLint + Prettier)
+  ${chalk.yellow("-a, --arch")} <name>      Architecture preset (feature-based, type-based, none, hybrid)
   ${chalk.yellow("-m, --manifest")} <path>  Drive scaffolding from a lumen.config.json or inline JSON
   ${chalk.yellow("-t, --template")} <name>  Scaffold using a preset (${Object.keys(PRESETS).join(", ")})
+  ${chalk.yellow("-f, --framework")} <name> Target framework (react, next, react:vite, next:app-router, etc.)
   ${chalk.yellow("-h, --help")}             Show this help message
   ${chalk.yellow("-v, --version")}          Show version number
 
@@ -273,6 +333,8 @@ ${chalk.bold("PRESETS")}
   ${chalk.cyan("react-js")}       React + Vite + JavaScript (feature-based)
   ${chalk.cyan("react-type-ts")}  React + Vite + TypeScript (type-based)
   ${chalk.cyan("react-type-js")}  React + Vite + JavaScript (type-based)
+  ${chalk.cyan("react-none-ts")}  React + Vite + TypeScript (none)
+  ${chalk.cyan("react-none-js")}  React + Vite + JavaScript (none)
 
 ${chalk.bold("EXAMPLES")}
   ${chalk.gray("# Interactive setup")}

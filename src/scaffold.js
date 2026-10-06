@@ -1,5 +1,7 @@
+import { promises as fsp } from "fs";
 import path from "path";
 import { execa } from "execa";
+import { copyDirRecursive } from "@/utils/fs.js";
 import { isYarnV1 } from "@/utils/yarn-v1.js";
 
 export async function runViteCreate(projectPath, projectName, pkg, language) {
@@ -26,4 +28,19 @@ export async function runBaseInstall(projectPath, pkg) {
 
 export async function runGitInit(projectPath) {
   await execa("git", ["init"], { stdio: "pipe", cwd: projectPath });
+}
+
+export async function scaffoldBase(projectPath, provider, language, templatesDir) {
+  if (provider && typeof provider.getFilePlan === "function") {
+    const filePlan = provider.getFilePlan({ lang: language });
+    const baseDir = path.join(templatesDir, "..", filePlan);
+    try {
+      await fsp.access(baseDir);
+      await copyDirRecursive(baseDir, projectPath);
+      return true;
+    } catch {
+      // Base directory does not exist yet in templates/bases
+    }
+  }
+  return false;
 }

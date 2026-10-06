@@ -1,6 +1,6 @@
 # create-lumen
 
-A scaffolder that generates production-ready React + Vite projects (feature-based or type-based).
+A scaffolder that generates production-ready React + Vite projects (feature-based, type-based, hybrid, or none).
 
 Note: this repository is the CLI scaffolder itself, not a generated app. Generated projects live in the target folder you create.
 
@@ -34,6 +34,12 @@ npm create lumen my-app -- --template react-ts
 npm create lumen my-app -- -t react-type-js
 ```
 
+Choose framework and architecture directly:
+
+```bash
+npm create lumen my-app -- --framework react --arch none
+```
+
 Drive scaffolding directly from a manifest file or inline JSON (manifest v2):
 
 ```bash
@@ -64,9 +70,9 @@ create-lumen my-app      # after npm link
 
 ## Features
 
-- Architecture choice: feature-based or type-based (with Next.js hybrid/none in v2)
+- Architecture choice: feature-based, type-based, hybrid, or none (per-framework availability)
 - TypeScript or JavaScript output
-- CSS frameworks: Tailwind CSS v4 (CSS-first `@theme`, v3 dropped), Bootstrap 5.3+, or none
+- CSS frameworks: Tailwind CSS v4 (CSS-first `@theme`, v3 dropped) or none
 - Optional state management: Zustand or Redux Toolkit
 - Optional router (React Router)
 - Optional testing: Vitest or Jest
@@ -148,8 +154,8 @@ src/
     ├── layouts
     ├── stores
     ├── styles
-    │   ├── globals.css      # Tailwind/Bootstrap directives (or main.css for vanilla)
-    │   └── themes.css       # Theme tokens (Tailwind @theme / Bootstrap data-bs-theme / CSS vars)
+    │   ├── globals.css      # Tailwind directives (or main.css for vanilla)
+    │   └── themes.css       # Theme tokens (Tailwind @theme / CSS vars)
     ├── types
     └── utils
 ```
@@ -177,8 +183,8 @@ src/
 ├── services
 ├── store
 ├── styles
-│   ├── globals.css      # Tailwind/Bootstrap directives (or main.css for vanilla)
-│   └── themes.css       # Theme tokens (Tailwind @theme / Bootstrap data-bs-theme / CSS vars)
+│   ├── globals.css      # Tailwind directives (or main.css for vanilla)
+│   └── themes.css       # Theme tokens (Tailwind @theme / CSS vars)
 ├── test
 └── utils
 ```
@@ -199,6 +205,8 @@ The manifest now includes:
 
 ### Ecosystem Documentation & Contracts
 
+- **[Documentation Index](./docs/README.md):** Complete overview of specifications, ADRs, and developer guides.
+- **[Generator Engine & Capabilities Guide (M2)](./docs/engine-capabilities.md):** Capability model, template composition, shadcn/ui on Tailwind v4, architecture presets, and Bootstrap removal.
 - **[Manifest v2 Overview](./docs/manifest-v2.md):** Specification of the nested schema, validation behavior, and the new harness and architecture validation fields.
 - **[Shared Contract: `create-lumen` ↔ `lumen-cli`](./docs/contracts/manifest-v2-contract.md):** The agreed contract for path mapping, barrel conventions, version negotiation, and the harness/configuration interface.
 - **[v1 to v2 Migration Guide](./docs/migration/v1-to-v2.md):** Complete guide for migrating generated projects and legacy flat configs to v2.

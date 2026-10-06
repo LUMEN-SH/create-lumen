@@ -62,7 +62,6 @@
           "type": "string",
           "enum": [
             "tailwind",
-            "bootstrap",
             "none"
           ]
         }

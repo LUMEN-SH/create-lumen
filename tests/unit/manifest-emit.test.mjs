@@ -55,10 +55,10 @@ test("buildManifest: legacy component-based normalizes to type-based", () => {
   assert.equal(m.paths.ui, "src/ui");
 });
 
-test("buildManifest: es docsLanguage + bootstrap + none linter", () => {
-  const m = buildManifest({ ...baseResponses, docsLanguage: "es", cssFramework: "bootstrap", linter: "none", formatter: "none" });
+test("buildManifest: es docsLanguage + none styling + none linter", () => {
+  const m = buildManifest({ ...baseResponses, docsLanguage: "es", cssFramework: "none", linter: "none", formatter: "none" });
   assert.equal(m.docs.language, "es");
-  assert.equal(m.styling.engine, "bootstrap");
+  assert.equal(m.styling.engine, "none");
   assert.equal(m.tooling.linter, "none");
 });
 

@@ -65,7 +65,7 @@ interface FrameworkConfig {
 #### Styling (`styling`)
 ```typescript
 interface StylingConfig {
-  engine: "tailwind" | "bootstrap" | "none";
+  engine: "tailwind" | "none";
 }
 ```
 *Notes:* In v2, `engine: "tailwind"` implies **Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.js`).

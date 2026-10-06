@@ -16,7 +16,7 @@ In v1, projects had no manifest file; scaffolder choices were flat (`{ framework
     "bundler?": "turbopack|webpack",
     "adapter?": "node|vercel|cloudflare|static"
   },
-  "styling": { "engine": "tailwind|bootstrap|none" },
+  "styling": { "engine": "tailwind|none" },
   "architecture": {
     "preset?": "feature-based|type-based|hybrid|none",
     "type?": "feature-based|type-based|hybrid|none (legacy alias, must match preset)",

@@ -162,4 +162,68 @@ for (const language of ["ts", "js"]) {
     await check(quickSetup(language), out);
     await fsp.rm(projectPath, { recursive: true, force: true });
   });
+
+  test(`offline smoke: None architecture scaffold (${language}) is coherent`, async () => {
+    const noneConfig = {
+      projectName: "app",
+      architecture: "none",
+      language,
+      cssFramework: "tailwind",
+      testing: "vitest",
+      router: false,
+      stateManagement: "none",
+      iconLibrary: "none",
+      apiClient: "none",
+      linter: "eslint",
+      formatter: "prettier",
+      gitInit: false,
+      readme: true,
+    };
+    const baseApp = await ensureBase(language);
+    const projectPath = path.join(os.tmpdir(), `lumen-smoke-none-${language}`);
+    const out = await generate(noneConfig, baseApp, projectPath);
+    const ext = language === "ts" ? "tsx" : "jsx";
+    assert.ok(await exists(path.join(out, "src", `App.${ext}`)), `src/App.${ext} missing`);
+    assert.ok(await exists(path.join(out, "src", `main.${ext}`)), `src/main.${ext} missing`);
+    const manifest = parseManifest(JSON.parse(await fsp.readFile(path.join(out, "lumen.config.json"), "utf8")));
+    assert.equal(manifest.architecture.type, "none");
+    assert.equal(manifest.paths.features, "src");
+    await fsp.rm(projectPath, { recursive: true, force: true });
+  });
 }
+
+test("offline smoke: shadcn UI kit scaffold (ts) is coherent", async () => {
+  const baseApp = await ensureBase("ts");
+  const projectPath = path.join(os.tmpdir(), "lumen-smoke-shadcn");
+  const conf = {
+    ...quickSetup("ts"),
+    uiKit: "shadcn",
+  };
+  const out = await generate(conf, baseApp, projectPath);
+  await check(conf, out);
+
+  // Check shadcn specific files
+  assert.ok(await exists(path.join(out, "components.json")), "components.json missing");
+  const comp = JSON.parse(await fsp.readFile(path.join(out, "components.json"), "utf8"));
+  assert.equal(comp.style, "new-york");
+  assert.equal(comp.rsc, false);
+  assert.equal(comp.tsx, true);
+  assert.equal(comp.aliases.utils, "@/lib/utils");
+  assert.equal(comp.aliases.ui, "@/shared/components/ui");
+
+  assert.ok(await exists(path.join(out, "src/lib/utils.ts")), "src/lib/utils.ts missing");
+  assert.ok(await exists(path.join(out, "src/shared/components/ui/Button.tsx")), "Button.tsx missing");
+  assert.ok(await exists(path.join(out, "src/shared/components/ui/Card.tsx")), "Card.tsx missing");
+  assert.ok(await exists(path.join(out, "src/shared/components/ui/index.ts")), "index.ts missing");
+
+  // Check manifest ui kit field
+  const manifestRaw = JSON.parse(await fsp.readFile(path.join(out, "lumen.config.json"), "utf8"));
+  assert.equal(manifestRaw.ui?.kit, "shadcn");
+
+  // Check root tsconfig.json has paths alias
+  const rootTsconfig = JSON.parse(await fsp.readFile(path.join(out, "tsconfig.json"), "utf8"));
+  assert.ok(rootTsconfig.compilerOptions?.paths?.["@/*"], "root tsconfig missing @/* alias");
+
+  await fsp.rm(projectPath, { recursive: true, force: true });
+});
+

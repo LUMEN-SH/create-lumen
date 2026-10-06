@@ -30,7 +30,7 @@ const pkg = getPkgManager();
 // the offline harness cannot exercise: real dep resolution + build + test).
 const INSTALL_CELLS = [
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "prettier" },
-  { architecture: "type-based", language: "js", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
+  { architecture: "type-based", language: "js", cssFramework: "tailwind", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "none", testing: "vitest", router: false, stateManagement: "zustand", iconLibrary: "lucide", apiClient: "axios", linter: "oxlint", formatter: "oxfmt" },
   { architecture: "type-based", language: "ts", cssFramework: "none", testing: "jest", router: false, stateManagement: "redux", iconLibrary: "none", apiClient: "axios", linter: "eslint", formatter: "prettier" },
 ];

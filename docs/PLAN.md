@@ -42,7 +42,7 @@ flowchart TD
         CreateLumen9["✅ create-lumen#9 · shared contract<br/>done (PR #44) · documented in docs/contracts"]
         CreateLumen6["✅ create-lumen#6 · Tailwind v4<br/>merged #41"]
         CreateLumen25["✅ create-lumen#25 · capability model<br/>done (feat/manifest-core)"]
-        CreateLumen10["create-lumen#10 · capabilities epic<br/>needs #25"]
+        CreateLumen10["✅ create-lumen#10 · capabilities epic<br/>done (M2 engine)"]
         CreateLumen11["create-lumen#11 · back navigation<br/>needs #25 #27"]
         CreateLumen24["✅ create-lumen#24 · tooling parity"]
         CreateLumen23["✅ create-lumen#23 · validate React/Vite under v2"]
@@ -53,6 +53,7 @@ flowchart TD
         CreateLumen27["create-lumen#27 · template composition"]
         CreateLumen33["create-lumen#33 · shadcn/ui"]
         CreateLumen34["create-lumen#34 · architecture none/hybrid"]
+        CreateLumen48["✅ create-lumen#48 · engine docs<br/>done (docs/engine-capabilities.md)"]
         CreateLumen8["create-lumen#8 · Next.js epic"]
         CreateLumenNext["create-lumen#18–#22 · Next.js tasks"]
         CreateLumen35["create-lumen#35 · testing epic"]
@@ -68,7 +69,7 @@ flowchart TD
         CreateLumen13 --> CreateLumen4
         CreateLumen13 --> CreateLumen9
         CreateLumen13 --> CreateLumen25 --> CreateLumen26 --> CreateLumen27
-        CreateLumen13 --> CreateLumen10
+        CreateLumen13 --> CreateLumen10 --> CreateLumen48
         CreateLumen13 --> CreateLumen38
         CreateLumen25 --> CreateLumen11
         CreateLumen27 --> CreateLumen11
@@ -98,6 +99,8 @@ flowchart TD
         style CreateLumen25 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen28 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
         style CreateLumen29 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen10 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
+        style CreateLumen48 fill:#c6f6d5,stroke:#0e8a16,stroke-width:2px
     end
 
     subgraph LC["lumen-cli v1"]
@@ -152,7 +155,7 @@ flowchart TB
 
     subgraph W1["🌊 Wave 1"]
         direction LR
-        LaneE["Lane E<br/>create-lumen engine + options<br/>create-lumen#25 #26 #27 #33 #34 #11 #10 #38"]
+        LaneE["Lane E<br/>create-lumen engine + options<br/>#25 ✅ #10 ✅ #38 ✅ #48 ✅<br/>#26 #27 #33 #34 #11"]
         LaneH["Lane H<br/>lumen-cli generators<br/>lumen-cli#7 #8 #11–#14"]
     end
 
@@ -195,7 +198,7 @@ flowchart LR
     Prompts["prompts"] --> Capabilities["capabilities"]
     Capabilities --> Composition["template composition<br/>(fragments)"]
     Composition --> Injector["injector"]
-    Injector --> CssOverlay["CSS overlay<br/>Tailwind / Bootstrap / none"]
+    Injector --> CssOverlay["CSS overlay<br/>Tailwind / none"]
     CssOverlay --> Config["tsconfig / vite + @/ alias"]
     Config --> Format["format pass"]
     Format --> Output[("generated project")]

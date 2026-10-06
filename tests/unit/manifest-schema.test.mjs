@@ -71,10 +71,21 @@ test("parseManifest accepts react + type-based", () => {
 test("parseManifest rejects shadcn without tailwind (#33)", () => {
   const m = {
     ...baseValid,
-    styling: { engine: "bootstrap" },
+    styling: { engine: "none" },
     ui: { kit: "shadcn" },
   };
   assert.throws(() => parseManifest(m), /shadcn.*requires.*tailwind/);
+});
+
+test("parseManifest rejects bootstrap as styling engine (#51)", () => {
+  const m = {
+    ...baseValid,
+    styling: { engine: "bootstrap" },
+  };
+  assert.throws(
+    () => parseManifest(m),
+    /expected one of "tailwind"\|"none" at "styling\.engine"/
+  );
 });
 
 test("parseManifest rejects react variant app-router mismatch", () => {

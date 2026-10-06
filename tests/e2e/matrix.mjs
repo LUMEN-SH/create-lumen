@@ -1,7 +1,7 @@
 export const axes = {
-  architecture: ["feature-based", "type-based"],
+  architecture: ["feature-based", "type-based", "none"],
   language: ["ts", "js"],
-  cssFramework: ["tailwind", "bootstrap", "none"],
+  cssFramework: ["tailwind", "none"],
   testing: ["vitest", "jest", "none"],
   router: [true, false],
   stateManagement: ["none", "redux", "zustand"],
@@ -34,19 +34,20 @@ export function* matrix() {
 }
 
 // Curated sample that touches every template surface: both architectures,
-// both languages, all three CSS frameworks, all three testing setups, every
+// both languages, both CSS frameworks, all three testing setups, every
 // state mgmt strategy, every icon/api client, every linter, every formatter.
 export const DEFAULT_CELLS = [
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "oxfmt" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "oxfmt" },
   { architecture: "feature-based", language: "js", cssFramework: "none", testing: "vitest", router: true, stateManagement: "zustand", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "prettier" },
-  { architecture: "type-based", language: "js", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
+  { architecture: "type-based", language: "js", cssFramework: "none", testing: "jest", router: true, stateManagement: "redux", iconLibrary: "huge", apiClient: "fetch", linter: "eslint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "none", router: false, stateManagement: "redux", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "prettier" },
   { architecture: "feature-based", language: "ts", cssFramework: "none", testing: "none", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "none" },
   { architecture: "type-based", language: "js", cssFramework: "none", testing: "none", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "oxlint", formatter: "oxfmt" },
-  { architecture: "feature-based", language: "ts", cssFramework: "bootstrap", testing: "jest", router: true, stateManagement: "none", iconLibrary: "huge", apiClient: "fetch", linter: "oxlint", formatter: "none" },
+  { architecture: "feature-based", language: "ts", cssFramework: "tailwind", testing: "jest", router: true, stateManagement: "none", iconLibrary: "huge", apiClient: "fetch", linter: "oxlint", formatter: "none" },
   { architecture: "type-based", language: "ts", cssFramework: "tailwind", testing: "vitest", router: true, stateManagement: "redux", iconLibrary: "lucide", apiClient: "axios", linter: "eslint", formatter: "none" },
+  { architecture: "none", language: "ts", cssFramework: "none", testing: "vitest", router: false, stateManagement: "none", iconLibrary: "none", apiClient: "none", linter: "eslint", formatter: "prettier" },
 ];
 
 // A dedicated subgroup: the "feature parity" cells — same cell under both
